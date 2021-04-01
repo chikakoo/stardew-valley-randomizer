@@ -1119,9 +1119,16 @@ namespace Randomizer
 				if (prefixes.Count > 0 && suffixes.Count > 0)
 				{
 					newName = $"{Globals.RNGGetAndRemoveRandomValueFromList(prefixes)}{Globals.RNGGetAndRemoveRandomValueFromList(suffixes)}";
-					if (newName.StartsWith("Mc")) newName = $"Mc{newName.Substring(2, 1).ToUpper()}{newName.Substring(3)}";
+					if (newName.StartsWith("Mc"))
+					{
+						newName = $"Mc{newName.Substring(2, 1).ToUpper()}{newName.Substring(3)}";
+					}
 
-					if (Globals.RNGGetNextBoolean(10) && adjectives.Count > 0) newName = $"{Globals.RNGGetAndRemoveRandomValueFromList(adjectives)} {newName}";
+					if (Globals.RNGGetNextBoolean(10) && adjectives.Count > 0)
+					{
+						newName = $"{Globals.RNGGetAndRemoveRandomValueFromList(adjectives)} {newName}";
+					}
+
 					createdNames.Add(newName);
 				}
 				else

@@ -10,13 +10,13 @@ namespace Randomizer
 	{
 		public static Dictionary<string, string> Randomize()
 		{
-			if (Globals.Config.CraftingRecipies.Randomize) { Globals.SpoilerWrite($"==== CRAFTING RECIPES ===="); }
+			if (Globals.Config.CraftingRecipes.Randomize) { Globals.SpoilerWrite($"==== CRAFTING RECIPES ===="); }
 			Dictionary<string, string> replacements = new Dictionary<string, string>();
 			foreach (CraftableItem item in ItemList.Items.Values.Where(x => x.IsCraftable))
 			{
 				replacements[item.Name] = item.GetCraftingString();
 			}
-			if (Globals.Config.CraftingRecipies.Randomize) { Globals.SpoilerWrite(""); }
+			if (Globals.Config.CraftingRecipes.Randomize) { Globals.SpoilerWrite(""); }
 			return replacements;
 		}
 	}

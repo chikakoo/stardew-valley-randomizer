@@ -14,7 +14,7 @@ namespace Randomizer
 		/// <summary>
 		/// A mapping of cooking recipes that include crop names to the id of that crop
 		/// </summary>
-		private static Dictionary<string, int> CropDishesMap = new Dictionary<string, int>
+		private static readonly Dictionary<string, int> CropDishesMap = new Dictionary<string, int>
 		{
 			{ "Cheese Cauli.", (int)ObjectIndexes.CheeseCauliflower },
 			{ "Parsnip Soup", (int)ObjectIndexes.ParsnipSoup },
@@ -38,7 +38,7 @@ namespace Randomizer
 		/// <summary>
 		/// A mapping of cooking recipes that include fish names to the id of that fish
 		/// </summary>
-		private static Dictionary<string, int> FishDishesMap = new Dictionary<string, int>
+		private static readonly Dictionary<string, int> FishDishesMap = new Dictionary<string, int>
 		{
 			{ "Carp Surprise", (int)ObjectIndexes.CarpSurprise },
 			{ "Salmon Dinner", (int)ObjectIndexes.SalmonDinner },
@@ -86,7 +86,7 @@ namespace Randomizer
 
 			else if (genericMenu is GameMenu && Game1.player.professions.Contains(TapperProfession))
 			{
-				if (!Globals.Config.CraftingRecipies.Randomize) { return; }
+				if (!Globals.Config.CraftingRecipes.Randomize) { return; }
 				ReduceCrabPotCost((GameMenu)genericMenu);
 			}
 		}

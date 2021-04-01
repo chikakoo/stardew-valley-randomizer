@@ -89,7 +89,7 @@ namespace Randomizer
 						itemChoice = Globals.RNGGetRandomValueFromList(new List<ItemAndMultiplier>
 						{
 							new ItemAndMultiplier(resource1, 5),
-							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings.ToArray()))
+							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings))
 						});
 
 						currentBuilding = new Building(
@@ -107,7 +107,7 @@ namespace Randomizer
 						itemChoice = Globals.RNGGetRandomValueFromList(new List<ItemAndMultiplier>
 						{
 							new ItemAndMultiplier(resource1, 3),
-							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings.ToArray()))
+							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings))
 						});
 
 						currentBuilding = new Building(
@@ -125,7 +125,7 @@ namespace Randomizer
 						itemChoice = Globals.RNGGetRandomValueFromList(new List<ItemAndMultiplier>
 						{
 							new ItemAndMultiplier(resource1, 9),
-							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.LargeTimeRequirements, idsToDisallowForAnimalBuildings.ToArray()))
+							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.LargeTimeRequirements, idsToDisallowForAnimalBuildings))
 						});
 
 						currentBuilding = new Building(
@@ -143,7 +143,7 @@ namespace Randomizer
 						itemChoice = Globals.RNGGetRandomValueFromList(new List<ItemAndMultiplier>
 						{
 							new ItemAndMultiplier(resource1, 5),
-							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings.ToArray()))
+							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings))
 						});
 
 						currentBuilding = new Building(
@@ -161,7 +161,7 @@ namespace Randomizer
 						itemChoice = Globals.RNGGetRandomValueFromList(new List<ItemAndMultiplier>
 						{
 							new ItemAndMultiplier(resource1, 3),
-							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings.ToArray()))
+							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.MediumTimeRequirements, idsToDisallowForAnimalBuildings))
 						});
 
 						currentBuilding = new Building(
@@ -179,7 +179,7 @@ namespace Randomizer
 						itemChoice = Globals.RNGGetRandomValueFromList(new List<ItemAndMultiplier>
 						{
 							new ItemAndMultiplier(resource1, 9),
-							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.LargeTimeRequirements, idsToDisallowForAnimalBuildings.ToArray()))
+							new ItemAndMultiplier(ItemList.GetRandomItemAtDifficulty(ObtainingDifficulties.LargeTimeRequirements, idsToDisallowForAnimalBuildings))
 						});
 
 						currentBuilding = new Building(

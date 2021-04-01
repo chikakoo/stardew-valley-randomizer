@@ -31,14 +31,14 @@ namespace Randomizer
 
 			ImageBuilder.CleanUpReplacementFiles();
 
-			this._modAssetLoader = new AssetLoader(this);
-			this._modAssetEditor = new AssetEditor(this);
-			helper.Content.AssetLoaders.Add(this._modAssetLoader);
-			helper.Content.AssetEditors.Add(this._modAssetEditor);
+			_modAssetLoader = new AssetLoader(this);
+			_modAssetEditor = new AssetEditor(this);
+			helper.Content.AssetLoaders.Add(_modAssetLoader);
+			helper.Content.AssetEditors.Add(_modAssetEditor);
 
-			this.PreLoadReplacments();
-			helper.Events.GameLoop.GameLaunched += (sender, args) => this.TryLoadModConfigMenu();
-			helper.Events.GameLoop.SaveLoaded += (sender, args) => this.CalculateAllReplacements();
+			PreLoadReplacments();
+			helper.Events.GameLoop.GameLaunched += (sender, args) => TryLoadModConfigMenu();
+			helper.Events.GameLoop.SaveLoaded += (sender, args) => CalculateAllReplacements();
 			helper.Events.Display.RenderingActiveMenu += (sender, args) => _modAssetLoader.TryReplaceTitleScreen();
 			helper.Events.GameLoop.ReturnedToTitle += (sender, args) => _modAssetLoader.ReplaceTitleScreenAfterReturning();
 
@@ -47,7 +47,7 @@ namespace Randomizer
 
 			if (Globals.Config.Crops.Randomize)
 			{
-				helper.Events.Multiplayer.PeerContextReceived += (sender, args) => FixParsnipSeedBox();
+				helper.Events.Multiplayer.PeerContextReceived += (sender, args) => MenuAdjustments.FixParsnipSeedBox();
 			}
 
 			if (Globals.Config.Crops.Randomize || Globals.Config.Fish.Randomize)
@@ -75,13 +75,17 @@ namespace Randomizer
 
 			if (Globals.Config.Bundles.Randomize)
 			{
-				helper.Events.Display.MenuChanged += BundleMenuAdjustments.FixRingSelection;
 				helper.Events.Display.RenderingActiveMenu += (sender, args) => BundleMenuAdjustments.FixRingDeposits();
 
 				if (Globals.Config.Bundles.ShowDescriptionsInBundleTooltips)
 				{
 					helper.Events.Display.RenderedActiveMenu += (sender, args) => BundleMenuAdjustments.AddDescriptionsToBundleTooltips();
 				}
+			}
+
+			if (Globals.Config.Bundles.Randomize || Globals.Config.Shops.RandomizeMainShops || Globals.Config.Shops.RandomizeMiscShops)
+			{
+				helper.Events.Display.MenuChanged += MenuAdjustments.TryAdjustMenu;
 			}
 		}
 
@@ -90,7 +94,7 @@ namespace Randomizer
 			// Check to see if Generic Mod Config Menu is installed
 			if (!Helper.ModRegistry.IsLoaded("spacechase0.GenericModConfigMenu"))
 			{
-				Globals.ConsoleTrace("GenericModConfigMenu not present");
+				Globals.ConsoleTrace("GenericModConfigMenu not present - skipping mod menu setup");
 				return;
 			}
 
@@ -120,7 +124,7 @@ namespace Randomizer
 			byte[] seedvar = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(Game1.player.farmName.Value));
 			int seed = BitConverter.ToInt32(seedvar, 0);
 
-			this.Monitor.Log($"Seed Set: {seed}");
+			Monitor.Log($"Seed Set: {seed}");
 
 			Globals.RNG = new Random(seed);
 			Globals.SpoilerLog = new SpoilerLogger(Game1.player.farmName.Value);
@@ -139,9 +143,7 @@ namespace Randomizer
 			Game1.GenerateBundles(Game1.bundleType, true);
 
 			ChangeDayOneForagables();
-			FixParsnipSeedBox();
-			OverriddenSeedShop.ReplaceShopStockMethod();
-			OverriddenAdventureShop.FixAdventureShopBuyAndSellPrices();
+			MenuAdjustments.FixParsnipSeedBox();
 		}
 
 		/// <summary>
@@ -193,30 +195,6 @@ namespace Randomizer
 			}
 		}
 
-		/// <summary>
-		/// Fixes the item name that you get at the start of the game
-		/// </summary>
-		public void FixParsnipSeedBox()
-		{
-			GameLocation farmHouse = Game1.locations.Where(x => x.Name == "FarmHouse").First();
 
-			List<StardewValley.Objects.Chest> chestsInRoom =
-				farmHouse.Objects.Values.Where(x =>
-					x.DisplayName == "Chest")
-					.Cast<StardewValley.Objects.Chest>()
-					.Where(x => x.giftbox.Value)
-				.ToList();
-
-			if (chestsInRoom.Count > 0)
-			{
-				string parsnipSeedsName = ItemList.GetItemName((int)ObjectIndexes.ParsnipSeeds);
-				StardewValley.Item itemInChest = chestsInRoom[0].items[0];
-				if (itemInChest.Name == "Parsnip Seeds")
-				{
-					itemInChest.Name = parsnipSeedsName;
-					itemInChest.DisplayName = parsnipSeedsName;
-				}
-			}
-		}
 	}
 }

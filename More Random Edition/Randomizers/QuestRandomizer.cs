@@ -90,7 +90,7 @@ namespace Randomizer
 		{
 			People = NPC.QuestableNPCsList;
 			Crops = ItemList.GetCrops(true).ToList();
-			Dishes = ItemList.GetCookeditems().ToList();
+			Dishes = ItemList.GetCookedItems().ToList();
 			FishList = FishItem.Get().ToList();
 			Items = ItemList.GetItemsBelowDifficulty(ObtainingDifficulties.Impossible).ToList();
 

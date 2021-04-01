@@ -63,6 +63,7 @@ namespace Randomizer
 		public bool IsCooked { get; set; }
 		public bool IsRing { get; set; }
 		public bool IsFruit { get; set; }
+		public bool IsBigCraftable { get; set; } = false;
 		public bool RequiresOilMaker { get; set; }
 		public bool RequiresBeehouse { get; set; }
 		public bool RequiresKeg { get; set; }
@@ -111,9 +112,8 @@ namespace Randomizer
 		/// </summary>
 		/// <param name="id">The item ID</param>
 		/// <param name="difficultyToObtain">The difficulty to obtain this item</param>
-		public Item(int id, ObtainingDifficulties difficultyToObtain)
+		public Item(int id, ObtainingDifficulties difficultyToObtain) : this(id)
 		{
-			Id = id;
 			DifficultyToObtain = difficultyToObtain;
 		}
 
@@ -168,7 +168,7 @@ namespace Randomizer
 		/// <returns>The computed price</returns>
 		public int GetPriceForObtainingDifficulty(double multiplier)
 		{
-			int basePrice = 0;
+			int basePrice;
 			switch (DifficultyToObtain)
 			{
 				case ObtainingDifficulties.NoRequirements:

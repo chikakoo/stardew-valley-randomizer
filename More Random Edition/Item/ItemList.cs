@@ -162,6 +162,15 @@ namespace Randomizer
 		}
 
 		/// <summary>
+		/// Gets all fish.
+		/// </summary>
+		/// <returns />
+		public static List<Item> GetFish()
+		{
+			return Items.Values.Where(x => x.IsFish).ToList();
+		}
+
+		/// <summary>
 		/// Gets all the flowers
 		/// </summary>
 		/// <returns />
@@ -201,7 +210,7 @@ namespace Randomizer
 		/// Gets all the cooked items
 		/// </summary>
 		/// <returns />
-		public static List<Item> GetCookeditems()
+		public static List<Item> GetCookedItems()
 		{
 			return Items.Values.Where(x => x.IsCooked).ToList();
 		}
@@ -253,21 +262,50 @@ namespace Randomizer
 		/// </summary>
 		/// <param name="difficulty">The difficulty</param>
 		/// <param name="idsToExclude">Any ids to exclude from the results</param>
-		/// <returns>The list of items</returns>
+		/// <returns>The list of items, not including any in <c>idsToExclude</c></returns>
 		public static List<Item> GetItemsBelowDifficulty(ObtainingDifficulties difficulty, List<int> idsToExclude = null)
 		{
-			return Items.Values.Where(x => x.DifficultyToObtain < difficulty &&
-				(idsToExclude == null || !idsToExclude.Contains(x.Id)))
-			.ToList();
+			return Items.Values.Where(
+					x => x.DifficultyToObtain < difficulty &&
+					(idsToExclude == null || !idsToExclude.Contains(x.Id))
+				).ToList();
 		}
 
 		/// <summary>
-		/// Gets one random items equal to the given difficulty
+		/// Gets all items at the given difficulty
 		/// </summary>
-		/// <param name="difficulty">The difficulty</param>
-		/// /// <param name="idsToExclude">Any ids to exclude from the results</param>
-		/// <returns>The list of items</returns>
-		public static Item GetRandomItemAtDifficulty(ObtainingDifficulties difficulty, int[] idsToExclude = null)
+		/// <param name="difficulty">See ObtainingDifficulties</param>
+		/// <param name="idsToExclude">List&lt;int&gt; of IDs to exclude</param>
+		/// <returns>The list of items, not including any in <c>idsToExclude</c></returns>
+		public static List<Item> GetItemsAtDifficulty(ObtainingDifficulties difficulty, List<int> idsToExclude = null)
+		{
+			return Items.Values.Where(
+					x => x.DifficultyToObtain == difficulty &&
+					(idsToExclude == null || !idsToExclude.Contains(x.Id))
+				).ToList();
+		}
+
+		/// <summary>
+		/// Gets all items in given craftable category
+		/// </summary>
+		/// <param name="category">See Enums/CraftableCategories</param>
+		/// <param name="idsToExclude"><c>List&lt;int&gt;</c> of IDs to exclude from results</param>
+		/// <returns><c>List&lt;Item&gt;</c> of craftable <c>Item</c>s in <c>category</c></returns>
+		public static List<Item> GetItemsInCraftableCategory(CraftableCategories category, List<int> idsToExclude = null)
+		{
+			return Items.Values.Where(
+					x => x.IsCraftable && (x as CraftableItem).Category == category &&
+					(idsToExclude == null || !idsToExclude.Contains(x.Id))
+				).ToList();
+		}
+
+		/// <summary>
+		/// Gets one random item equal to the given difficulty
+		/// </summary>
+		/// <param name="difficulty">See Enums/ObtainingDifficulties</param>
+		/// /// <param name="idsToExclude"><c>List&lt;int&gt;</c> of IDs to exclude from results</param>
+		/// <returns>One random <c>Item</c> of specified difficulty</returns>
+		public static Item GetRandomItemAtDifficulty(ObtainingDifficulties difficulty, List<int> idsToExclude = null)
 		{
 			return Globals.RNGGetRandomValueFromList(
 				Items.Values.Where(x =>

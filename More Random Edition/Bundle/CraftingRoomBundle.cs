@@ -99,7 +99,7 @@ namespace Randomizer
 					potentialItems = new List<RequiredItem>
 					{
 
-						new RequiredItem(Globals.RNGGetRandomValueFromList(ItemList.GetCookeditems())),
+						new RequiredItem(Globals.RNGGetRandomValueFromList(ItemList.GetCookedItems())),
 						new RequiredItem(Globals.RNGGetRandomValueFromList(ItemList.GetForagables())),
 						new RequiredItem(Globals.RNGGetRandomValueFromList(FishItem.Get())),
 						new RequiredItem(Globals.RNGGetRandomValueFromList(

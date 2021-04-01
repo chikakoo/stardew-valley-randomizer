@@ -22,7 +22,7 @@ namespace Randomizer
 		}
 
 		public static List<Item> UniversalHates;
-		
+
 		/// <summary>
 		/// Updates UniversalHates list to provided List&lt;Item&gt;<paramref name="newUniversalHates"/>.
 		/// </summary>
@@ -224,39 +224,39 @@ namespace Randomizer
 		/// </summary>
 		public static List<string> GiftableNPCs = new List<string>
 		{
-			"Robin", 
-			"Demetrius", 
-			"Maru", 
-			"Sebastian", 
-			"Linus", 
-			"Pierre", 
-			"Caroline", 
-			"Abigail", 
-			"Alex", 
+			"Robin",
+			"Demetrius",
+			"Maru",
+			"Sebastian",
+			"Linus",
+			"Pierre",
+			"Caroline",
+			"Abigail",
+			"Alex",
 			"George",
-			"Evelyn", 
-			"Lewis", 
-			"Clint", 
-			"Penny", 
-			"Pam", 
-			"Emily", 
-			"Haley", 
-			"Jas", 
-			"Vincent", 
-			"Jodi", 
-			"Kent", 
+			"Evelyn",
+			"Lewis",
+			"Clint",
+			"Penny",
+			"Pam",
+			"Emily",
+			"Haley",
+			"Jas",
+			"Vincent",
+			"Jodi",
+			"Kent",
 			"Sam",
-			"Leah", 
-			"Shane", 
-			"Marnie", 
-			"Elliott", 
-			"Gus", 
-			"Dwarf", 
-			"Wizard", 
-			"Harvey", 
-			"Sandy", 
-			"Willy", 
-			"Krobus", 
+			"Leah",
+			"Shane",
+			"Marnie",
+			"Elliott",
+			"Gus",
+			"Dwarf",
+			"Wizard",
+			"Harvey",
+			"Sandy",
+			"Willy",
+			"Krobus",
 			"Leo"
 		};
 

@@ -4,7 +4,7 @@
 	{
 		public bool CreateSpoilerLog { get; set; } = true;
 
-		public CraftingRecipesConfig CraftingRecipies { get; set; } = new CraftingRecipesConfig();
+		public CraftingRecipesConfig CraftingRecipes { get; set; } = new CraftingRecipesConfig();
 		public WeaponsConfig Weapons { get; set; } = new WeaponsConfig();
 		public BootsConfig Boots { get; set; } = new BootsConfig();
 		public MonstersConfig Monsters { get; set; } = new MonstersConfig();
@@ -13,16 +13,13 @@
 		public NPCsConfig NPCs { get; set; } = new NPCsConfig();
 		public BundleConfig Bundles { get; set; } = new BundleConfig();
 		public MusicConfig Music { get; set; } = new MusicConfig();
+		public ShopsConfig Shops { get; set; } = new ShopsConfig();
 
 		public bool RandomizeForagables { get; set; } = true;
 		public bool AddRandomArtifactItem { get; set; } = true;
-
 		public bool RandomizeBuildingCosts { get; set; } = true;
-
 		public bool RandomizeFruitTrees { get; set; } = true;
-
 		public bool RandomizeAnimalSkins { get; set; } = true;
-
 		public bool RandomizeIntroStory { get; set; } = true;
 		public bool RandomizeQuests { get; set; } = true;
 		public bool RandomizeRain { get; set; } = true;
@@ -84,6 +81,13 @@
 	{
 		public bool Randomize { get; set; } = true;
 		public bool RandomSongEachTransition { get; set; } = false;
+	}
+
+	public class ShopsConfig
+	{
+		public bool RandomizeMainShops { get; set; } = true;
+		public bool RandomizeMiscShops { get; set; } = true;
+
 	}
 }
 

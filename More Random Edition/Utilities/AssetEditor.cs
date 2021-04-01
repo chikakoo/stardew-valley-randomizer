@@ -40,12 +40,12 @@ namespace Randomizer
 
 		public AssetEditor(ModEntry mod)
 		{
-			this._mod = mod;
+			_mod = mod;
 		}
 
 		public bool CanEdit<T>(IAssetInfo asset)
 		{
-			if (asset.AssetNameEquals("Data/CraftingRecipes")) { return Globals.Config.CraftingRecipies.Randomize; }
+			if (asset.AssetNameEquals("Data/CraftingRecipes")) { return Globals.Config.CraftingRecipes.Randomize; }
 			if (asset.AssetNameEquals("Data/Bundles")) { return Globals.Config.Bundles.Randomize; }
 			if (asset.AssetNameEquals("Data/Blueprints")) { return Globals.Config.RandomizeBuildingCosts; }
 			if (asset.AssetNameEquals("Strings/StringsFromCSFiles")) { return true; }
@@ -80,91 +80,91 @@ namespace Randomizer
 		{
 			if (asset.AssetNameEquals("Data/CraftingRecipes"))
 			{
-				this.ApplyEdits(asset, this._recipeReplacements);
+				ApplyEdits(asset, _recipeReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/Bundles"))
 			{
-				this.ApplyEdits(asset, this._bundleReplacements);
+				ApplyEdits(asset, _bundleReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/Blueprints"))
 			{
-				this.ApplyEdits(asset, this._blueprintReplacements);
+				ApplyEdits(asset, _blueprintReplacements);
 			}
 			else if (asset.AssetNameEquals("Strings/StringsFromCSFiles"))
 			{
-				this.ApplyEdits(asset, this._grandpaStringReplacements);
-				this.ApplyEdits(asset, this._stringReplacements);
+				ApplyEdits(asset, _grandpaStringReplacements);
+				ApplyEdits(asset, _stringReplacements);
 			}
 			else if (asset.AssetNameEquals("Strings/UI"))
 			{
-				this.ApplyEdits(asset, this._uiStringReplacements);
+				ApplyEdits(asset, _uiStringReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/ObjectInformation"))
 			{
 				if (IgnoreObjectInformationReplacements)
 				{
-					this.ApplyEdits(asset, new Dictionary<int, string>());
+					ApplyEdits(asset, new Dictionary<int, string>());
 				}
 				else
 				{
-					this.ApplyEdits(asset, this._objectInformationReplacements);
+					ApplyEdits(asset, _objectInformationReplacements);
 				}
 			}
 			else if (asset.AssetNameEquals("Data/Fish"))
 			{
-				this.ApplyEdits(asset, this._fishReplacements);
+				ApplyEdits(asset, _fishReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/Quests"))
 			{
-				this.ApplyEdits(asset, this._questReplacements);
+				ApplyEdits(asset, _questReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/mail"))
 			{
-				this.ApplyEdits(asset, this._mailReplacements);
+				ApplyEdits(asset, _mailReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/Locations"))
 			{
-				this.ApplyEdits(asset, this._locationsReplacements);
+				ApplyEdits(asset, _locationsReplacements);
 			}
 			else if (asset.AssetNameEquals("Strings/Locations"))
 			{
-				this.ApplyEdits(asset, this._locationStringReplacements);
+				ApplyEdits(asset, _locationStringReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/fruitTrees"))
 			{
-				this.ApplyEdits(asset, this._fruitTreeReplacements);
+				ApplyEdits(asset, _fruitTreeReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/Crops"))
 			{
-				this.ApplyEdits(asset, this._cropReplacements);
+				ApplyEdits(asset, _cropReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/TV/CookingChannel"))
 			{
-				this.ApplyEdits(asset, this._cookingChannelReplacements);
+				ApplyEdits(asset, _cookingChannelReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/weapons"))
 			{
-				this.ApplyEdits(asset, this._weaponReplacements);
+				ApplyEdits(asset, _weaponReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/Boots"))
 			{
-				this.ApplyEdits(asset, this._bootReplacements);
+				ApplyEdits(asset, _bootReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/Monsters"))
 			{
-				this.ApplyEdits(asset, this._monsterReplacements);
+				ApplyEdits(asset, _monsterReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/NPCDispositions"))
 			{
-				this.ApplyEdits(asset, this._birthdayReplacements);
+				ApplyEdits(asset, _birthdayReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/NPCGiftTastes"))
 			{
-				this.ApplyEdits(asset, this._preferenceReplacements);
+				ApplyEdits(asset, _preferenceReplacements);
 			}
 			else if (asset.AssetNameEquals("Data/SecretNotes"))
 			{
-				this.ApplyEdits(asset, this._secretNotesReplacements);
+				ApplyEdits(asset, _secretNotesReplacements);
 			}
 		}
 
@@ -209,7 +209,7 @@ namespace Randomizer
 		public void CalculateAndInvalidateUIEdits()
 		{
 			_uiStringReplacements = StringsAdjustments.ModifyRemixedBundleUI();
-			this._mod.Helper.Content.InvalidateCache("Strings/UI");
+			_mod.Helper.Content.InvalidateCache("Strings/UI");
 		}
 
 		public void CalculateEdits()
@@ -233,7 +233,7 @@ namespace Randomizer
 			_stringReplacements = StringsAdjustments.GetCSFileStringReplacements();
 			_locationStringReplacements = StringsAdjustments.GetLocationStringReplacements();
 			CraftingRecipeAdjustments.FixCookingRecipeDisplayNames();
-			_cookingChannelReplacements = CookingChannel.GetTextEdits();
+			_cookingChannelReplacements = CookingChannelAdjustments.GetTextEdits();
 
 			// Needs to run after Cooking Recipe fix so that cooked items are properly named,
 			// and needs to run before bundles so that NPC Loved Item bundles are properly generated
@@ -260,7 +260,7 @@ namespace Randomizer
 		public void UndoObjectInformationReplacements()
 		{
 			IgnoreObjectInformationReplacements = true;
-			this._mod.Helper.Content.InvalidateCache("Data/ObjectInformation");
+			_mod.Helper.Content.InvalidateCache("Data/ObjectInformation");
 		}
 
 		/// <summary>
@@ -270,7 +270,7 @@ namespace Randomizer
 		public void RedoObjectInformationReplacements()
 		{
 			IgnoreObjectInformationReplacements = false;
-			this._mod.Helper.Content.InvalidateCache("Data/ObjectInformation");
+			_mod.Helper.Content.InvalidateCache("Data/ObjectInformation");
 		}
 
 		/// <summary>
@@ -282,7 +282,7 @@ namespace Randomizer
 			{
 				if (!ItemList.Items.ContainsKey((int)index))
 				{
-					Globals.ConsoleWarn($"Missing item: {(int)index}: {index.ToString()}");
+					Globals.ConsoleWarn($"Missing item: {(int)index}: {index}");
 				}
 			}
 		}

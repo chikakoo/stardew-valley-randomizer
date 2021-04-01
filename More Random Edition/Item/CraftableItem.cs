@@ -56,7 +56,7 @@ namespace Randomizer
 				generatedLevel = Globals.RNGGetNextBoolean() ? 4 : 6;
 			}
 
-			if (!Globals.Config.CraftingRecipies.Randomize || !Globals.Config.CraftingRecipies.RandomizeLevels) { return BaseLevelLearnedAt; }
+			if (!Globals.Config.CraftingRecipes.Randomize || !Globals.Config.CraftingRecipes.RandomizeLevels) { return BaseLevelLearnedAt; }
 
 			return generatedLevel;
 		}
@@ -80,7 +80,7 @@ namespace Randomizer
 				requiredItemsSpoilerString += $" - {itemName}: {amount}";
 			}
 
-			if (Globals.Config.CraftingRecipies.Randomize)
+			if (Globals.Config.CraftingRecipes.Randomize)
 			{
 				Globals.SpoilerWrite($"{Name} - {stringSuffix}");
 				Globals.SpoilerWrite(requiredItemsSpoilerString);
@@ -100,7 +100,7 @@ namespace Randomizer
 		/// </returns>
 		private string GetItemsRequired()
 		{
-			string craftingString = "";
+			string craftingString;
 			switch (Category)
 			{
 				case CraftableCategories.EasyAndNeedMany:
@@ -453,7 +453,7 @@ namespace Randomizer
 		/// <returns />
 		private string GetStringForForagables()
 		{
-			Seasons season = Seasons.Spring;
+			Seasons season;
 			switch (Id)
 			{
 				case (int)ObjectIndexes.SpringSeeds:

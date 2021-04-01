@@ -5,7 +5,7 @@ namespace Randomizer
 	/// <summary>
 	/// Updates the cooking channel data to match the current randomizer settings
 	/// </summary>
-	public class CookingChannel
+	public class CookingChannelAdjustments
 	{
 		/// <summary>
 		/// A class consisting of all the data needed to replace one of the cooking channel recipes

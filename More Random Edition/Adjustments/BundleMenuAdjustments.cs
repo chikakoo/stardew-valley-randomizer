@@ -21,12 +21,6 @@ namespace Randomizer
 		/// </summary>
 		public static void FixRingSelection(object sender, MenuChangedEventArgs e)
 		{
-			if (!Globals.Config.Bundles.Randomize || !(e.NewMenu is JunimoNoteMenu))
-			{
-				_currentActiveBundleMenu = null;
-				return;
-			}
-
 			_currentActiveBundleMenu = (JunimoNoteMenu)e.NewMenu;
 			_currentActiveBundleMenu.inventory.highlightMethod = HighlightBundleCompatibleItems;
 		}
@@ -89,14 +83,19 @@ namespace Randomizer
 
 			bool isRing = item is Ring;
 			if (!bundle.depositsAllowed || (!isRing && !(item is SVObject)))
+			{
 				return false;
+			}
+
 			SVObject @object = item as SVObject;
 			for (int index = 0; index < bundle.ingredients.Count; ++index)
 			{
 				if (isRing || bundle.IsValidItemForThisIngredientDescription(@object, bundle.ingredients[index]) &&
 					(ignore_stack_count || bundle.ingredients[index].stack <= item.Stack) &&
 					(slot == null || slot.item == null))
+				{
 					return true;
+				}
 			}
 			return false;
 		}
@@ -118,24 +117,32 @@ namespace Randomizer
 			if (!bundle.depositsAllowed)
 			{
 				if (Game1.player.hasCompletedCommunityCenter())
+				{
 					Game1.showRedMessage(Game1.content.LoadString("Strings\\UI:JunimoNote_MustBeAtAJM"));
+				}
 				else
+				{
 					Game1.showRedMessage(Game1.content.LoadString("Strings\\UI:JunimoNote_MustBeAtCC"));
+				}
+
 				return item;
 			}
 
 			bool isRing = item is Ring;
 			if (!(item is SVObject || isRing) || item is Furniture)
+			{
 				return item;
+			}
+
 			SVObject @object = item as SVObject;
 			bool ringDeposited = false;
 			for (int index = 0; index < bundle.ingredients.Count; ++index)
 			{
 				if (!bundle.ingredients[index].completed &&
-					bundle.ingredients[index].index == (int)((NetFieldBase<int, NetInt>)item.parentSheetIndex) &&
+					bundle.ingredients[index].index == (NetFieldBase<int, NetInt>)item.parentSheetIndex &&
 					(
 						item.Stack >= bundle.ingredients[index].stack &&
-						(isRing || (int)((NetFieldBase<int, NetInt>)@object.quality) >= bundle.ingredients[index].quality)
+						(isRing || (NetFieldBase<int, NetInt>)@object.quality >= bundle.ingredients[index].quality)
 					) &&
 					slot.item == null)
 				{
@@ -159,7 +166,10 @@ namespace Randomizer
 				}
 			}
 			if (!ringDeposited && item.Stack > 0)
+			{
 				return item;
+			}
+
 			return null;
 		}
 

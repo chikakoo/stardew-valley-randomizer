@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using System.Linq;
+using StardewValley;
 
 namespace Randomizer
 {
@@ -111,59 +113,41 @@ namespace Randomizer
 		/// </summary>
 		public void BuildImage()
 		{
-			Bitmap finalImage = null;
-
-			finalImage = new Bitmap(BaseFileFullPath);
-			using (Graphics graphics = Graphics.FromImage(finalImage))
+			using Texture2D spritesImage = Texture2D.FromFile(Game1.graphics.GraphicsDevice, BaseFileFullPath);
+			FilesToPullFrom = GetAllCustomImages();
+			foreach (Point position in PositionsToOverlay)
 			{
-				FilesToPullFrom = GetAllCustomImages();
-				foreach (Point position in PositionsToOverlay)
+				string randomFileName = GetRandomFileName(position);
+				if (string.IsNullOrWhiteSpace(randomFileName) || !ShouldSaveImage(position))
 				{
-					string randomFileName = GetRandomFileName(position);
-					if (string.IsNullOrWhiteSpace(randomFileName) || !ShouldSaveImage(position)) { continue; }
-
-					if (!File.Exists(randomFileName))
-					{
-						Globals.ConsoleError($"File {randomFileName} does not exist! Using default image instead.");
-						continue;
-					}
-
-					Bitmap bitmap = new Bitmap(randomFileName);
-					if (bitmap.Width != ImageWidthInPx || bitmap.Height != ImageHeightInPx)
-					{
-						bitmap = CropImage(bitmap, ImageWidthInPx, ImageHeightInPx);
-					}
-
-					int xOffset = position.X * OffsetWidthInPx;
-					int yOffset = position.Y * OffsetHeightInPx + InitialHeightOffetInPx;
-
-					graphics.FillRectangle(
-						new SolidBrush(Color.FromArgb(0, 0, 1)),
-						new Rectangle(xOffset, yOffset, ImageWidthInPx, ImageHeightInPx));
-					graphics.DrawImage(bitmap, new Rectangle(xOffset, yOffset, ImageWidthInPx, ImageHeightInPx));
+					continue;
 				}
 
-				finalImage.MakeTransparent(Color.FromArgb(0, 0, 1));
-				if (ShouldSaveImage())
+				if (!File.Exists(randomFileName))
 				{
-					finalImage.Save(OutputFileFullPath);
+					Globals.ConsoleError($"File {randomFileName} does not exist! Using default image instead.");
+					continue;
 				}
+
+				using Texture2D randomImage = Texture2D.FromFile(Game1.graphics.GraphicsDevice, randomFileName);
+
+				int xOffset = position.X * OffsetWidthInPx;
+				int yOffset = position.Y * OffsetHeightInPx + InitialHeightOffetInPx;
+
+				// Based on https://stackoverflow.com/questions/16137500/cropping-texture2d-on-all-sides-in-xna-c-sharp
+				Rectangle sourceRect = new Rectangle(0, 0, ImageWidthInPx, ImageHeightInPx);
+				Color[] data = new Color[sourceRect.Width * sourceRect.Height];
+				randomImage.GetData(0, sourceRect, data, 0, sourceRect.Width * sourceRect.Height);
+
+				Rectangle destRect = new Rectangle(xOffset, yOffset, ImageWidthInPx, ImageHeightInPx);
+				spritesImage.SetData(0, destRect, data, 0, destRect.Width * destRect.Height);
 			}
-		}
 
-		/// <summary>
-		/// Crops the given image
-		/// Based on https://stackoverflow.com/questions/734930/how-to-crop-an-image-using-c
-		/// </summary>
-		/// <param name="bitmap">The bitmap containing the original image</param>
-		/// <param name="width">The desired width</param>
-		/// <param name="height">The desired height</param>
-		/// <returns>The cropped image</returns>
-		public Bitmap CropImage(Bitmap bitmap, int width, int height)
-		{
-			Bitmap newBitmap = new Bitmap(bitmap);
-			Rectangle rect = new Rectangle(0, 0, width, height);
-			return newBitmap.Clone(rect, newBitmap.PixelFormat);
+			if (ShouldSaveImage())
+			{
+				using FileStream stream = File.OpenWrite(OutputFileFullPath);
+				spritesImage.SaveAsPng(stream, spritesImage.Width, spritesImage.Height);
+			}
 		}
 
 		/// <summary>

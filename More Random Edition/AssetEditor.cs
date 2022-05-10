@@ -1,11 +1,12 @@
 ﻿using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Randomizer
 {
-	public class AssetEditor : IAssetEditor
+	public class AssetEditor
 	{
 		private readonly ModEntry _mod;
 		private Dictionary<string, string> _recipeReplacements = new Dictionary<string, string>();
@@ -40,29 +41,6 @@ namespace Randomizer
 			this._mod = mod;
 		}
 
-		public bool CanEdit<T>(IAssetInfo asset)
-		{
-			if (asset.AssetNameEquals("Data/CraftingRecipes")) { return Globals.Config.CraftingRecipies.Randomize; }
-			if (asset.AssetNameEquals("Data/Bundles")) { return Globals.Config.Bundles.Randomize; }
-			if (asset.AssetNameEquals("Data/Blueprints")) { return Globals.Config.RandomizeBuildingCosts; }
-			if (asset.AssetNameEquals("Strings/StringsFromCSFiles")) { return true; }
-			if (asset.AssetNameEquals("Strings/UI")) { return true; }
-			if (asset.AssetNameEquals("Data/ObjectInformation")) { return true; }
-			if (asset.AssetNameEquals("Data/Fish")) { return Globals.Config.Fish.Randomize; }
-			if (asset.AssetNameEquals("Data/Quests") || asset.AssetNameEquals("Data/mail")) { return Globals.Config.RandomizeQuests; }
-			if (asset.AssetNameEquals("Data/Locations")) { return Globals.Config.Fish.Randomize || Globals.Config.RandomizeForagables || Globals.Config.AddRandomArtifactItem; }
-			if (asset.AssetNameEquals("Strings/Locations")) { return Globals.Config.Crops.Randomize; } // For now, as the only thing is the sweet gem berry text
-			if (asset.AssetNameEquals("Data/fruitTrees")) { return Globals.Config.RandomizeFruitTrees; }
-			if (asset.AssetNameEquals("Data/Crops")) { return Globals.Config.Crops.Randomize; }
-			if (asset.AssetNameEquals("Data/TV/CookingChannel")) { return Globals.Config.Crops.Randomize || Globals.Config.Fish.Randomize; }
-			if (asset.AssetNameEquals("Data/weapons")) { return Globals.Config.Weapons.Randomize; }
-			if (asset.AssetNameEquals("Data/Boots")) { return Globals.Config.Boots.Randomize; }
-			if (asset.AssetNameEquals("Data/Monsters")) { return Globals.Config.Monsters.Randomize; }
-			if (asset.AssetNameEquals("Data/NPCDispositions")) { return Globals.Config.RandomizeNPCBirthdays; }
-
-			return false;
-		}
-
 		private void ApplyEdits<TKey, TValue>(IAssetData asset, IDictionary<TKey, TValue> edits)
 		{
 			IAssetDataForDictionary<TKey, TValue> assetDict = asset.AsDictionary<TKey, TValue>();
@@ -72,111 +50,112 @@ namespace Randomizer
 			}
 		}
 
-		public void Edit<T>(IAssetData asset)
+		public void OnAssetRequested(object sender, AssetRequestedEventArgs e)
 		{
-			if (asset.AssetNameEquals("Data/CraftingRecipes"))
+			if (e.Name.IsEquivalentTo("Data/CraftingRecipes"))
 			{
-				this.ApplyEdits(asset, this._recipeReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _recipeReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/Bundles"))
+			else if (e.Name.IsEquivalentTo("Data/Bundles"))
 			{
-				this.ApplyEdits(asset, this._bundleReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _bundleReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/Blueprints"))
+			else if (e.Name.IsEquivalentTo("Data/Blueprints"))
 			{
-				this.ApplyEdits(asset, this._blueprintReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _blueprintReplacements); });
 			}
-			else if (asset.AssetNameEquals("Strings/StringsFromCSFiles"))
+			else if (e.Name.IsEquivalentTo("Strings/StringsFromCSFiles"))
 			{
-				this.ApplyEdits(asset, this._grandpaStringReplacements);
-				this.ApplyEdits(asset, this._stringReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _grandpaStringReplacements); });
+				e.Edit((asset) => { ApplyEdits(asset, _stringReplacements); });
 			}
-			else if (asset.AssetNameEquals("Strings/UI"))
+			else if (e.Name.IsEquivalentTo("Strings/UI"))
 			{
-				this.ApplyEdits(asset, this._uiStringReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _uiStringReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/ObjectInformation"))
+			else if (e.Name.IsEquivalentTo("Data/ObjectInformation"))
 			{
 				if (IgnoreObjectInformationReplacements)
 				{
-					this.ApplyEdits(asset, new Dictionary<int, string>());
+					e.Edit((asset) => { ApplyEdits(asset, new Dictionary<int, string>()); });
 				}
 				else
 				{
-					this.ApplyEdits(asset, this._objectInformationReplacements);
+					e.Edit((asset) => { ApplyEdits(asset, _objectInformationReplacements); });
 				}
 			}
-			else if (asset.AssetNameEquals("Data/Fish"))
+			else if (e.Name.IsEquivalentTo("Data/Fish"))
 			{
-				this.ApplyEdits(asset, this._fishReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _fishReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/Quests"))
+			else if (e.Name.IsEquivalentTo("Data/Quests"))
 			{
-				this.ApplyEdits(asset, this._questReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _questReplacements); });
 			}
-			if (asset.AssetNameEquals("Data/mail"))
+			// Not sure if this is intentional or should be else if
+			if (e.Name.IsEquivalentTo("Data/mail"))
 			{
-				this.ApplyEdits(asset, this._mailReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _mailReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/Locations"))
+			else if (e.Name.IsEquivalentTo("Data/Locations"))
 			{
-				this.ApplyEdits(asset, this._locationsReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _locationsReplacements); });
 			}
-			else if (asset.AssetNameEquals("Strings/Locations"))
+			else if (e.Name.IsEquivalentTo("Strings/Locations"))
 			{
-				this.ApplyEdits(asset, this._locationStringReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _locationStringReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/fruitTrees"))
+			else if (e.Name.IsEquivalentTo("Data/fruitTrees"))
 			{
-				this.ApplyEdits(asset, this._fruitTreeReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _fruitTreeReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/Crops"))
+			else if (e.Name.IsEquivalentTo("Data/Crops"))
 			{
-				this.ApplyEdits(asset, this._cropReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _cropReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/TV/CookingChannel"))
+			else if (e.Name.IsEquivalentTo("Data/TV/CookingChannel"))
 			{
-				this.ApplyEdits(asset, this._cookingChannelReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _cookingChannelReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/weapons"))
+			else if (e.Name.IsEquivalentTo("Data/weapons"))
 			{
-				this.ApplyEdits(asset, this._weaponReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _weaponReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/Boots"))
+			else if (e.Name.IsEquivalentTo("Data/Boots"))
 			{
-				this.ApplyEdits(asset, this._bootReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _bootReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/Monsters"))
+			else if (e.Name.IsEquivalentTo("Data/Monsters"))
 			{
-				this.ApplyEdits(asset, this._monsterReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _monsterReplacements); });
 			}
-			else if (asset.AssetNameEquals("Data/NPCDispositions"))
+			else if (e.Name.IsEquivalentTo("Data/NPCDispositions"))
 			{
-				this.ApplyEdits(asset, this._birthdayReplacements);
+				e.Edit((asset) => { ApplyEdits(asset, _birthdayReplacements); });
 			}
 		}
 
 		public void InvalidateCache()
 		{
-			this._mod.Helper.Content.InvalidateCache("Data/CraftingRecipes");
-			this._mod.Helper.Content.InvalidateCache("Data/Bundles");
-			this._mod.Helper.Content.InvalidateCache("Data/Blueprints");
-			this._mod.Helper.Content.InvalidateCache("Strings/StringsFromCSFiles");
-			this._mod.Helper.Content.InvalidateCache("Strings/UI");
-			this._mod.Helper.Content.InvalidateCache("Data/ObjectInformation");
-			this._mod.Helper.Content.InvalidateCache("Data/Events/Farm");
-			this._mod.Helper.Content.InvalidateCache("Data/Fish");
-			this._mod.Helper.Content.InvalidateCache("Data/Quests");
-			this._mod.Helper.Content.InvalidateCache("Data/mail");
-			this._mod.Helper.Content.InvalidateCache("Data/Locations");
-			this._mod.Helper.Content.InvalidateCache("Strings/Locations");
-			this._mod.Helper.Content.InvalidateCache("Data/fruitTrees");
-			this._mod.Helper.Content.InvalidateCache("Data/Crops");
-			this._mod.Helper.Content.InvalidateCache("Data/TV/CookingChannel");
-			this._mod.Helper.Content.InvalidateCache("Data/weapons");
-			this._mod.Helper.Content.InvalidateCache("Data/Boots");
-			this._mod.Helper.Content.InvalidateCache("Data/Monsters");
-			this._mod.Helper.Content.InvalidateCache("Data/NPCDispositions");
+			_mod.Helper.GameContent.InvalidateCache("Data/CraftingRecipes");
+			_mod.Helper.GameContent.InvalidateCache("Data/Bundles");
+			_mod.Helper.GameContent.InvalidateCache("Data/Blueprints");
+			_mod.Helper.GameContent.InvalidateCache("Strings/StringsFromCSFiles");
+			_mod.Helper.GameContent.InvalidateCache("Strings/UI");
+			_mod.Helper.GameContent.InvalidateCache("Data/ObjectInformation");
+			_mod.Helper.GameContent.InvalidateCache("Data/Events/Farm");
+			_mod.Helper.GameContent.InvalidateCache("Data/Fish");
+			_mod.Helper.GameContent.InvalidateCache("Data/Quests");
+			_mod.Helper.GameContent.InvalidateCache("Data/mail");
+			_mod.Helper.GameContent.InvalidateCache("Data/Locations");
+			_mod.Helper.GameContent.InvalidateCache("Strings/Locations");
+			_mod.Helper.GameContent.InvalidateCache("Data/fruitTrees");
+			_mod.Helper.GameContent.InvalidateCache("Data/Crops");
+			_mod.Helper.GameContent.InvalidateCache("Data/TV/CookingChannel");
+			_mod.Helper.GameContent.InvalidateCache("Data/weapons");
+			_mod.Helper.GameContent.InvalidateCache("Data/Boots");
+			_mod.Helper.GameContent.InvalidateCache("Data/Monsters");
+			_mod.Helper.GameContent.InvalidateCache("Data/NPCDispositions");
 		}
 
 		/// <summary>
@@ -195,7 +174,7 @@ namespace Randomizer
 		public void CalculateAndInvalidateUIEdits()
 		{
 			_uiStringReplacements = StringsAdjustments.ModifyRemixedBundleUI();
-			this._mod.Helper.Content.InvalidateCache("Strings/UI");
+			_mod.Helper.GameContent.InvalidateCache("Strings/UI");
 		}
 
 		public void CalculateEdits()
@@ -240,7 +219,7 @@ namespace Randomizer
 		public void UndoObjectInformationReplacements()
 		{
 			IgnoreObjectInformationReplacements = true;
-			this._mod.Helper.Content.InvalidateCache("Data/ObjectInformation");
+			_mod.Helper.GameContent.InvalidateCache("Data/ObjectInformation");
 		}
 
 		/// <summary>
@@ -250,7 +229,7 @@ namespace Randomizer
 		public void RedoObjectInformationReplacements()
 		{
 			IgnoreObjectInformationReplacements = false;
-			this._mod.Helper.Content.InvalidateCache("Data/ObjectInformation");
+			_mod.Helper.GameContent.InvalidateCache("Data/ObjectInformation");
 		}
 
 		/// <summary>
@@ -262,7 +241,7 @@ namespace Randomizer
 			{
 				if (!ItemList.Items.ContainsKey((int)index))
 				{
-					Globals.ConsoleWarn($"Missing item: {(int)index}: {index.ToString()}");
+					Globals.ConsoleWarn($"Missing item: {(int)index}: {index}");
 				}
 			}
 		}

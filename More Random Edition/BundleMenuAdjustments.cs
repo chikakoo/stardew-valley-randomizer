@@ -88,7 +88,7 @@ namespace Randomizer
 					.GetValue();
 
 			bool isRing = item is Ring;
-			if (!bundle.depositsAllowed || (!isRing && !(item is SVObject)))
+			if (!bundle.depositsAllowed || (!isRing && item is not SVObject))
 				return false;
 			SVObject @object = item as SVObject;
 			for (int index = 0; index < bundle.ingredients.Count; ++index)
@@ -132,10 +132,10 @@ namespace Randomizer
 			for (int index = 0; index < bundle.ingredients.Count; ++index)
 			{
 				if (!bundle.ingredients[index].completed &&
-					bundle.ingredients[index].index == (int)((NetFieldBase<int, NetInt>)item.parentSheetIndex) &&
+					bundle.ingredients[index].index == item.ParentSheetIndex &&
 					(
 						item.Stack >= bundle.ingredients[index].stack &&
-						(isRing || (int)((NetFieldBase<int, NetInt>)@object.quality) >= bundle.ingredients[index].quality)
+						(isRing || @object.Quality >= bundle.ingredients[index].quality)
 					) &&
 					slot.item == null)
 				{

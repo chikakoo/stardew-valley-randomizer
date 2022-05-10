@@ -7,65 +7,45 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Microsoft.Xna.Framework.Graphics;
 using static StardewValley.LocalizedContentManager;
 
 namespace Randomizer
 {
-	public class AssetLoader : IAssetLoader
+	public class AssetLoader
 	{
 		private readonly ModEntry _mod;
 		private readonly Dictionary<string, string> _replacements = new Dictionary<string, string>();
 
-
 		public AssetLoader(ModEntry mod)
 		{
-			this._mod = mod;
+			_mod = mod;
 		}
 
-		public bool CanLoad<T>(IAssetInfo asset)
+		public void OnAssetRequested(object sender, AssetRequestedEventArgs e)
 		{
-			// Check if the assets has a replacement in the dictionary
-			foreach (KeyValuePair<string, string> replacement in this._replacements)
-			{
-				if (asset.AssetNameEquals(replacement.Key))
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public T Load<T>(IAssetInfo asset)
-		{
-			string normalizedAssetName = this._mod.Helper.Content.NormalizeAssetName(asset.AssetName);
-
 			// Try to get the replacement asset from the replacements dictionary
-			if (this._replacements.TryGetValue(normalizedAssetName, out string replacementAsset))
+			if (_replacements.TryGetValue(e.Name.BaseName, out string replacementAsset))
 			{
-				return this._mod.Helper.Content.Load<T>(replacementAsset, ContentSource.ModFolder);
+				e.LoadFromModFile<Texture2D>(replacementAsset, AssetLoadPriority.Medium);
 			}
-
-			throw new InvalidOperationException($"Unknown asset: {asset.AssetName}.");
 		}
-
 
 		private void AddReplacement(string originalAsset, string replacementAsset)
 		{
 			// Normalize the asset name so the keys are consistent
-			string normalizedAssetName = this._mod.Helper.Content.NormalizeAssetName(originalAsset);
+			IAssetName normalizedAssetName = _mod.Helper.GameContent.ParseAssetName(originalAsset);
 
 			// Add the replacement to the dictionary
-			this._replacements[normalizedAssetName] = replacementAsset;
+			_replacements[normalizedAssetName.BaseName] = replacementAsset;
 		}
-
 
 		public void InvalidateCache()
 		{
 			// Invalidate all replaced assets so that the changes are reapplied
-			foreach (string assetName in this._replacements.Keys)
+			foreach (string assetName in _replacements.Keys)
 			{
-				this._mod.Helper.Content.InvalidateCache(assetName);
+				_mod.Helper.GameContent.InvalidateCache(assetName);
 			}
 		}
 
@@ -88,7 +68,7 @@ namespace Randomizer
 		public void TryReplaceTitleScreen()
 		{
 			IClickableMenu genericMenu = Game1.activeClickableMenu;
-			if (genericMenu is null || !(genericMenu is TitleMenu)) { return; }
+			if (genericMenu is null || genericMenu is not TitleMenu) { return; }
 
 			if (_currentLocale != _mod.Helper.Translation.Locale)
 			{
@@ -112,7 +92,7 @@ namespace Randomizer
 		{
 			_currentLocale = _mod.Helper.Translation.Locale;
 			AddReplacement("Minigames/TitleButtons", $"Assets/Minigames/{Globals.GetTranslation("title-graphic")}");
-			_mod.Helper.Content.InvalidateCache("Minigames/TitleButtons");
+			_mod.Helper.GameContent.InvalidateCache("Minigames/TitleButtons");
 
 			if (titleMenu != null)
 			{
@@ -130,7 +110,7 @@ namespace Randomizer
 		public void CalculateReplacements()
 		{
 			// Clear any previous replacements
-			this._replacements.Clear();
+			_replacements.Clear();
 
 			if (Globals.Config.Crops.Randomize)
 			{
@@ -144,16 +124,16 @@ namespace Randomizer
 				switch (Globals.RNG.Next(0, 4))
 				{
 					case 0:
-						this.AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersBears");
+						AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersBears");
 						break;
 					case 1:
-						this.AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersseagullcrow");
+						AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersseagullcrow");
 						break;
 					case 2:
-						this.AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersWsquirrelPseagull");
+						AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersWsquirrelPseagull");
 						break;
 					case 3:
-						this.AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersBlueBunny");
+						AddReplacement("TileSheets/critters", "Assets/TileSheets/crittersBlueBunny");
 						break;
 				}
 
@@ -165,17 +145,17 @@ namespace Randomizer
 				if (isPet == 1)
 				{
 					int petRng = Globals.RNG.Next(0, Pet.Length - 1);
-					this.AddReplacement($"Animals/{Pet[petRng]}", "Assets/Characters/BearDog");
+					AddReplacement($"Animals/{Pet[petRng]}", "Assets/Characters/BearDog");
 				}
 				if (isPet == 2)
 				{
-					this.AddReplacement($"Animals/horse", "Assets/Characters/BearHorse");
+					AddReplacement($"Animals/horse", "Assets/Characters/BearHorse");
 				}
 				else
 				{
 					int animalRng = Globals.RNG.Next(0, Animal.Length - 1);
-					this.AddReplacement($"Animals/{Animal[animalRng]}", "Assets/Characters/Bear");
-					this.AddReplacement($"Animals/Baby{Animal[animalRng]}", "Assets/Characters/BabyBear");
+					AddReplacement($"Animals/{Animal[animalRng]}", "Assets/Characters/Bear");
+					AddReplacement($"Animals/Baby{Animal[animalRng]}", "Assets/Characters/BabyBear");
 				}
 			}
 
@@ -186,7 +166,7 @@ namespace Randomizer
 				Dictionary<string, string> currentSwaps = new Dictionary<string, string>();
 
 				// Copy the array of possible swaps to a new list
-				List<PossibleSwap> possibleSwaps = this._mod.PossibleSwaps.ToList();
+				List<PossibleSwap> possibleSwaps = _mod.PossibleSwaps.ToList();
 
 				// Make swaps until either a random number of swaps are made or we run out of possible swaps to make
 				int swapsRemaining = Globals.RNG.Next(5, 11);
@@ -208,13 +188,13 @@ namespace Randomizer
 					// Add the swap to the dictionary
 					currentSwaps[swap.FirstCharacter] = swap.SecondCharacter;
 					currentSwaps[swap.SecondCharacter] = swap.FirstCharacter;
-					this._mod.Monitor.Log($"Swapping {swap.FirstCharacter} and {swap.SecondCharacter}");
+					_mod.Monitor.Log($"Swapping {swap.FirstCharacter} and {swap.SecondCharacter}");
 
 					// Add the replacements
-					this.AddReplacement($"Characters/{swap.FirstCharacter}", $"Assets/Characters/{swap.SecondCharacter}");
-					this.AddReplacement($"Characters/{swap.SecondCharacter}", $"Assets/Characters/{swap.FirstCharacter}");
-					this.AddReplacement($"Portraits/{swap.FirstCharacter}", $"Assets/Portraits/{swap.SecondCharacter}");
-					this.AddReplacement($"Portraits/{swap.SecondCharacter}", $"Assets/Portraits/{swap.FirstCharacter}");
+					AddReplacement($"Characters/{swap.FirstCharacter}", $"Assets/Characters/{swap.SecondCharacter}");
+					AddReplacement($"Characters/{swap.SecondCharacter}", $"Assets/Characters/{swap.FirstCharacter}");
+					AddReplacement($"Portraits/{swap.FirstCharacter}", $"Assets/Portraits/{swap.SecondCharacter}");
+					AddReplacement($"Portraits/{swap.SecondCharacter}", $"Assets/Portraits/{swap.FirstCharacter}");
 
 					// Decrement the number of swaps remaining
 					swapsRemaining--;
@@ -278,8 +258,8 @@ namespace Randomizer
 			RainTypes rainType = Globals.RNGGetRandomValueFromList(
 				Enum.GetValues(typeof(RainTypes)).Cast<RainTypes>().ToList());
 
-			AddReplacement("TileSheets/rain", $"Assets/TileSheets/{rainType.ToString()}Rain");
-			_mod.Helper.Content.InvalidateCache("TileSheets/rain");
+			AddReplacement("TileSheets/rain", $"Assets/TileSheets/{rainType}Rain");
+			_mod.Helper.GameContent.InvalidateCache("TileSheets/rain");
 		}
 	}
 }

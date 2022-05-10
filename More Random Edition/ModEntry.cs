@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Locations;
@@ -55,30 +56,34 @@ namespace Randomizer
 		private AssetLoader _modAssetLoader;
 		private AssetEditor _modAssetEditor;
 
-		private IModHelper _helper;
-
 		/// <summary>The mod entry point, called after the mod is first loaded</summary>
 		/// <param name="helper">Provides simplified APIs for writing mods</param>
 		public override void Entry(IModHelper helper)
 		{
-			_helper = helper;
 			Globals.ModRef = this;
-			Globals.Config = Helper.ReadConfig<ModConfig>();
+			Globals.Config = helper.ReadConfig<ModConfig>();
 
 			ImageBuilder.CleanUpReplacementFiles();
 
-			this._modAssetLoader = new AssetLoader(this);
-			this._modAssetEditor = new AssetEditor(this);
-			helper.Content.AssetLoaders.Add(this._modAssetLoader);
-			helper.Content.AssetEditors.Add(this._modAssetEditor);
+			_modAssetLoader = new AssetLoader(this);
+			_modAssetEditor = new AssetEditor(this);
 
-			this.PreLoadReplacments();
-			helper.Events.GameLoop.SaveLoaded += (sender, args) => this.CalculateAllReplacements();
+			helper.Events.Content.AssetRequested += OnAssetRequested;
+
+			PreLoadReplacments();
+			helper.Events.GameLoop.SaveLoaded += (sender, args) => CalculateAllReplacements();
 			helper.Events.Display.RenderingActiveMenu += (sender, args) => _modAssetLoader.TryReplaceTitleScreen();
 			helper.Events.GameLoop.ReturnedToTitle += (sender, args) => _modAssetLoader.ReplaceTitleScreenAfterReturning();
 
-			if (Globals.Config.Music.Randomize) { helper.Events.GameLoop.UpdateTicked += (sender, args) => MusicRandomizer.TryReplaceSong(); }
-			if (Globals.Config.RandomizeRain) { helper.Events.GameLoop.DayEnding += _modAssetLoader.ReplaceRain; }
+			if (Globals.Config.Music.Randomize)
+			{
+				helper.Events.GameLoop.UpdateTicked += (sender, args) => MusicRandomizer.TryReplaceSong();
+			}
+
+			if (Globals.Config.RandomizeRain)
+			{
+				helper.Events.GameLoop.DayEnding += _modAssetLoader.ReplaceRain;
+			}
 
 			if (Globals.Config.Crops.Randomize)
 			{
@@ -120,6 +125,12 @@ namespace Randomizer
 			}
 		}
 
+		private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
+		{
+			_modAssetLoader.OnAssetRequested(sender, e);
+			_modAssetEditor.OnAssetRequested(sender, e);
+		}
+
 		/// <summary>
 		/// Loads the replacements that can be loaded before a game is selected
 		/// </summary>
@@ -138,7 +149,7 @@ namespace Randomizer
 			byte[] seedvar = (new SHA1Managed()).ComputeHash(Encoding.UTF8.GetBytes(Game1.player.farmName.Value));
 			int seed = BitConverter.ToInt32(seedvar, 0);
 
-			this.Monitor.Log($"Seed Set: {seed}");
+			Monitor.Log($"Seed Set: {seed}");
 
 			Globals.RNG = new Random(seed);
 			Globals.SpoilerLog = new SpoilerLogger(Game1.player.farmName.Value);

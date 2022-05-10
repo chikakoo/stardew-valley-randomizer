@@ -1,7 +1,21 @@
-.vs
-/More Random Edition/bin/Debug
-/More Random Edition/bin/Debug/Assets/Minigames
-/More Random Edition/obj
-/More Random Edition/obj/Debug
-/More Random Edition/bin/Release
-/More Random Edition/Randomizer.csproj.user
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+[Bb]in/
+[Oo]bj/
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+
+# Visual Studio temp something
+.vs/

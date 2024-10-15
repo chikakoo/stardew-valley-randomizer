@@ -149,6 +149,11 @@ The [Trout Derby]([url](https://stardewvalleywiki.com/Trout_Derby)) works differ
 * Spoiler log
   * A spoiler log can be generated to see info about what was randomized
   * You must turn on this option in the settings to generate the log
+* Bundle log (off by default)
+  * Creates a file containing all the items required for bundles, but with shorthand hints at when they are available
+  * Fish/Crops/Seeds/Foragables have a list of seasons
+  * Fish have their locations and whether they are sun or rain only
+  * Intended to copy/paste into a spreadsheet of some kind for easy reference
   
 ## Possible Future Features
 * Enemy changes

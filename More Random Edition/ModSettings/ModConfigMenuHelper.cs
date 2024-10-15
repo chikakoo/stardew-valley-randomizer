@@ -5,18 +5,19 @@ namespace Randomizer
 {
     public class ModConfigMenuHelper
 	{
-		public IGenericModConfigMenuApi api;
+		public IGenericModConfigMenuApi Api;
 		public IManifest ModManifest;
 
-		public ModConfigMenuHelper(IGenericModConfigMenuApi api, IManifest ModManifest)
+		public ModConfigMenuHelper(IGenericModConfigMenuApi api, IManifest modManifest)
 		{
-			this.api = api;
-			this.ModManifest = ModManifest;
+			Api = api;
+			ModManifest = modManifest;
 		}
 
 		public void RegisterModOptions()
 		{
 			AddCheckbox("Create Spoiler Log", "Create a text file which contains all of the randomized elements when a new farm is created. Highly recommended to leave on.", () => Globals.Config.CreateSpoilerLog, (bool val) => Globals.Config.CreateSpoilerLog = val);
+			AddCheckbox("Create Bundle Log", "Creates a text file with most community center bundle required items and shorthand versions of seasons/locations for certain items. Does not spoil rewards.", () => Globals.Config.CreateBundleLog, (bool val) => Globals.Config.CreateBundleLog = val);
 			AddCheckbox("Save Randomized Images", "Saves most of the randomized images under a file called \"randomizedImages.png\". Used for debugging purposes - will slow down load times if on.", () => Globals.Config.SaveRandomizedImages, (bool val) => Globals.Config.SaveRandomizedImages = val);
 
 			AddSectionTitle("---RANDOMIZATION OPTIONS---", "Toggle on or off the various aspects of the game which can be randomized.");
@@ -112,7 +113,7 @@ namespace Randomizer
 			Func<bool> optionGet, 
 			Action<bool> optionSet)
 		{
-            api.AddBoolOption(
+            Api.AddBoolOption(
 				mod: ModManifest,
 				name: () => optionName,
 				tooltip: () => optionTooltip,
@@ -134,7 +135,7 @@ namespace Randomizer
             Func<int> getValue, 
 			Action<int> setValue)
 		{
-			api.AddNumberOption(
+			Api.AddNumberOption(
 				mod: ModManifest,
 				getValue: getValue,
 				setValue: setValue,
@@ -157,7 +158,7 @@ namespace Randomizer
 			Func<int> getValue,
 			Action<int> setValue)
 		{
-			api.AddNumberOption(
+			Api.AddNumberOption(
 				mod: ModManifest,
 				getValue: getValue,
 				setValue: setValue,
@@ -174,7 +175,7 @@ namespace Randomizer
 		/// <param name="tooltip"></param>
 		private void AddSectionTitle(string text, string tooltip = "")
 		{
-            api.AddSectionTitle(ModManifest, () => text, () => tooltip);
+            Api.AddSectionTitle(ModManifest, () => text, () => tooltip);
 		}
 	}
 

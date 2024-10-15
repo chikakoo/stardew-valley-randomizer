@@ -3,6 +3,7 @@
 	public class ModConfig
 	{
 		public bool CreateSpoilerLog { get; set; } = true;
+		public bool CreateBundleLog { get; set; } = false;
 		public bool SaveRandomizedImages { get; set; } = false;
 
 		public CraftingRecipesConfig CraftingRecipes { get; set; } = new CraftingRecipesConfig();

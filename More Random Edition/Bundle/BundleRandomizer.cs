@@ -75,6 +75,7 @@ namespace Randomizer
 			foreach (RoomInformation room in Rooms)
 			{
 				Globals.SpoilerWrite(room.Room.ToString());
+				Globals.BundleLog.WriteRoomTitle(room.Room);
 				room.Bundles.Clear(); // Clear the bundles in case this was ran multiple times in a session
 				CreateBundlesForRoom(room);
 			}
@@ -102,6 +103,7 @@ namespace Randomizer
 				BundleToName.Add(bundle.Id, bundle.DisplayName);
 
                 WriteToSpoilerLog(bundle, i);
+				Globals.BundleLog.WriteBundle(bundle);
 			}
 		}
 

@@ -446,6 +446,14 @@ namespace Randomizer
 
 				var currentDescription = objectReplacements[itemId].Description;
 				objectReplacements[itemId].Description = $"{currentDescription} {tooltip}";
+
+				// Assign the list of seasons to our item so we can reference it later
+				// We don't need to add the list of seasons if it isn't a foragable item, though
+				Item item = ItemList.GetItemFromStringId(itemId);
+				if (item is ForagableItem foragableItem)
+				{
+					foragableItem.ForagableSeasons = seasonList.ToList();
+				}
             }
         }
 

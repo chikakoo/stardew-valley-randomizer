@@ -114,8 +114,9 @@ namespace Randomizer
 			Monitor.Log($"Seed Set: {seed}");
 
 			Globals.SpoilerLog = new SpoilerLogger(Game1.player.farmName.Value);
+			Globals.BundleLog = new BundleLogger(Game1.player.farmName.Value);
 
-            // Make replacements and edits
+			// Make replacements and edits
 			_modAssetEditor.CalculateEdits();
 			_modAssetLoader.RandomizeImages();
 
@@ -129,7 +130,8 @@ namespace Randomizer
             WorldAdjustments.ChangeDayOneForagables();
 
             Globals.SpoilerLog.WriteFile();
-        }
+			Globals.BundleLog.WriteFile();
+		}
 
 		/// <summary>
 		/// A passthrough to calculate amd invalidate UI edits

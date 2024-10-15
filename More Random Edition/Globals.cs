@@ -12,6 +12,7 @@ namespace Randomizer
 		public static ModEntry ModRef { get; set; }
 		public static ModConfig Config { get; set; }
 		public static SpoilerLogger SpoilerLog { get; set; }
+		public static BundleLogger BundleLog { get; set; }
 
 		/// <summary>
 		/// A shortcut to write traces to the console

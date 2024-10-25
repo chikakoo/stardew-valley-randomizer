@@ -8,7 +8,7 @@ namespace Randomizer
 	public class SecretNotesRandomizer
 	{
 		private static RNG Rng { get; set; }
-		private static Dictionary<string, string> prefs;
+		private static Dictionary<string, string> PreferenceReplacements;
 
 		/// <summary>
 		/// For each secret note, generate a random number of NPCs for whom to reveal loved items.
@@ -25,7 +25,7 @@ namespace Randomizer
 			Globals.SpoilerWrite("===== SECRET NOTES =====");
 
 			Rng = RNG.GetFarmRNG(nameof(SecretNotesRandomizer));
-			prefs = preferenceReplacements;
+			PreferenceReplacements = preferenceReplacements;
 			Dictionary<int, string> secretNoteData = DataLoader.SecretNotes(Game1.content);
 
 			// The data dictionary has more entries than we want to change - we do only want indexes 1-9
@@ -64,7 +64,13 @@ namespace Randomizer
 			foreach (string npc in npcs)
 			{
 				List<string> spoilerLogItems = new();
-				string[] tokens = prefs[npc].Split('/');
+
+				if (!PreferenceReplacements.TryGetValue(npc, out string preference))
+				{
+					continue;
+				}
+
+				string[] tokens = preference.Split('/');
 				List<string> items = tokens[1].Trim().Split(' ')
 					.Where(id => !id.StartsWith("-"))
 					.ToList();

@@ -114,7 +114,7 @@ namespace Randomizer
         public static List<Item> GetIndividualPreferences(GiftableNPCIndexes npc, NPCGiftTasteIndexes prefType)
 		{
 			string npcKey = GiftableNPCs[npc];
-            string npcDataString = Globals.Config.NPCs.RandomizeUniversalPreferences
+            string npcDataString = Globals.Config.NPCs.RandomizeIndividualPreferences
                 ? NewGiftTasteData[npcKey]
                 : GiftTasteData[npcKey];
 			string itemListString = npcDataString.Split("/")[(int)prefType];
@@ -131,25 +131,46 @@ namespace Randomizer
             // Initialize gift taste data here so that it's reloaded in case of a locale change
             GiftTasteData = DataLoader.NpcGiftTastes(Game1.content);
 			NewGiftTasteData = new();
+            Rng = RNG.GetFarmRNG(nameof(PreferenceRandomizer));
 
+			RandomizeUniversalPreferences();
+			RandomizeIndividualPreferences();
+			WriteToSpoilerLog();
+
+			return NewGiftTasteData;
+		}
+
+		/// <summary>
+		/// Randomizes universal preferences and adds them to the dictionary
+		/// </summary>
+		private static void RandomizeUniversalPreferences()
+		{
 			if (!Globals.Config.NPCs.RandomizeUniversalPreferences)
 			{
-				return NewGiftTasteData;
+				return;
 			}
 
-            Rng = RNG.GetFarmRNG(nameof(PreferenceRandomizer));
-            List<int> universalUnusedCategories = new(CategoryExtentions.GetIntValues());
+			List<int> universalUnusedCategories = new(CategoryExtentions.GetIntValues());
 			List<Item> universalUnusedItems = ItemList.GetGiftables();
 
-			// Generate the universal preferences
 			foreach (string key in UniversalPreferenceIndexes.Values)
 			{
 				NewGiftTasteData.Add(
-                    key, 
+					key,
 					GetUniversalPreferenceString(universalUnusedCategories, universalUnusedItems));
 			}
+		}
 
-			// Generate randomized NPC Preferences strings
+		/// <summary>
+		/// Randomizes individual preferences and adds them to the dictionary
+		/// </summary>
+		private static void RandomizeIndividualPreferences()
+		{
+			if (!Globals.Config.NPCs.RandomizeIndividualPreferences)
+			{
+				return;
+			}
+
 			foreach (string npcName in GiftableNPCs.Values)
 			{
 				List<int> unusedCategories = new(CategoryExtentions.GetIntValues());
@@ -158,14 +179,11 @@ namespace Randomizer
 				string[] giftTasteData = GiftTasteData[npcName].Split('/');
 				foreach (NPCGiftTasteIndexes index in Enum.GetValues(typeof(NPCGiftTasteIndexes)))
 				{
-                    giftTasteData[(int)index] = GetPreferenceString(index, unusedCategories, unusedItems);
+					giftTasteData[(int)index] = GetPreferenceString(index, unusedCategories, unusedItems);
 				}
 
 				NewGiftTasteData.Add(npcName, string.Join("/", giftTasteData));
 			}
-
-			WriteToSpoilerLog();
-			return NewGiftTasteData;
 		}
 
 		/// <summary>
@@ -283,17 +301,20 @@ namespace Randomizer
 			}
 
 			Globals.SpoilerWrite("===== NPC GIFT TASTES =====");
-			foreach (KeyValuePair<string, string> NPCPreferences in NewGiftTasteData)
+			foreach (KeyValuePair<string, string> npcPreferences in NewGiftTasteData)
 			{
-				if (UniversalPreferenceIndexes.ContainsValue(NPCPreferences.Key))
+				if (UniversalPreferenceIndexes.ContainsValue(npcPreferences.Key))
 				{
-					Globals.SpoilerWrite($"{NPCPreferences.Key.Replace('_', ' ')}: {TranslateIds(NPCPreferences.Value)}");
-					Globals.SpoilerWrite("");
+					if (Globals.Config.NPCs.RandomizeUniversalPreferences)
+					{
+						Globals.SpoilerWrite($"{npcPreferences.Key.Replace('_', ' ')}: {TranslateIds(npcPreferences.Value)}");
+						Globals.SpoilerWrite("");
+					}
 				}
-				else
+				else if (Globals.Config.NPCs.RandomizeIndividualPreferences)
 				{
-					string npcName = NPCPreferences.Key;
-					string[] tokens = NPCPreferences.Value.Split('/');
+					string npcName = npcPreferences.Key;
+					string[] tokens = npcPreferences.Value.Split('/');
 
 					Globals.SpoilerWrite(npcName);
 					Globals.SpoilerWrite($"\tLoves: {TranslateIds(tokens[(int)NPCGiftTasteIndexes.Loves])}");

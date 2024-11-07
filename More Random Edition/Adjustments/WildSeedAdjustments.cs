@@ -80,10 +80,15 @@ namespace Randomizer
         /// </summary>
         public static void ReplaceGetRandomWildCropForSeason()
 		{
-            var harmony = new Harmony(Globals.ModRef.ModManifest.UniqueID);
+			var harmony = new Harmony(Globals.ModRef.ModManifest.UniqueID);
             harmony.Patch(
-               original: AccessTools.Method(typeof(SVCrop), nameof(SVCrop.getRandomWildCropForSeason)),
-               prefix: new HarmonyMethod(typeof(WildSeedAdjustments), nameof(GetRandomWildCropForSeason_Prefix))
+               original: AccessTools.Method(
+					typeof(SVCrop), 
+					nameof(SVCrop.getRandomWildCropForSeason),
+					new Type[] { typeof(SVSeason) }),
+               prefix: new HarmonyMethod(
+				   typeof(WildSeedAdjustments), 
+				   nameof(GetRandomWildCropForSeason_Prefix))
             );
         }
 	}

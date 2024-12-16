@@ -10,13 +10,6 @@ namespace Randomizer
 	/// </summary>
 	public class FishItem : Item
 	{
-		/// <summary>
-		/// TODO: remove this in the next major update
-		///   This is used to put the tooltip info in for the fish so we don't change the RNG by
-		///   populating the seasons/locations
-		/// </summary>
-		public bool IsNewMinesFish { get; set; }
-
 		public string OriginalName { get; set; }
 		public List<Seasons> AvailableSeasons { get; set; } = new List<Seasons>();
 		public List<Weather> Weathers { get; set; } = new List<Weather>();
@@ -186,13 +179,6 @@ namespace Randomizer
 		/// <returns>A string in the following format: Lives in the [loc1], [loc2], and [loc3].</returns>
 		private string GetStringForLocations()
 		{
-			// TODO: remove this in the next major update
-			if (IsNewMinesFish)
-			{
-				var minesLoc = $"{Globals.GetTranslation($"fish-undergroundmine-location")} {MineFloorString}";
-				return Globals.GetTranslation("fish-tooltip-locations", new { locations = minesLoc });
-			}
-
 			if (AvailableLocations.Count == 0) 
 			{ 
 				return ""; 
@@ -209,12 +195,6 @@ namespace Randomizer
 		/// <return />
 		private string GetStringForSeasons()
 		{
-			// TODO: remove this in the next major update
-			if (IsNewMinesFish)
-			{
-				return Globals.GetTranslation("fish-tooltip-seasons-all");
-			}
-
 			if (AvailableSeasons.Count == 0) 
 			{ 
 				return ""; 

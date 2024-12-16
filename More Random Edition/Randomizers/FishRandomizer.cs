@@ -302,15 +302,13 @@ namespace Randomizer
 					var fishItem = ItemList.GetItemFromStringId(newFishId) as FishItem;
 					var spawnFishData = CreateNewSpawnFishData(newFishId);
 
-					//TODO: turn this on in the next major update
-					//TryAddLocationToFishItem(fishItem, Locations.UndergroundMine);
-					//TryAddSeasonToFishItem(fishItem, Seasons.Spring);
-					//TryAddSeasonToFishItem(fishItem, Seasons.Summer);
-					//TryAddSeasonToFishItem(fishItem, Seasons.Fall);
-					//TryAddSeasonToFishItem(fishItem, Seasons.Winter);
+					TryAddLocationToFishItem(fishItem, Locations.UndergroundMine);
+					TryAddSeasonToFishItem(fishItem, Seasons.Spring);
+					TryAddSeasonToFishItem(fishItem, Seasons.Summer);
+					TryAddSeasonToFishItem(fishItem, Seasons.Fall);
+					TryAddSeasonToFishItem(fishItem, Seasons.Winter);
 
 					fishData.Insert(0, spawnFishData);
-					fishItem.IsNewMinesFish = true;
 					fishItem.MineFloorString = FishItem.ComputeMineFloorString(); // Use the default, as this isn't hard-coded
 				}
 				else

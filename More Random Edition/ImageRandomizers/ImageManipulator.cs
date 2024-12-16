@@ -420,5 +420,48 @@ namespace Randomizer
             croppedTexture.SetData(croppedData);
             return croppedTexture;
         }
+
+        /// <summary>
+        /// Creates a new texture with the given dimensions, filling it with the given texture,
+        /// tiling the given texture to fill any empty space where necessary
+        /// </summary>
+        /// <param name="inputTexture">The texture to use</param>
+        /// <param name="width">The width to use</param>
+        /// <param name="height">The height to use</param>
+        /// <returns>The new texture</returns>
+        public static Texture2D TileOrCropTexture(
+            Texture2D inputTexture, 
+            int width, 
+            int height)
+        {
+            // Create a new Texture2D with the desired dimensions
+            Texture2D outputTexture = new(Game1.graphics.GraphicsDevice, width, height);
+
+            // Get the pixel data of the input texture
+            Color[] inputData = new Color[inputTexture.Width * inputTexture.Height];
+            inputTexture.GetData(inputData);
+
+            // Create an array to hold the pixel data for the output texture
+            Color[] outputData = new Color[width * height];
+
+            // Fill the outputData by tiling or cropping the input texture
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    // Calculate the corresponding position in the input texture
+                    int inputX = x % inputTexture.Width;
+                    int inputY = y % inputTexture.Height;
+
+                    // Get the color from the input texture and place it in the output array
+                    outputData[y * width + x] = inputData[inputY * inputTexture.Width + inputX];
+                }
+            }
+
+            // Set the data for the output texture
+            outputTexture.SetData(outputData);
+
+            return outputTexture;
+        }
     }
 }

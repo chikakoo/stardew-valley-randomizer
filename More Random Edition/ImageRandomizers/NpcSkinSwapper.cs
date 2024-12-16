@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 
@@ -95,6 +96,10 @@ public class NpcSkinSwapper
         return npcSwapperData;
     }
 
+    /// <summary>
+    /// Gets the list of NPC swaps to make
+    /// </summary>
+    /// <returns />
     private static List<NpcSwapperData> GetNpcSwaps()
     {
         List<NpcSwapperData> npcSwapData = new();
@@ -105,44 +110,124 @@ public class NpcSkinSwapper
             {
                 var replacementNPC = Rng.GetAndRemoveRandomValueFromList(possibleSwaps);
                 NPCSkinSwapPaths npcSwap = new(npc, replacementNPC);
-                AddNpcSwaps(npcSwapData, npcSwap);
 
+                if (npc != replacementNPC)
+                {
+                    AddNpcSwaps(npcSwapData, npcSwap);
+                }
+                
                 Globals.SpoilerWrite($"{npc} => {replacementNPC}");
             }
         }
         return npcSwapData;
     }
 
+    /// <summary>
+    /// Adds all NPC swaps to the list for a given NPC
+    /// - This includes special swaps, like Beach and Winter
+    /// </summary>
+    /// <param name="npcSwapData">The list of swap data to add to</param>
+    /// <param name="npcSwap">The NPC and its counterpart to swap with</param>
     private static void AddNpcSwaps(
-        List<NpcSwapperData> npcSwapData, NPCSkinSwapPaths npcSwap)
+        List<NpcSwapperData> npcSwapData, 
+        NPCSkinSwapPaths npcSwap)
     {
-        AddSwapForSuffix(npcSwapData, npcSwap);
+        // Sprite sheets
+        NPCSkinSwapPaths.Suffixes.ForEach(suffix =>
+        {
+            AddSwapForSuffix(
+            npcSwapData,
+            npcSwap.OriginalCharacterPath,
+            npcSwap.ReplacementCharacterPath,
+            fileOutputName: npcSwap.OriginalNPC,
+            suffix);
+        });
 
-        //TODO - enable and deal with these
-        //AddSwapForSuffix(npcSwapData, npcSwap, NPCSkinSwapPaths.BeachSuffix);
-        //AddSwapForSuffix(npcSwapData, npcSwap, NPCSkinSwapPaths.WinterSuffix);
-        //AddSwapForSuffix(npcSwapData, npcSwap, NPCSkinSwapPaths.HospitalSuffix);
-        //AddSwapForSuffix(npcSwapData, npcSwap, NPCSkinSwapPaths.JojaMartSuffix);
+        // Portraits
+        NPCSkinSwapPaths.Suffixes.ForEach(suffix =>
+        {
+            AddSwapForSuffix(
+            npcSwapData,
+            npcSwap.OriginalPortraitPath,
+            npcSwap.ReplacementPortraitPath,
+            fileOutputName: $"{npcSwap.OriginalNPC}_Portrait",
+            suffix);
+        });
     } 
 
+    /// <summary>
+    /// Adds a swap for the given paths and suffix
+    /// </summary>
+    /// <param name="npcSwapData">The list of swap data to add to</param>
+    /// <param name="originalPath">The path to the original asset</param>
+    /// <param name="replacementPath">The path to the asset to use instead</param>
+    /// <param name="fileOutputName">The name of the file to output, if saving the images</param>
+    /// <param name="suffix">The suffix for any special spritesheet, if any (e.g. "_Beach")</param>
     private static void AddSwapForSuffix(
         List<NpcSwapperData> npcSwapData, 
-        NPCSkinSwapPaths npcSwap, 
+        string originalPath,
+        string replacementPath,
+        string fileOutputName,
         string suffix = "")
     {
-        var npcSpriteSheetName = $"{npcSwap.OriginalCharacterPath}{suffix}";
-        Texture2D replacementNpcSpriteSheet = Globals.ModRef.Helper.GameContent
-            .Load<Texture2D>($"{npcSwap.ReplacementCharacterPath}{suffix}");
+        Texture2D originalAsset = TryGetStardewCharacterAsset(originalPath, suffix);
+        if (originalAsset == default)
+        {
+            // No need to replace anything if the original doesn't exist!
+            return;
+        }
 
-        //TODO: we should be modifying the replacement sprite sheet here
-        // to match the dimensions correctly
+        Texture2D replacementAsset = GetStardewCharacterAsset(replacementPath, suffix);
+        Texture2D replacementSpriteSheet = ImageManipulator.TileOrCropTexture(
+            replacementAsset, originalAsset.Width, originalAsset.Height);
 
         npcSwapData.Add(new NpcSwapperData(
-            $"{npcSwap.OriginalNPC}{suffix}", 
-            npcSpriteSheetName, 
-            replacementNpcSpriteSheet));
+            assetName: $"{fileOutputName}{suffix}",
+            assetPath: $"{originalPath}{suffix}",
+            replacementSpriteSheet));
+    }
 
-        //TODO: do portraits as well
+    /// <summary>
+    /// Get the Stardew asset for the given character asset and suffix
+    /// - If it doesn't exist, return back null
+    /// </summary>
+    /// <param name="assetPath">The asset path, including the file name</param>
+    /// <param name="suffix">The suffix, if any (e.g. "_Beach")</param>
+    /// <returns>The asset loaded from Stardew Valley</returns>
+    private static Texture2D TryGetStardewCharacterAsset(string assetPath, string suffix)
+    {
+        try
+        {
+            return Globals.ModRef.Helper.GameContent
+                .Load<Texture2D>($"{assetPath}{suffix}");
+        }
+        catch (ContentLoadException)
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
+    /// Get the Stardew asset for the given character asset and suffix
+    /// - If the suffix asset can't be found, load the base one instead
+    /// </summary>
+    /// <param name="assetPath">The asset path, including the file name</param>
+    /// <param name="suffix">The suffix, if any (e.g. "_Beach")</param>
+    /// <returns>The asset loaded from Stardew Valley</returns>
+    private static Texture2D GetStardewCharacterAsset(string assetPath, string suffix)
+    {
+        try
+        {
+            return Globals.ModRef.Helper.GameContent
+                .Load<Texture2D>($"{assetPath}{suffix}");
+        }
+        catch (ContentLoadException)
+        {
+            // If we can't load with the suffix, we will use the base instead
+            // - This just means the replacement doesn't have special sprites, like beach graphics, etc
+            return Globals.ModRef.Helper.GameContent
+                .Load<Texture2D>(assetPath);
+        }
     }
 
     /// <summary>
@@ -180,13 +265,22 @@ public class NpcSkinSwapper
     /// </summary>
     private class NPCSkinSwapPaths
     {
-        public const string BeachSuffix = "_Beach";
-        public const string WinterSuffix = "_Winter";
-        public const string HospitalSuffix = "_Hospital";
-        public const string JojaMartSuffix = "_JojaMart";
+        /// <summary>
+        /// A list of suffixes to check for each asset
+        /// - The game has different spritesheets for these maps/events
+        /// - We try to replace the correct ones, if necessary, but fall back on the base one
+        /// </summary>
+        public static List<string> Suffixes = new()
+        {
+            "",
+            "_Beach",
+            "_Winter",
+            "_Hospital",
+            "_JojaMart"
+        };
 
-        public static string CharacterPath => $"Characters";
-        public static string PortraitPath => $"Portraits";
+        public static string CharacterPath => "Characters";
+        public static string PortraitPath => "Portraits";
 
         public string OriginalNPC { get; }
         public string ReplacementNPC { get; }
@@ -214,14 +308,14 @@ public class NpcSkinSwapper
     public class NpcSwapperData
     {
         /// <summary>
-        /// The path to the asset (the entire thing, including the file name)
-        /// </summary>
-        public string StardewAssetPath { get; private set; }
-
-        /// <summary>
         /// The name of the modified asset (just the file name, used for the saving the image)
         /// </summary>
         public string AssetName { get; private set; }
+
+        /// <summary>
+        /// The path to the asset (the entire thing, including the file name)
+        /// </summary>
+        public string StardewAssetPath { get; private set; }
 
         /// <summary>
         /// The modified image

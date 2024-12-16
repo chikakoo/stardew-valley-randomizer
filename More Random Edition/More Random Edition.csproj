@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<EnableHarmony>true</EnableHarmony>
+	<RootNamespace>Randomizer</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

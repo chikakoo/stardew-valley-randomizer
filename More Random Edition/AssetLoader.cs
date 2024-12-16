@@ -155,6 +155,13 @@ namespace Randomizer
 
             MonsterHueShifter.GetHueShiftedMonsterAssets().ForEach(monsterData =>
                 AddReplacement(monsterData.StardewAssetPath, monsterData.MonsterImage));
+
+            NpcSkinSwapper.GetSwappedNpcAssets()
+                .ForEach(npcSwap =>
+                {
+                    AddReplacement(npcSwap.StardewAssetPath, npcSwap.NpcImage);
+                    _mod.Helper.GameContent.InvalidateCache(npcSwap.StardewAssetPath);
+                });
         }
 
 		/// <summary>

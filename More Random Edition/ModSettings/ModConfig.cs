@@ -76,6 +76,7 @@
 		public bool RandomizeBirthdays { get; set; } = true;
 		public bool RandomizeIndividualPreferences { get; set; } = true;
 		public bool RandomizeUniversalPreferences { get; set; } = true;
+		public bool SpriteShuffle { get; set; } = false;
 	}
 
 	public class BundleConfig

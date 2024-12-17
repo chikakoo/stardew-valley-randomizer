@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
-using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Randomizer
 {
@@ -58,6 +58,16 @@ namespace Randomizer
             // Woodpecker
             new List<CritterSpriteLocations>() {
                 new(size: 16, startingPoint: new Point(0, 256), numberOfSprites: 5) },
+
+            // Chicken Bird
+            new List<CritterSpriteLocations>() {
+                new(size: 32, startingPoint: new Point(160, 512), numberOfSprites: 5),
+                new(size: 32, startingPoint: new Point(0, 544), numberOfSprites: 4)},
+
+            // Dove
+            new List<CritterSpriteLocations>() {
+                new(size: 32, startingPoint: new Point(160, 544), numberOfSprites: 5),
+                new(size: 32, startingPoint: new Point(0, 576), numberOfSprites: 4)},
 
             // -- Butterflies --
 
@@ -138,17 +148,21 @@ namespace Randomizer
             // Gorilla
             new List<CritterSpriteLocations>() {
                 new(size: 32, startingPoint: new Point(0, 352), numberOfSprites: 7) },
+
+            // Opossum 
+            new List<CritterSpriteLocations>() {
+                new(size: 32, startingPoint: new Point(0, 480), numberOfSprites: 9) },
         };
 
         /// <summary>
         /// The path to the critter asset
         /// </summary>
-        public const string StardewAssetPath = "TileSheets/critters";
+        public const string StardewAssetPath = $"TileSheets/critters";
 
         public CritterPatcher()
         {
             // This patcher doesn't actually use this, it's strictly for saving the randomized image
-            SubFolder = "CustomImages/HueShiftedCritters";
+            SubFolder = $"CustomImages{Path.DirectorySeparatorChar}HueShiftedCritters";
         }
 
         public override void OnAssetRequested(IAssetData asset)

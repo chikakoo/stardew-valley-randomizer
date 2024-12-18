@@ -98,6 +98,10 @@ namespace Randomizer
                 new(size: 16, startingPoint: new Point(48, 144), numberOfSprites: 3) },
             new List<CritterSpriteLocations>() {
                 new(size: 16, startingPoint: new Point(96, 144), numberOfSprites: 3) },
+            new List<CritterSpriteLocations>() {
+                new(size: 16, startingPoint: new Point(224, 304), numberOfSprites: 3) },
+            new List<CritterSpriteLocations>() {
+                new(size: 16, startingPoint: new Point(272, 304), numberOfSprites: 3) },
 
             // Tropical
             new List<CritterSpriteLocations>() {
@@ -108,6 +112,14 @@ namespace Randomizer
                 new(size: 16, startingPoint: new Point(192, 288), numberOfSprites: 4) },
             new List<CritterSpriteLocations>() {
                 new(size: 16, startingPoint: new Point(256, 288), numberOfSprites: 4) },
+            new List<CritterSpriteLocations>() {
+                new(size: 16, startingPoint: new Point(128, 336), numberOfSprites: 4) },
+            new List<CritterSpriteLocations>() {
+                new(size: 16, startingPoint: new Point(192, 336), numberOfSprites: 4) },
+            new List<CritterSpriteLocations>() {
+                new(size: 16, startingPoint: new Point(0, 384), numberOfSprites: 4) },
+            new List<CritterSpriteLocations>() {
+                new(size: 16, startingPoint: new Point(64, 384), numberOfSprites: 4) },
         
             // -- Ground Critters --
 

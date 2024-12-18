@@ -7,12 +7,27 @@ using System.Linq;
 
 namespace Randomizer
 {
+    //TODO: add -no-hue-shift suffix support
     public class CritterPatcher : ImagePatcher
     {
+        /// <summary>
+        /// The size of the critter image sprite sheet
+        /// If this ever changes, we'd need to adjust things, so it's okay to hard-code it here
+        /// </summary>
         private const int CritterImageWidth = 320;
-        private RNG Rng { get; set; }
-        private static Texture2D CritterSpriteSheet { get; set; }
 
+        /// <summary>
+        /// The RNG for the patcher - intended to be set to daily RNG
+        /// </summary>
+        private RNG Rng { get; set; }
+
+        /// <summary>
+        /// The for all the sprites to replace
+        /// - This is a list of sets, separated by what folder they are in
+        /// - Each Set has a list of a list of data
+        ///   - The outer list consists of each critter to replace on the sprite sheet
+        ///   - The inner list consists of pieces of that specific critter (e.g. the Red Monkey has a separate head image)
+        /// </summary>
         private static readonly List<CritterSpriteSet> CritterSpriteSets = new()
         {
             new("Seagull",
@@ -158,239 +173,6 @@ namespace Randomizer
                 numberOfSprites: 9,
                 new Point(0, 480))
         };
-        
-
-
-        /// <summary>
-        /// The critter sprite sheet is kind of a mess of sprites all over the place
-        /// This data is to group each animal into its own set so that we can hue
-        /// shift each sprite in the same way
-        /// </summary>
-       // private static readonly List<List<CritterSpriteLocation>> CritterLocationData = new()
-        //{
-            // DATA TO USE
-            // Seagull - 32x32 (14 sprites)
-            // 0, 0
-
-            // Crow - 32x32 (11 sprites)
-            // 128, 32; 11 
-
-            // Perching Bird - 32x32 (9 sprites) AND 12x12 (5 sprites) (start at 0, 32*9)
-            // 160, 64 AND 47, 333
-
-            // Birds - 32x32 (9 sprites)
-            // 160, 128
-            // 160, 384
-            // 160, 416
-            // 160, 512
-            // 160, 544
-
-            // Butterflies - 16x16 (4 sprites)
-            // 128, 96
-            // 192, 96
-            // 256, 96
-            // 128, 112
-            // 192, 112
-            // 256, 112
-            // 64, 228
-            // 128, 228
-            // 192, 228
-            // 256, 288
-            // 128, 336
-            // 192, 336
-            // 0, 384
-            // 64, 384
-
-            // Small Butterflies - 16x16 (3 sprites)
-            // 0, 128
-            // 48, 128
-            // 96, 128
-            // 0, 144
-            // 48, 144
-            // 96, 144
-            // 224, 304
-            // 272, 304
-
-            // Woodpecker - 16x16 (5 sprites)
-            // 0, 256
-
-            // Owl - 32x32 (4 sprites)
-            // 96, 256
-
-            // Bunnies - 32x32 (7 sprites)
-            // 6 sprites at 128, 160; 1 sprite at 256, 192
-            // 6 sprites at 128, 224; 1 sprite at 288, 192
-
-            // Squirrel - 32x32 (8 sprites)
-            // 0, 192
-
-            // Frogs - 16x16 (7 sprites)
-            // 0, 224
-            // 0, 240
-
-            // Crab - 18x18 (6 sprites) (NOT A TYPO, IT IS 18)
-            // 0, 273 (3 of the sprites)
-            // - then, at 0, 291, the other 3 (0, 18*3 on the frog spritesheet)
-
-            // Red Monkey - 20x24 (7 sprites), then 15x12 (3 sprites, starting at 0,20*7)
-            // 0, 309 AND...
-            // - 0, 333 = the 3 monkey heads
-
-            // Monkey - 20x24 (4 sprites)
-            // 141, 309
-
-            // Gorilla - 32x32 (7 sprites)
-            // 0, 352
-
-            // Opossum - 32x32 (9 sprites)
-            // 0, 480
-
-
-            //// Seagull
-            //new List<CritterSpriteLocations>() { 
-            //    new(size: 32, startingPoint: new Point(0, 0), numberOfSprites: 10),
-            //    new(size: 32, startingPoint: new Point(0, 32), numberOfSprites: 4)},
-
-            //// Crow
-            //new List<CritterSpriteLocations>() { 
-            //    new(size: 32, startingPoint: new Point(128, 32), numberOfSprites: 6),
-            //    new(size: 32, startingPoint: new Point(0, 64), numberOfSprites: 5)},
-
-            //// Brown Perching Bird
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(160, 64), numberOfSprites: 5),
-            //    new(size: 32, startingPoint: new Point(0, 96), numberOfSprites: 4),
-            //    new(size: 12, startingPoint: new Point(47, 333), numberOfSprites: 5) },
-
-            //// Blue Bird
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(160, 128), numberOfSprites: 5),
-            //    new(size: 32, startingPoint: new Point(0, 160), numberOfSprites: 4)},
-
-            //// Purple Bird
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(160, 384), numberOfSprites: 5),
-            //    new(size: 32, startingPoint: new Point(0, 416), numberOfSprites: 4)},
-
-            //// Red Bird
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(160, 416), numberOfSprites: 5),
-            //    new(size: 32, startingPoint: new Point(0, 448), numberOfSprites: 4)},
-
-            //// Owl
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(96, 256), numberOfSprites: 4) },
-            
-            //// Woodpecker
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(0, 256), numberOfSprites: 5) },
-
-            //// Chicken Bird
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(160, 512), numberOfSprites: 5),
-            //    new(size: 32, startingPoint: new Point(0, 544), numberOfSprites: 4)},
-
-            //// Dove
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(160, 544), numberOfSprites: 5),
-            //    new(size: 32, startingPoint: new Point(0, 576), numberOfSprites: 4)},
-
-            //// -- Butterflies --
-
-            //// Big, colored
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(128, 96), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(192, 96), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(256, 96), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(128, 112), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(192, 112), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(256, 112), numberOfSprites: 4) },
-
-            //// Small, patterned
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(0, 128), numberOfSprites: 3) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(48, 128), numberOfSprites: 3) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(96, 128), numberOfSprites: 3) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(0, 144), numberOfSprites: 3) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(48, 144), numberOfSprites: 3) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(96, 144), numberOfSprites: 3) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(224, 304), numberOfSprites: 3) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(272, 304), numberOfSprites: 3) },
-
-            //// Tropical
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(64, 288), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(128, 288), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(192, 288), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(256, 288), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(128, 336), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(192, 336), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(0, 384), numberOfSprites: 4) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(64, 384), numberOfSprites: 4) },
-        
-            //// -- Ground Critters --
-
-            //// Gray Bunny
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(128, 160), numberOfSprites: 6),
-            //    new(size: 32, startingPoint: new Point(256, 192), numberOfSprites: 1) },
-
-            //// White Bunny
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(288, 192), numberOfSprites: 1),
-            //    new(size: 32, startingPoint: new Point(128, 224), numberOfSprites: 6) },
-
-            //// Squirrel
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(0, 192), numberOfSprites: 8) },
-
-            //// Frogs
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(0, 224), numberOfSprites: 7) },
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 16, startingPoint: new Point(0, 240), numberOfSprites: 7) },
-
-            //// Crab
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 18, startingPoint: new Point(0, 273), numberOfSprites: 3),
-            //    new(size: 18, startingPoint: new Point(0, 291), numberOfSprites: 3)},
-
-            //// Red Monkey
-            //new List<CritterSpriteLocations>() {
-            //    new(width: 20, height: 24, startingPoint: new Point(0, 309), numberOfSprites: 7),
-            //    new(width: 15, height: 12, startingPoint: new Point(0, 333), numberOfSprites: 3) },
-
-            //// Monkey
-            //new List<CritterSpriteLocations>() {
-            //    new(width: 20, height: 24, startingPoint: new Point(141, 309), numberOfSprites: 4) },
-
-            //// Gorilla
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(0, 352), numberOfSprites: 7) },
-
-            //// Opossum 
-            //new List<CritterSpriteLocations>() {
-            //    new(size: 32, startingPoint: new Point(0, 480), numberOfSprites: 9) },
-        //};
 
         /// <summary>
         /// The path to the critter asset
@@ -402,6 +184,11 @@ namespace Randomizer
             SubFolder = "CustomImages/TileSheets/Critters";
         }
 
+        /// <summary>
+        /// Called when the asset is requested - this is where we'll do our work
+        /// Exits if we aren't randomizing critters
+        /// </summary>
+        /// <param name="asset">The critter image asset</param>
         public override void OnAssetRequested(IAssetData asset)
         {
             if (!Globals.Config.Animals.RandomizeCritters)
@@ -409,7 +196,6 @@ namespace Randomizer
                 return;
             }
 
-            CritterSpriteSheet = Globals.ModRef.Helper.GameContent.Load<Texture2D>(StardewAssetPath);
             Rng = RNG.GetDailyRNG(nameof(CritterPatcher));
 
             var editor = asset.AsImage();
@@ -421,36 +207,38 @@ namespace Randomizer
             }
         }
 
+        /// <summary>
+        /// Replaces all critters with random ones in the TileSheets/Critters folders
+        /// Hue shifts them as well, according to the setting
+        /// </summary>
+        /// <param name="editor">The critters asset from the game</param>
         private void ReplaceAllCritters(IAssetDataForImage editor)
         {
             // For each sprite set (for example, all kinds of birds with 9 sprites)
             foreach (var spriteSet in CritterSpriteSets)
             {
+                var subDirectory = spriteSet.SubDirectory;
+                var files = GetAllFileNamesInFolder(subDirectory);
+                if (files.Count == 0)
+                {
+                    Globals.ConsoleWarn($"No critter images found - skipping critter set: {subDirectory}");
+                    continue;
+                }
+
+                var spriteSheetDirectory = Path.Combine(PatcherImageFolder, subDirectory);
+
                 // For each place in the main sprite sheet we need to replace
                 foreach (var spriteLocationList in spriteSet.SpriteLocations) 
                 {
-                    var subDirectory = spriteSet.SubDirectory;
-                    var files = GetAllFileNamesInFolder(subDirectory);
-                    if (files.Count == 0)
-                    {
-                        Globals.ConsoleWarn($"No critter images found - skipping critter set: {subDirectory}");
-                    }
-
                     // For each sub-section of the sprite sheet we need to replace
                     // e.g. the Red Monkey has two pieces (hence, we use the same sprite sheet image here)
-                    var spriteSheetDirectory = Path.Combine(PatcherImageFolder, subDirectory);
                     var spriteSheetFullPath = GetRandomCritterImage(files, subDirectory, spriteSheetDirectory);
-                    foreach (var spriteLocation in spriteLocationList)
-                    {
-                        //TODO: "using" here?
-                        
-                        var hueShiftValue = Rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
-                        Texture2D critterSpriteSheet = ImageManipulator.ShiftImageHue(
-                            Globals.ModRef.Helper.ModContent
-                                .Load<Texture2D>(spriteSheetFullPath), hueShiftValue);
-
-                        PatchMainSpriteSheet(editor, critterSpriteSheet, spriteLocation);
-                    }
+                    var hueShiftValue = Rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
+                    using Texture2D critterSpriteSheet = ImageManipulator.ShiftImageHue(
+                        Globals.ModRef.Helper.ModContent
+                            .Load<Texture2D>(spriteSheetFullPath), hueShiftValue);
+                    spriteLocationList.ForEach(spriteLocation =>
+                        PatchMainSpriteSheet(editor, critterSpriteSheet, spriteLocation));
                 }
             }
         }
@@ -477,6 +265,13 @@ namespace Randomizer
             return Path.Combine(pathToImages, fileName);
         }
 
+        /// <summary>
+        /// Handles logic to patch the main sprite sheet with a given critter sprite sheet
+        /// Handles wrapping around the main sprite sheet
+        /// </summary>
+        /// <param name="editor">The critters asset from the game</param>
+        /// <param name="critterSpriteSheet">The sprite sheet we want to replace the existing one with</param>
+        /// <param name="spriteLocation">The sprite location, containing the info on how to patch the sprite sheets</param>
         private static void PatchMainSpriteSheet(
             IAssetDataForImage editor, 
             Texture2D critterSpriteSheet, 
@@ -496,13 +291,11 @@ namespace Randomizer
                 var targetX = (spriteLocation.MainSheetStartingPoint.X + i * spriteWidth) + xOffset;
                 var targetY = spriteLocation.MainSheetStartingPoint.Y + yOffset;
 
-                // TODO: FIND OUT WHY THIS PART IS ONLY AFFECTING THE FIRST IMAGE ON WRAPAROUND
-
                 // If we've gone beyond the edge of the page, wrap around to the start of the next line
                 if (targetX + spriteWidth > CritterImageWidth)
                 {
                     // We now need to offset everything by these values, as we're on the second line
-                    xOffset = targetX;
+                    xOffset = -targetX;
                     yOffset = spriteHeight;
 
                     targetX = 0;
@@ -514,41 +307,6 @@ namespace Randomizer
                 editor.PatchImage(critterSpriteSheet, sourceRectangle, targetRectangle);
             }
         }
-
-
-        //private static void HueShiftAllCritters(IAssetDataForImage editor, RNG rng)
-        //{
-            //foreach(List<CritterSpriteLocation> spriteLocsList in CritterLocationData)
-            //{
-            //    int hueShiftValue = rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
-            //    foreach (CritterSpriteLocation spriteLocs in spriteLocsList)
-            //    {
-            //        HueShiftFromSpriteLocs(spriteLocs, editor, hueShiftValue);
-            //    }
-            //}
-        //}
-
-        //private static void HueShiftFromSpriteLocs(
-        //    CritterSpriteLocation spriteLocs, 
-        //    IAssetDataForImage editor, 
-        //    int hueShiftValue)
-        //{
-        //    int startingX = spriteLocs.MainSheetStartingPoint.X;
-        //    int y = spriteLocs.MainSheetStartingPoint.Y;
-        //    int width = spriteLocs.Width;
-        //    int height = spriteLocs.Height;
-        //    for (int i = 0; i < spriteLocs.NumberOfSprites; i++)
-        //    {
-        //        int x = (width * i) + startingX;
-        //        Rectangle cropRectangle = new(x, y, width, height);
-
-        //        using Texture2D hueShiftedCritter = ImageManipulator.ShiftImageHue(
-        //            ImageManipulator.Crop(CritterSpriteSheet, cropRectangle, Game1.graphics.GraphicsDevice),
-        //            hueShiftValue);
-
-        //        editor.PatchImage(hueShiftedCritter, targetArea: cropRectangle);
-        //    }
-        //}
 
         /// <summary>
         /// Groups all sprite locations into a set so that it can be grouped in a single directory
@@ -598,14 +356,22 @@ namespace Randomizer
                 params Point[] spriteSheetStartingPoints)
             {
                 SubDirectory = subDirectory;
-                SpriteLocations = new()
-                {
-                    spriteSheetStartingPoints
-                        .Select(point => new CritterSpriteLocation(size, numberOfSprites, point))
-                        .ToList()
-                };
+                SpriteLocations = spriteSheetStartingPoints
+                    .Select(point => new List<CritterSpriteLocation> 
+                    { 
+                        new(size, numberOfSprites, point) 
+                    }).ToList();
             }
 
+            /// <summary>
+            /// Constructor for a sprite set that has a simple animal type only consisting of a
+            /// row of images of the same dimentions, mapping all in a row to the main sheet
+            /// </summary>
+            /// <param name="subDirectory">The sub directory</param>
+            /// <param name="width">The width of one sprite</param>
+            /// <param name="height">The height of one sprite</param>
+            /// <param name="numberOfSprites">The number of sprites in the sheet</param>
+            /// <param name="spriteSheetStartingPoints">The starting points to map the critters to</param>
             public CritterSpriteSet(
                 string subDirectory,
                 int width,
@@ -614,13 +380,11 @@ namespace Randomizer
                 params Point[] spriteSheetStartingPoints)
             {
                 SubDirectory = subDirectory;
-                SpriteLocations = new()
-                {
-                    spriteSheetStartingPoints
-                        .Select(point => new CritterSpriteLocation(
-                            width, height, numberOfSprites, point))
-                        .ToList()
-                };
+                SpriteLocations = spriteSheetStartingPoints
+                    .Select(point => new List<CritterSpriteLocation> 
+                    { 
+                        new(width, height, numberOfSprites, point) 
+                    }).ToList();
             }
         }
 

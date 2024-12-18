@@ -122,7 +122,7 @@ Seeds:
   - Eachimage must be 16 x 16px
   - Ensure that the seed in the corresponding seed image lines up with the standard location of all the Trellis Packets, or the image will look strange
 
-TileSheets:
+TileSheets/Rain:
 Contains images to be used as the rain graphics. The randomizer will choose one of them at the start of every day.
 - Each image must be 64 x 32px
 

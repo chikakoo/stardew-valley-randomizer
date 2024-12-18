@@ -15,7 +15,7 @@ namespace Randomizer
 
         public RainPatcher()
         {
-            SubFolder = "CustomImages/TileSheets";
+            SubFolder = "CustomImages/TileSheets/Rain";
         }
 
         /// <summary>

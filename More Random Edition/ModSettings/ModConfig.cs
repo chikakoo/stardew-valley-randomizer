@@ -110,6 +110,7 @@
 	{
 		public bool RandomizeHorses { get; set; } = true;
 		public bool RandomizePets { get; set; } = true;
+		public bool RandomizeCritters { get; set; } = true;
 		public int CritterHueShiftMax { get; set; } = 359;
 	}
 }

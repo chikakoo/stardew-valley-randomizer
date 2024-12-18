@@ -72,7 +72,7 @@ namespace Randomizer
 
         /// <summary>
         /// Gets a list of file names in the patcher's folder
-        /// Igmores the output file name
+        /// Ignores the output file name
         /// </summary>
         /// <param name="subfolder">Any subfolder you with to search through instead - set to nothing by default</param>
         /// <param name="getFullPath">Whether to get the full path of the filename - false by default</param>

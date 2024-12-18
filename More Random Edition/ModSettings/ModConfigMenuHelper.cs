@@ -72,6 +72,7 @@ namespace Randomizer
 					Globals.Config.Animals.RandomizePets = val;
                     Globals.ModRef.Helper.GameContent.InvalidateCache(AnimalIconPatcher.StardewAssetPath);
                 });
+            AddCheckbox("RandomizeCritters", "Use custom images for critters using replacements in their respective directories.", () => Globals.Config.Animals.RandomizeCritters, (bool val) => Globals.Config.Animals.RandomizeCritters = val);
             AddHueShiftOption("Critter Hue Shift Max", "The maxmium value that critter images will be hue shifted by. Set to 0 for no effect.", () => Globals.Config.Animals.CritterHueShiftMax, (int val) => Globals.Config.Animals.CritterHueShiftMax = val);
 
             AddSectionTitle("Music Options");

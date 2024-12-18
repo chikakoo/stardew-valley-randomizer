@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
-using StardewValley;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +9,8 @@ namespace Randomizer
 {
     public class CritterPatcher : ImagePatcher
     {
+        private const int CritterImageWidth = 320;
+        private RNG Rng { get; set; }
         private static Texture2D CritterSpriteSheet { get; set; }
 
         private static readonly List<CritterSpriteSet> CritterSpriteSets = new()
@@ -33,7 +34,7 @@ namespace Randomizer
                         new(size: 12,
                             numberOfSprites: 5,
                             mainSheetStartingPoint: new Point(47, 333),
-                            spriteSheetStartingPoint: new Point(0, 32*9))
+                            spriteSheetStartingPoint: new Point(32 * 9, 0))
                     }
                 }),
             new("Birds",
@@ -61,7 +62,7 @@ namespace Randomizer
                 new Point(192, 336),
                 new Point(0, 384),
                 new Point(64, 384)),
-            new("SmallButterflies",
+            new("Small Butterflies",
                 size: 16,
                 numberOfSprites: 3,
                 new Point(0, 128),
@@ -91,17 +92,17 @@ namespace Randomizer
                         new(size: 32,
                             numberOfSprites: 1,
                             mainSheetStartingPoint: new Point(256, 192),
-                            spriteSheetStartingPoint: new Point(0, 32*6))
+                            spriteSheetStartingPoint: new Point(32 * 6, 0))
                     },
                     new()
                     {
                         new(size: 32,
                             numberOfSprites: 6,
-                            mainSheetStartingPoint: new Point(128, 244)),
+                            mainSheetStartingPoint: new Point(128, 224)),
                         new(size: 32,
                             numberOfSprites: 1,
                             mainSheetStartingPoint: new Point(288, 192),
-                            spriteSheetStartingPoint: new Point(0, 32*6))
+                            spriteSheetStartingPoint: new Point(32 * 6, 0))
                     }
                 }),
             new("Squirrel",
@@ -124,7 +125,7 @@ namespace Randomizer
                         new(size: 18,
                             numberOfSprites: 3,
                             mainSheetStartingPoint: new Point(0, 291),
-                            spriteSheetStartingPoint: new Point(0, 18*3))
+                            spriteSheetStartingPoint: new Point(18 * 3, 0))
                     }
                 }),
             new("Red Monkey",
@@ -140,7 +141,7 @@ namespace Randomizer
                             height: 12,
                             numberOfSprites: 3,
                             mainSheetStartingPoint: new Point(0, 333),
-                            spriteSheetStartingPoint: new Point(0, 20*7))
+                            spriteSheetStartingPoint: new Point(20 * 7, 0))
                     }
                 }),
             new("Monkey",
@@ -165,8 +166,8 @@ namespace Randomizer
         /// This data is to group each animal into its own set so that we can hue
         /// shift each sprite in the same way
         /// </summary>
-        private static readonly List<List<CritterSpriteLocation>> CritterLocationData = new()
-        {
+       // private static readonly List<List<CritterSpriteLocation>> CritterLocationData = new()
+        //{
             // DATA TO USE
             // Seagull - 32x32 (14 sprites)
             // 0, 0
@@ -218,7 +219,7 @@ namespace Randomizer
 
             // Bunnies - 32x32 (7 sprites)
             // 6 sprites at 128, 160; 1 sprite at 256, 192
-            // 6 sprites at 128, 244; 1 sprite at 288, 192
+            // 6 sprites at 128, 224; 1 sprite at 288, 192
 
             // Squirrel - 32x32 (8 sprites)
             // 0, 192
@@ -389,7 +390,7 @@ namespace Randomizer
             //// Opossum 
             //new List<CritterSpriteLocations>() {
             //    new(size: 32, startingPoint: new Point(0, 480), numberOfSprites: 9) },
-        };
+        //};
 
         /// <summary>
         /// The path to the critter asset
@@ -398,59 +399,156 @@ namespace Randomizer
 
         public CritterPatcher()
         {
-            // This patcher doesn't actually use this, it's strictly for saving the randomized image
-            SubFolder = $"CustomImages{Path.DirectorySeparatorChar}HueShiftedCritters";
+            SubFolder = "CustomImages/TileSheets/Critters";
         }
 
         public override void OnAssetRequested(IAssetData asset)
         {
+            if (!Globals.Config.Animals.RandomizeCritters)
+            {
+                return;
+            }
+
             CritterSpriteSheet = Globals.ModRef.Helper.GameContent.Load<Texture2D>(StardewAssetPath);
-            RNG rng = RNG.GetDailyRNG(nameof(CritterPatcher));
+            Rng = RNG.GetDailyRNG(nameof(CritterPatcher));
 
             var editor = asset.AsImage();
-            HueShiftAllCritters(editor, rng);
+            ReplaceAllCritters(editor);
 
-            // With the way we're doing this, we need to re-load the asset to write the current one
-            // so we'll only execute this if apprpriate
             if (Globals.Config.SaveRandomizedImages)
             {
                 TryWriteRandomizedImage(Globals.ModRef.Helper.GameContent.Load<Texture2D>(StardewAssetPath));
             }
         }
 
-        private static void HueShiftAllCritters(IAssetDataForImage editor, RNG rng)
+        private void ReplaceAllCritters(IAssetDataForImage editor)
         {
-            foreach(List<CritterSpriteLocation> spriteLocsList in CritterLocationData)
+            // For each sprite set (for example, all kinds of birds with 9 sprites)
+            foreach (var spriteSet in CritterSpriteSets)
             {
-                int hueShiftValue = rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
-                foreach (CritterSpriteLocation spriteLocs in spriteLocsList)
+                // For each place in the main sprite sheet we need to replace
+                foreach (var spriteLocationList in spriteSet.SpriteLocations) 
                 {
-                    HueShiftFromSpriteLocs(spriteLocs, editor, hueShiftValue);
+                    var subDirectory = spriteSet.SubDirectory;
+                    var files = GetAllFileNamesInFolder(subDirectory);
+                    if (files.Count == 0)
+                    {
+                        Globals.ConsoleWarn($"No critter images found - skipping critter set: {subDirectory}");
+                    }
+
+                    // For each sub-section of the sprite sheet we need to replace
+                    // e.g. the Red Monkey has two pieces (hence, we use the same sprite sheet image here)
+                    var spriteSheetDirectory = Path.Combine(PatcherImageFolder, subDirectory);
+                    var spriteSheetFullPath = GetRandomCritterImage(files, subDirectory, spriteSheetDirectory);
+                    foreach (var spriteLocation in spriteLocationList)
+                    {
+                        //TODO: "using" here?
+                        
+                        var hueShiftValue = Rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
+                        Texture2D critterSpriteSheet = ImageManipulator.ShiftImageHue(
+                            Globals.ModRef.Helper.ModContent
+                                .Load<Texture2D>(spriteSheetFullPath), hueShiftValue);
+
+                        PatchMainSpriteSheet(editor, critterSpriteSheet, spriteLocation);
+                    }
                 }
             }
         }
 
-        private static void HueShiftFromSpriteLocs(
-            CritterSpriteLocation spriteLocs, 
-            IAssetDataForImage editor, 
-            int hueShiftValue)
+        /// <summary>
+        /// Returns the path of a random critter image
+        /// Refills the list if there's none in it and logs a warning
+        /// </summary>
+        /// <param name="fileNames">The list of possible images</param>
+        /// <param name="critterSetName">The name of the critter set</param>"
+        /// <param name="pathToImages">The path to the images to look in</param>
+        /// <returns>The path of the random image retrieved</returns>
+        private string GetRandomCritterImage(
+            List<string> fileNames, string critterSetName, string pathToImages)
         {
-            int startingX = spriteLocs.MainSheetStartingPoint.X;
-            int y = spriteLocs.MainSheetStartingPoint.Y;
-            int width = spriteLocs.Width;
-            int height = spriteLocs.Height;
-            for (int i = 0; i < spriteLocs.NumberOfSprites; i++)
+            if (fileNames.Count == 0)
             {
-                int x = (width * i) + startingX;
-                Rectangle cropRectangle = new(x, y, width, height);
+                //TODO: test that this actually works
+                Globals.ConsoleWarn($"Refreshing critter list, as we ran out for set: {critterSetName}");
+                fileNames = GetAllFileNamesInFolder(critterSetName);
+            }
 
-                using Texture2D hueShiftedCritter = ImageManipulator.ShiftImageHue(
-                    ImageManipulator.Crop(CritterSpriteSheet, cropRectangle, Game1.graphics.GraphicsDevice),
-                    hueShiftValue);
+            var fileName = Rng.GetAndRemoveRandomValueFromList(fileNames);
+            return Path.Combine(pathToImages, fileName);
+        }
 
-                editor.PatchImage(hueShiftedCritter, targetArea: cropRectangle);
+        private static void PatchMainSpriteSheet(
+            IAssetDataForImage editor, 
+            Texture2D critterSpriteSheet, 
+            CritterSpriteLocation spriteLocation)
+        {
+            var yOffset = 0;
+            var xOffset = 0;
+            for (var i = 0; i < spriteLocation.NumberOfSprites; i++)
+            {
+                var spriteWidth = spriteLocation.Width;
+                var spriteHeight = spriteLocation.Height;
+
+                var sourceX = spriteLocation.SpriteSheetStartingPoint.X + i * spriteWidth;
+                var sourceY = spriteLocation.SpriteSheetStartingPoint.Y;
+                Rectangle sourceRectangle = new(sourceX, sourceY, spriteWidth, spriteHeight);
+
+                var targetX = (spriteLocation.MainSheetStartingPoint.X + i * spriteWidth) + xOffset;
+                var targetY = spriteLocation.MainSheetStartingPoint.Y + yOffset;
+
+                // TODO: FIND OUT WHY THIS PART IS ONLY AFFECTING THE FIRST IMAGE ON WRAPAROUND
+
+                // If we've gone beyond the edge of the page, wrap around to the start of the next line
+                if (targetX + spriteWidth > CritterImageWidth)
+                {
+                    // We now need to offset everything by these values, as we're on the second line
+                    xOffset = targetX;
+                    yOffset = spriteHeight;
+
+                    targetX = 0;
+                    targetY += yOffset;
+                }
+
+                Rectangle targetRectangle = new(targetX, targetY, spriteWidth, spriteHeight);
+
+                editor.PatchImage(critterSpriteSheet, sourceRectangle, targetRectangle);
             }
         }
+
+
+        //private static void HueShiftAllCritters(IAssetDataForImage editor, RNG rng)
+        //{
+            //foreach(List<CritterSpriteLocation> spriteLocsList in CritterLocationData)
+            //{
+            //    int hueShiftValue = rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
+            //    foreach (CritterSpriteLocation spriteLocs in spriteLocsList)
+            //    {
+            //        HueShiftFromSpriteLocs(spriteLocs, editor, hueShiftValue);
+            //    }
+            //}
+        //}
+
+        //private static void HueShiftFromSpriteLocs(
+        //    CritterSpriteLocation spriteLocs, 
+        //    IAssetDataForImage editor, 
+        //    int hueShiftValue)
+        //{
+        //    int startingX = spriteLocs.MainSheetStartingPoint.X;
+        //    int y = spriteLocs.MainSheetStartingPoint.Y;
+        //    int width = spriteLocs.Width;
+        //    int height = spriteLocs.Height;
+        //    for (int i = 0; i < spriteLocs.NumberOfSprites; i++)
+        //    {
+        //        int x = (width * i) + startingX;
+        //        Rectangle cropRectangle = new(x, y, width, height);
+
+        //        using Texture2D hueShiftedCritter = ImageManipulator.ShiftImageHue(
+        //            ImageManipulator.Crop(CritterSpriteSheet, cropRectangle, Game1.graphics.GraphicsDevice),
+        //            hueShiftValue);
+
+        //        editor.PatchImage(hueShiftedCritter, targetArea: cropRectangle);
+        //    }
+        //}
 
         /// <summary>
         /// Groups all sprite locations into a set so that it can be grouped in a single directory

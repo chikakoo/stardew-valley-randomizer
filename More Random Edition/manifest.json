@@ -5,7 +5,7 @@
   "Description": "Randomizes many gameplay and visual aspects of the game, see the readme for more info.",
   "UniqueID": "Chikakoo.Randomizer",
   "EntryDll": "More Random Edition.dll",
-  "MinimumApiVersion": "4.1.4",
-  "MinimumGameVersion": "1.6.11",
+  "MinimumApiVersion": "4.1.10",
+  "MinimumGameVersion": "1.6.14",
   "UpdateKeys": [ "Nexus:5311" ]
 }

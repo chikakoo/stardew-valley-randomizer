@@ -122,11 +122,48 @@ Seeds:
   - Eachimage must be 16 x 16px
   - Ensure that the seed in the corresponding seed image lines up with the standard location of all the Trellis Packets, or the image will look strange
 
-TileSheets/Rain:
+TileSheets:
+-----------
+This directory contains rain and critter modifications.
+
+Rain:
 Contains images to be used as the rain graphics. The randomizer will choose one of them at the start of every day.
 - Each image must be 64 x 32px
 
+Critters:
+Critters are the various environmental animals you see while walking around, such as birds and butterflies. It also includes the crow and the owl. 
+
+This directory contains several folders grouping sets of critters together.
+- For each folder, a set amount of them are randomly chosen to use for the current day
+- Each image chosen is hue-shifted (based on the setting value) before being added to the sprite sheet
+  - If you do not want an image to be hue-shifted, name it with the prefix "-no-hue-shift"
+    - e.g. "Turtle-no-hue-shift.png" will not be hue-shifted
+- The images there by default currently only consist of the main game's critters
+
+Below is a breakdown of how each sprite sheets work. Every sprite sheet is layed out horizontally only.
+- Seagull: 14 32x32 sprites, 1 replacement
+- Crow: 11 32x32 sprites, 1 replacement
+- Perching Bird - consists of two sections (1 replacement)
+  - 9 32x32 sprites, followed by...
+  - 5 12x12 sprites (aligned to the top of the spritesheet, directly to the right of the first 9 sprites)
+- Birds: 9 32x32 sprites, 5 replacements
+- Butterflies: 4 16x16 sprites, 14 replacements
+- Small Butterflies: 3 16x16 sprites, 8 replacements
+- Woodpecker: 5 16x16 sprites, 1 replacement
+- Owl: 4 32x32 sprites, 1 replacement
+- Bunnies: 7 32x32 sprites, 2 replacements
+- Squirrel: 8 32x32 sprites, 1 replacement
+- Frogs: 7 16x16 sprites, 2 replacements
+- Crab: 6 18x18 sprites, 1 replacement (yes, it is 18 and not 16)
+- Red Monkey - consists of two sections (1 replacement)
+  - 7 20x24 sprites, followed by...
+  - 3 15x12 sprites (aligned to the top of the spritesheet, directly to the right of the first 7 sprites)
+- Monkey: 4 20x24 sprites, 1 replacement
+- Gorilla: 7 32x32 sprites, 1 replacement
+- Opossum: 9 32x32 sprites, 1 replacement
+
 Weapons:
+--------
 The weapons are divided among four different folders, to represent the different weapon types. Each directory has the following rules, with the exception of the Slingshots directory, which is currently unused:
 
 - Each image must be 16 x 16px

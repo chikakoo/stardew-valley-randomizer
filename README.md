@@ -130,8 +130,8 @@ The [Trout Derby]([url](https://stardewvalleywiki.com/Trout_Derby)) works differ
 * Graphics randomization - some of these are modified from the Time Fantasy assets (https://www.timefantasy.net/)
   * Horse: chooses a random horse image from the files in CustomImages/Animals/Horses
   * Pets: chooses a random pet image from the files in CustomImages/Animals/Pets
-  * Rain: every day chooses a random rain image from the files in CustomImages/TileSheets
-  * Critters: every day, all critters will get a random hue shift
+  * Rain: every day chooses a random rain image from the files in CustomImages/TileSheets/Rain
+  * Critters: every day, all critters will be randomly selected from the files in CustomImages/TileSheets/Critters, and then hue-shifted
 * Music randomization
   * Most in-game songs and ambience are now randomly swapped 1 to 1 with another in-game song or ambience
   * Option to play a completely random song each time an area is moved to
@@ -144,6 +144,10 @@ The [Trout Derby]([url](https://stardewvalleywiki.com/Trout_Derby)) works differ
   * Randomizes the season and day of each NPC's birthday
   * Does not assign birthdays to the same day
   * Does not assign birthdays on the same day of most festivals (excludes night market and the moonlight jellies)
+* NPC skin shuffle (OFF BY DEFAULT)
+  * Note that this setting can result in graphical weirdness, use at your own risk!
+  * Shuffles NPC skins and portaits among each other
+    * Any sprite sheets that are different sizes are tiled and/or cropped so they can work together
 * Garbage Can Randomizer
   * Places disliked/hated items in garbage cans from characters that are likely to use them
 * Spoiler log

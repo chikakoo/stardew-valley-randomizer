@@ -69,9 +69,9 @@ namespace Randomizer
                 new Point(128, 112),
                 new Point(192, 112),
                 new Point(256, 112),
-                new Point(64, 228),
-                new Point(128, 228),
-                new Point(192, 228),
+                new Point(64, 288),
+                new Point(128, 288),
+                new Point(192, 288),
                 new Point(256, 288),
                 new Point(128, 336),
                 new Point(192, 336),
@@ -136,10 +136,10 @@ namespace Randomizer
                     {
                         new(size: 18,
                             numberOfSprites: 3,
-                            mainSheetStartingPoint: new Point(0, 273)),
+                            mainSheetStartingPoint: new Point(0, 272)),
                         new(size: 18,
                             numberOfSprites: 3,
-                            mainSheetStartingPoint: new Point(0, 291),
+                            mainSheetStartingPoint: new Point(0, 290),
                             spriteSheetStartingPoint: new Point(18 * 3, 0))
                     }
                 }),

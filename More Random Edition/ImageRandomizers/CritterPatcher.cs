@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace Randomizer
 {
-    //TODO: add -no-hue-shift suffix support
     public class CritterPatcher : ImagePatcher
     {
         /// <summary>
@@ -233,7 +232,9 @@ namespace Randomizer
                     // For each sub-section of the sprite sheet we need to replace
                     // e.g. the Red Monkey has two pieces (hence, we use the same sprite sheet image here)
                     var spriteSheetFullPath = GetRandomCritterImage(files, subDirectory, spriteSheetDirectory);
-                    var hueShiftValue = Rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
+                    var hueShiftValue = spriteSheetFullPath.EndsWith("no-hue-shift.png")
+                        ? 0
+                        : Rng.NextIntWithinRange(0, Globals.Config.Animals.CritterHueShiftMax);
                     using Texture2D critterSpriteSheet = ImageManipulator.ShiftImageHue(
                         Globals.ModRef.Helper.ModContent
                             .Load<Texture2D>(spriteSheetFullPath), hueShiftValue);
@@ -256,7 +257,6 @@ namespace Randomizer
         {
             if (fileNames.Count == 0)
             {
-                //TODO: test that this actually works
                 Globals.ConsoleWarn($"Refreshing critter list, as we ran out for set: {critterSetName}");
                 fileNames = GetAllFileNamesInFolder(critterSetName);
             }

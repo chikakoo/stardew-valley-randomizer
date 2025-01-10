@@ -105,8 +105,8 @@ namespace Randomizer
 		/// <returns>The random item drop</returns>
 		private static ItemDrop GetRandomItemDrop()
 		{
-			double probability = 0;
-			Item item = null;
+			double probability;
+			Item item;
 			if (Rng.NextBoolean())
 			{
 				item = ItemList.GetRandomItemAtDifficulty(Rng, ObtainingDifficulties.NoRequirements);

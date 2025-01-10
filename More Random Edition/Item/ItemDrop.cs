@@ -1,13 +1,12 @@
-﻿using StardewValley;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Randomizer
 {
-	/// <summary>
-	/// Represents an item drop - contains an item and probability
-	/// </summary>
-	public class ItemDrop
+    /// <summary>
+    /// Represents an item drop - contains an item and probability
+    /// </summary>
+    public class ItemDrop
 	{
 		public Item ItemToDrop { get; set; }
 		public double Probability { get; set; }
@@ -17,6 +16,15 @@ namespace Randomizer
 			ItemToDrop = itemId.GetItem();
             Probability = probability;
 		}
+
+        public ItemDrop(string stringId, double probability)
+        {
+			ItemToDrop = new Item(stringId)
+			{
+                OverrideName = stringId
+			};
+            Probability = probability;
+        }
 
         /// <summary>
         /// Parses an item drop string into a list of item drops
@@ -34,7 +42,7 @@ namespace Randomizer
 			string[] itemTokens = itemDropString.Split(' ');
 			for (int i = 0; i + 1 < itemTokens.Length; i += 2)
 			{
-				ObjectIndexes itemIndex = ObjectIndexes.Slime;
+				ObjectIndexes? itemIndex = default;
 				string itemId = itemTokens[i].Trim();
 
                 if (itemId == "-4")
@@ -53,7 +61,7 @@ namespace Randomizer
                     }
                     catch (Exception)
                     {
-                        Globals.ConsoleError($"Invalid token when parsing monster item drop in string: {itemDropString}");
+                        Globals.ConsoleWarn($"Object index not found when parsing monster item drop in string (expected in some mods): {itemDropString}");
                     }
                 }
 
@@ -63,7 +71,14 @@ namespace Randomizer
 					probability = 0.75;
 				}
 
-				itemDrops.Add(new ItemDrop(itemIndex, probability));
+				if (itemIndex.HasValue)
+				{
+                    itemDrops.Add(new ItemDrop(itemIndex.Value, probability));
+                } 
+				else
+				{
+                    itemDrops.Add(new ItemDrop(itemId, probability));
+                }
 			}
 
 			return itemDrops;

@@ -118,6 +118,7 @@ namespace Randomizer
             int price = -1, 
             int availableStock = -1,
             bool isRecipe = false,
+            string recipeName = null,
             string condition = null,
             int? maxItems = null)
         {
@@ -144,7 +145,7 @@ namespace Randomizer
                 MinStack = -1,
                 MaxStack = -1,
                 Quality = -1,
-                ObjectInternalName = null,
+                ObjectInternalName = isRecipe ? recipeName : null, // Used so shop tooltips for recipes work properly
                 ObjectDisplayName = null,
                 ToolUpgradeLevel = -1,
                 IsRecipe = isRecipe,
@@ -172,10 +173,21 @@ namespace Randomizer
             int price = -1,
             int availableStock = -1,
             bool isRecipe = false,
+            string recipeName = null,
             string condition = null,
             int? maxItems = null)
         {
-            AddStock(GetNewShopItem(qualifiedId, uniqueId, price, availableStock, isRecipe, condition, maxItems));
+            AddStock(
+                GetNewShopItem(
+                    qualifiedId, 
+                    uniqueId, 
+                    price, 
+                    availableStock, 
+                    isRecipe,
+                    recipeName,
+                    condition, 
+                    maxItems)
+            );
         }
 
         /// <summary>

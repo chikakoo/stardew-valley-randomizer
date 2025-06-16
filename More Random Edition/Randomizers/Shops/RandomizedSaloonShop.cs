@@ -40,20 +40,26 @@ namespace Randomizer
 
             // Random Cooked Items - pick 3-5 random dishes each week
             var numberOfCookedItems = shopRNG.NextIntWithinRange(3, 5);
-            List<string> allCookedItemIds = ItemList.GetCookedItems()
-                .Select(item => item.QualifiedId)
+            List<CookedItem> allCookedItems = ItemList.GetCookedItems()
+                .Cast<CookedItem>()
                 .ToList();
-            List<string> gusFoodList =
-                shopRNG.GetRandomValuesFromList(allCookedItemIds, numberOfCookedItems);
-            gusFoodList.ForEach(itemId => AddStock(itemId, $"FoodItem-{itemId}"));
+            shopRNG.GetRandomValuesFromList(
+                    allCookedItems.Select(item => item.QualifiedId).ToList(), 
+                    numberOfCookedItems)
+                .ForEach(itemId => AddStock(itemId, $"FoodItem-{itemId}"));
 
-            // Random Cooking Recipes - pick 3-5 random recipes each week
-            // Note that the game will not include these if they are already learned
+            /// Adds random cooking recipes
+            /// - Pick 3-5 random recipes each week
+            /// - Note that the game will not include these if they are already learned
             var numberOfRecipes = shopRNG.NextIntWithinRange(3, 5);
-            List<string> gusRecipeList = 
-                shopRNG.GetRandomValuesFromList(allCookedItemIds, numberOfRecipes);
-            gusRecipeList.ForEach(itemId =>
-                AddStock(itemId, $"RecipeItem-{itemId}", isRecipe: true));
+            shopRNG.GetRandomValuesFromList(allCookedItems, numberOfRecipes)
+                .ForEach(cookedItem =>
+                    AddStock(
+                        cookedItem.QualifiedId, 
+                        $"RecipeItem-{cookedItem.QualifiedId}", 
+                        isRecipe: true,
+                        recipeName: cookedItem.RecipeName)
+                    );
         }
     }
 }

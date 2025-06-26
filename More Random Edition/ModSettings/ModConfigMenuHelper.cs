@@ -20,7 +20,7 @@ namespace Randomizer
 			AddCheckbox("Create Bundle Log", "Creates a text file with most community center bundle required items and shorthand versions of seasons/locations for certain items. Does not spoil rewards.", () => Globals.Config.CreateBundleLog, (bool val) => Globals.Config.CreateBundleLog = val);
 			AddCheckbox("Save Randomized Images", "Saves most of the randomized images under a file called \"randomizedImages.png\". Used for debugging purposes - will slow down load times if on.", () => Globals.Config.SaveRandomizedImages, (bool val) => Globals.Config.SaveRandomizedImages = val);
 
-			AddSectionTitle("---RANDOMIZATION OPTIONS---", "Toggle on or off the various aspects of the game which can be randomized.");
+			AddSectionTitle("---RANDOMIZATION OPTIONS---", "Toggle on or off the various aspects of the game which can be randomized. Note that toggling random images from ON to OFF will require a game restart to reload the default image.");
 
 			AddSectionTitle("Bundle Options");
 			AddCheckbox("Community Center Bundles", "Generate new bundles for each room which select a random number of items from a themed pool.", () => Globals.Config.Bundles.Randomize, (bool val) => Globals.Config.Bundles.Randomize = val);
@@ -54,8 +54,9 @@ namespace Randomizer
             AddHueShiftOption("Hue Shift Max", "The maxmium value that monster images will be hue shifted by (excludes slimes). Set to 0 for no effect.", () => Globals.Config.Monsters.HueShiftMax, (int val) => Globals.Config.Monsters.HueShiftMax = val);
 
             AddSectionTitle("Weapon Options");
-			AddCheckbox("Weapons", "Randomize weapon stats, types, and drop locations.", () => Globals.Config.Weapons.Randomize, (bool val) => Globals.Config.Weapons.Randomize = val);
-			AddCheckbox("Use Custom Weapon Images", "Use custom images for weapons.", () => Globals.Config.Weapons.UseCustomImages, (bool val) => Globals.Config.Weapons.UseCustomImages = val);
+			AddCheckbox("Randomize Stats", "Randomize weapon stats, types, and drop locations.", () => Globals.Config.Weapons.RandomizeStats, (bool val) => Globals.Config.Weapons.RandomizeStats = val);
+            AddCheckbox("Randomize Names", "Randomize weapon names.", () => Globals.Config.Weapons.RandomizeNames, (bool val) => Globals.Config.Weapons.RandomizeNames = val);
+            AddCheckbox("Use Custom Weapon Images", "Use custom images for weapons.", () => Globals.Config.Weapons.UseCustomImages, (bool val) => Globals.Config.Weapons.UseCustomImages = val);
 
 			AddSectionTitle("Boot Options");
 			AddCheckbox("Boots", "Randomize boots stats, names, descriptions.", () => Globals.Config.Boots.Randomize, (bool val) => Globals.Config.Boots.Randomize = val);

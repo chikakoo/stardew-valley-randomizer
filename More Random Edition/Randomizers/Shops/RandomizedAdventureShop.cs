@@ -15,7 +15,7 @@ namespace Randomizer
         /// <returns>True if we should modify the shop</returns>
 		public override bool ShouldModifyShop()
 		{
-			return Globals.Config.Weapons.Randomize ||
+			return Globals.Config.Weapons.RandomizeStats ||
                 Globals.Config.Boots.Randomize;
 		}
 

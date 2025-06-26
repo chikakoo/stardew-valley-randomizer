@@ -1,5 +1,6 @@
 ﻿using StardewValley;
 using StardewValley.GameData.Weapons;
+using StardewValley.TokenizableStrings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +13,22 @@ namespace Randomizer
     public class WeaponRandomizer
 	{
 		public readonly static Dictionary<string, WeaponData> Weapons = new();
-		private static RNG Rng { get; set; }
-
-		/// <summary>
-		/// Returns the object use to modify the weapons
-		/// </summary>
-		/// <returns />
-		public static Dictionary<string, WeaponData> Randomize()
+        public readonly static Dictionary<string, string> WeaponNameMap = new();
+        private static RNG Rng { get; set; }
+        
+        /// <summary>
+        /// Returns the object use to modify the weapons
+        /// </summary>
+        /// <returns />
+        public static Dictionary<string, WeaponData> Randomize()
 		{
 			Weapons.Clear();
-			Rng = RNG.GetFarmRNG(nameof(WeaponRandomizer));
-			WeaponAndArmorNameRandomizer nameRandomizer = new(nameof(WeaponRandomizer));
+			WeaponNameMap.Clear();
+            Rng = RNG.GetFarmRNG(nameof(WeaponRandomizer));
+            WeaponAndArmorNameRandomizer nameRandomizer = new(nameof(WeaponRandomizer));
 
-			// Exclude slingshots and scythes for now
-			Dictionary<string, WeaponData> weaponReplacements = Game1.weaponData
+            // Exclude slingshots and scythes for now
+            Dictionary<string, WeaponData> weaponReplacements = Game1.weaponData
 				.Where(keyValuePair => {
 					var weaponName = keyValuePair.Value.Name;
 					return !weaponName.Contains("Slingshot") && !weaponName.Contains("Scythe");
@@ -37,9 +40,12 @@ namespace Randomizer
 				// If this fails to be an int, it is a modded weapon, so just skip it
 				if (int.TryParse(weaponData.Key, out int weaponIndex))
 				{
-					// In this case, we're checking the setting in RandomizeWeapon instead of existing early
-					// since WeaponImageBuilder relies on Weapons to be populated
-					RandomizeWeapon(weaponData.Value, (WeaponIndexes)weaponIndex, nameRandomizer);
+					// Fill the weapon name map BEFORE the name is randomized!
+                    WeaponNameMap.Add(weaponData.Key, TokenParser.ParseText(weaponData.Value.DisplayName));
+
+                    // In this case, we're checking the setting in RandomizeWeapon instead of existing early
+                    // since WeaponImageBuilder relies on Weapons to be populated
+                    RandomizeWeapon(weaponData.Value, (WeaponIndexes)weaponIndex, nameRandomizer);
 					Weapons.Add(weaponData.Key, weaponData.Value);
 				}
 			}
@@ -52,40 +58,65 @@ namespace Randomizer
 		/// Randomizes the values on the given weapon
 		/// </summary>
 		/// <param name="weapon">The weapon to randomize</param>
-		/// <param name="nameRandomizer">The name randomizer</param>
+		/// <param name="weaponIndex">The index of the weapon</param>
+		/// <param name="nameRandomizer">The randomizer to use for the weapon names</param>
 		private static void RandomizeWeapon(
 			WeaponData weapon,
-            WeaponIndexes weaponIndex, 
-			WeaponAndArmorNameRandomizer nameRandomizer)
+            WeaponIndexes weaponIndex,
+            WeaponAndArmorNameRandomizer nameRandomizer)
 		{
-			if (!Globals.Config.Weapons.Randomize)
-			{
-				return;
-			}
+			RandomizeWeaponName(weapon, weaponIndex, nameRandomizer);
+			RandomizeWeaponStats(weapon, weaponIndex);
+		}
+
+        /// <summary>
+        /// Randomizes the mame of the given weapon
+        /// </summary>
+        /// <param name="weapon">The weapon to randomize</param>
+        /// <param name="weaponIndex">The index of the weapon</param>
+		/// <param name="nameRandomizer">The randomizer to use for the weapon names</param>
+        private static void RandomizeWeaponName(
+			WeaponData weapon, 
+			WeaponIndexes weaponIndex,
+            WeaponAndArmorNameRandomizer nameRandomizer)
+		{
+			if (!Globals.Config.Weapons.RandomizeNames) { return; }
 
             if (weapon.Type == (int)WeaponType.Slingshot)
-			{
-				//TODO: assign the name here after we deal with the slingshot name hardcoding issue
-				// Doing this to advance the RNG so we don't affect seeds when we do actually
-				// assign one for the slingshot - don't actually assign the name yet, though
-				nameRandomizer.GenerateRandomWeaponName((WeaponType)weapon.Type, weaponIndex);
-				return;
-			}
+            {
+                //TODO: assign the name here after we deal with the slingshot name hardcoding issue
+                // Doing this to advance the RNG so we don't affect seeds when we do actually
+                // assign one for the slingshot - don't actually assign the name yet, though
+                nameRandomizer.GenerateRandomWeaponName((WeaponType)weapon.Type, weaponIndex);
+                return;
+            }
 
-			RandomizeWeaponType(weapon);
-			RandomizeWeaponDamage(weapon);
-			RandomizeWeaponCrits(weapon);
-			RandomizeWeaponKnockback(weapon);
-			RandomizeWeaponSpeed(weapon);
-			RandomizeWeaponAOE(weapon);
-			RandomizeWeaponPrecision(weapon);
-			RandomizeWeaponDefense(weapon);
-			RandomizeWeaponDropInfo(weapon, weaponIndex);
-			SetWeaponDescription(weapon, weaponIndex);
+            string weaponName = nameRandomizer.GenerateRandomWeaponName((WeaponType)weapon.Type);
+            weapon.DisplayName = weaponName;
+        }
 
-			string weaponName = nameRandomizer.GenerateRandomWeaponName((WeaponType)weapon.Type);
-			weapon.DisplayName = weaponName;
-		}
+        /// <summary>
+        /// Randomizes the stats of the given weapon
+        /// </summary>
+        /// <param name="weapon">The weapon to randomize</param>
+        /// <param name="weaponIndex">The index of the weapon</param>
+        private static void RandomizeWeaponStats(
+			WeaponData weapon,
+            WeaponIndexes weaponIndex)
+		{
+            if (!Globals.Config.Weapons.RandomizeStats) { return; }
+
+            RandomizeWeaponType(weapon);
+            RandomizeWeaponDamage(weapon);
+            RandomizeWeaponCrits(weapon);
+            RandomizeWeaponKnockback(weapon);
+            RandomizeWeaponSpeed(weapon);
+            RandomizeWeaponAOE(weapon);
+            RandomizeWeaponPrecision(weapon);
+            RandomizeWeaponDefense(weapon);
+            RandomizeWeaponDropInfo(weapon, weaponIndex);
+            SetWeaponDescription(weapon, weaponIndex);
+        }
 
 		/// <summary>
 		/// Randomizes the weapon type
@@ -388,21 +419,30 @@ namespace Randomizer
 		/// <param name="modifiedWeaponDictionary">The dictionary with changed info</param>
 		private static void WriteToSpoilerLog(Dictionary<string, WeaponData> modifiedWeaponDictionary)
 		{
-			if (!Globals.Config.Weapons.Randomize) { return; }
+			if (!Globals.Config.Weapons.ShouldSaveChanges()) { return; }
 
 			Globals.SpoilerWrite("==== WEAPONS ====");
 			foreach (var weaponData in modifiedWeaponDictionary)
 			{
 				WeaponData weapon = weaponData.Value;
 
-                Globals.SpoilerWrite($"{weaponData.Key}: {weapon.DisplayName}");
-				Globals.SpoilerWrite($"Type: {Enum.GetName(typeof(WeaponType), weapon.Type)}");
-				Globals.SpoilerWrite($"Damage: {weapon.MinDamage} - {weapon.MaxDamage}");
-				Globals.SpoilerWrite($"Crit Chance / Multiplier: {weapon.CritChance} / {weapon.CritMultiplier}");
-				Globals.SpoilerWrite($"Knockback / Speed / AOE: {weapon.Knockback} / {weapon.Speed} / {weapon.AreaOfEffect}");
-				Globals.SpoilerWrite($"Added Precision / Defense: {weapon.Precision} / {weapon.Defense}");
-				Globals.SpoilerWrite($"Base / Min Mine Level Drop: {weapon.MineBaseLevel} / {weapon.MineMinLevel}");
-				Globals.SpoilerWrite("---");
+				var originalWeaponName = WeaponNameMap[weaponData.Key];
+                var weaponName = Globals.Config.Weapons.RandomizeNames
+					? $"{originalWeaponName}: {weapon.DisplayName}"
+					: originalWeaponName;
+
+                Globals.SpoilerWrite(weaponName);
+
+				if (Globals.Config.Weapons.RandomizeStats)
+				{
+                    Globals.SpoilerWrite($"Type: {Enum.GetName(typeof(WeaponType), weapon.Type)}");
+                    Globals.SpoilerWrite($"Damage: {weapon.MinDamage} - {weapon.MaxDamage}");
+                    Globals.SpoilerWrite($"Crit Chance / Multiplier: {weapon.CritChance} / {weapon.CritMultiplier}");
+                    Globals.SpoilerWrite($"Knockback / Speed / AOE: {weapon.Knockback} / {weapon.Speed} / {weapon.AreaOfEffect}");
+                    Globals.SpoilerWrite($"Added Precision / Defense: {weapon.Precision} / {weapon.Defense}");
+                    Globals.SpoilerWrite($"Base / Min Mine Level Drop: {weapon.MineBaseLevel} / {weapon.MineMinLevel}");
+                    Globals.SpoilerWrite("---");
+                }
 			}
 			Globals.SpoilerWrite("");
 		}

@@ -120,7 +120,7 @@ namespace Randomizer
             if (e.NameWithoutLocale.IsEquivalentTo("Data/FruitTrees")) { return Globals.Config.RandomizeFruitTrees; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Crops")) { return Globals.Config.Crops.Randomize; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/TV/CookingChannel")) { return Globals.Config.Crops.Randomize || Globals.Config.Fish.Randomize; }
-            if (e.NameWithoutLocale.IsEquivalentTo("Data/Weapons")) { return Globals.Config.Weapons.Randomize; }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Weapons")) { return Globals.Config.Weapons.ShouldSaveChanges(); }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Boots")) { return Globals.Config.Boots.Randomize; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Monsters")) { return Globals.Config.Monsters.Randomize; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Characters")) { return Globals.Config.NPCs.RandomizeBirthdays; }

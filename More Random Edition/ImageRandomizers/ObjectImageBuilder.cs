@@ -331,7 +331,7 @@ namespace Randomizer
 			string itemId = OverlayDataToItemIds[overlayData];
 			if (BootRandomizer.BootData.Keys.Any(x => x == itemId.ToString()))
 			{
-				return Globals.Config.Boots.Randomize && Globals.Config.Boots.UseCustomImages;
+				return Globals.Config.Boots.UseCustomImages;
 			}
 
 			Item item = ItemList.Items[itemId];

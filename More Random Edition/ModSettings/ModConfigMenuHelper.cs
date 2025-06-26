@@ -59,8 +59,9 @@ namespace Randomizer
             AddCheckbox("Use Custom Weapon Images", "Use custom images for weapons.", () => Globals.Config.Weapons.UseCustomImages, (bool val) => Globals.Config.Weapons.UseCustomImages = val);
 
 			AddSectionTitle("Boot Options");
-			AddCheckbox("Boots", "Randomize boots stats, names, descriptions.", () => Globals.Config.Boots.Randomize, (bool val) => Globals.Config.Boots.Randomize = val);
-			AddCheckbox("Use Custom Boot Images", "Use custom images for boots.", () => Globals.Config.Boots.UseCustomImages, (bool val) => Globals.Config.Boots.UseCustomImages = val);
+			AddCheckbox("Randomize Stats", "Randomize boots stats.", () => Globals.Config.Boots.RandomizeStats, (bool val) => Globals.Config.Boots.RandomizeStats = val);
+            AddCheckbox("Randomize Names", "Randomize boot names and descriptions.", () => Globals.Config.Boots.RandomizeNames, (bool val) => Globals.Config.Boots.RandomizeNames = val);
+            AddCheckbox("Use Custom Boot Images", "Use custom images for boots.", () => Globals.Config.Boots.UseCustomImages, (bool val) => Globals.Config.Boots.UseCustomImages = val);
 			AddHueShiftOption("Hue Shift Max", "The maxmium value that boot images will be hue-shifted. Set to 0 for no effect.", () => Globals.Config.Boots.HueShiftMax, (int val) => Globals.Config.Boots.HueShiftMax = val);
 
 			AddSectionTitle("Animal Options");

@@ -16,7 +16,7 @@ namespace Randomizer
 		public override bool ShouldModifyShop()
 		{
 			return Globals.Config.Weapons.RandomizeStats ||
-                Globals.Config.Boots.Randomize;
+                Globals.Config.Boots.RandomizeStats;
 		}
 
 		/// <summary>

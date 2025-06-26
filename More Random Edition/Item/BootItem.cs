@@ -8,12 +8,14 @@ namespace Randomizer
     /// </summary>
     public class BootItem : Item
 	{
+		public string OriginalName { get; set; }
 		public string Description { get; set; }
 		public int Defense { get; set; }
 		public int Immunity { get; set; }
 
         public BootItem(
-			string id,
+            string originalName,
+            string id,
 			string name,
 			int defense,
 			int immunity) : base(id)
@@ -22,6 +24,7 @@ namespace Randomizer
             CanStack = false;
             ShouldBeForagable = false;
 
+			OriginalName = originalName;
             OverrideName = name;
             Description = BootRandomizer.BootData[id.ToString()].Split("/")[(int)BootIndexes.Description];
             Defense = defense;
@@ -29,11 +32,12 @@ namespace Randomizer
         }
 
         public BootItem(
+			string originalName,
 			string id,
 			string name,
 			string description,
 			int defense,
-			int immunity) : this(id, name, defense, immunity)
+			int immunity) : this(originalName, id, name, defense, immunity)
 		{
 			if (Globals.ModRef.Helper.Translation.LocaleEnum == LocalizedContentManager.LanguageCode.en)
 			{
@@ -63,7 +67,12 @@ namespace Randomizer
 			originalData[(int)BootIndexes.Price] = GetBuyPrice().ToString();
             originalData[(int)BootIndexes.Defense] = Defense.ToString();
             originalData[(int)BootIndexes.Immunity] = Immunity.ToString();
-            originalData[(int)BootIndexes.DisplayName] = OverrideName;
+
+			// If we are randomizing names, override it; otherwise, keep the old name
+			originalData[(int)BootIndexes.DisplayName] = 
+				Globals.Config.Boots.RandomizeNames
+					? OverrideName
+					: OriginalName;
 
             return string.Join("/", originalData);
 		}

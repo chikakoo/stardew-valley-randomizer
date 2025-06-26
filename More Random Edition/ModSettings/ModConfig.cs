@@ -45,12 +45,16 @@
 		public bool ShouldSaveChanges()
 			=> RandomizeStats || RandomizeNames;
 	}
-
+	
 	public class BootsConfig
 	{
-		public bool Randomize { get; set; } = true;
-		public bool UseCustomImages { get; set; } = true;
+        public bool RandomizeStats { get; set; } = true;
+        public bool RandomizeNames { get; set; } = true;
+        public bool UseCustomImages { get; set; } = true;
         public int HueShiftMax { get; set; } = 359;
+
+        public bool ShouldSaveChanges()
+			=> RandomizeStats || RandomizeNames;
     }
 
 	public class MonstersConfig

@@ -423,7 +423,7 @@ namespace Randomizer
 				if (Globals.Config.Crops.RandomizeStats)
 				{
                     Globals.SpoilerWrite($"- Seed Buy Price: {seedItem.Price * 2}G - Crop Sell Price: {cropItem.Price}G");
-                    Globals.SpoilerWrite($"{seedItem.Id}: {seedItem.Description}");
+                    Globals.SpoilerWrite($"{seedItem.Id} ({seedItem.Name}): {seedItem.Description}");
                     Globals.SpoilerWrite("---");
                 }
 			}

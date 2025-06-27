@@ -21,7 +21,7 @@ namespace Randomizer
 			stringReplacements["Farmer.cs.1918"] = Globals.GetTranslation("Farmer.cs.1918", new { seedName = parsnipSeedName });
 
 			// Fix the queen of sauce strings so it doesn't say the wrong recipe
-			if (Globals.Config.Fish.RandomizeNames || Globals.Config.Crops.Randomize)
+			if (Globals.Config.Fish.RandomizeNames || Globals.Config.Crops.RandomizeNames)
 			{
 				stringReplacements["TV.cs.13151"] = Globals.GetTranslation("TV.cs.13151");
 				stringReplacements["TV.cs.13153"] = Globals.GetTranslation("TV.cs.13153");
@@ -44,7 +44,9 @@ namespace Randomizer
 		{
 			Dictionary<string, string> stringReplacements = new();
 
-			if (Globals.Config.Crops.Randomize)
+			// This is checked by the crop Id, so it will always be the sweet gem berry's Id - so we just need to
+			// adjust this if the name of the sweet gem berry has changed
+			if (Globals.Config.Crops.RandomizeNames)
 			{
 				string sweetGemBerryName = ItemList.GetItemName(ObjectIndexes.SweetGemBerry);
 				stringReplacements["Woods_Statue"] = Globals.GetTranslation("Woods_Statue", new { cropName = sweetGemBerryName });

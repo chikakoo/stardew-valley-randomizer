@@ -37,8 +37,9 @@ namespace Randomizer
             AddCheckbox("Sprite Shuffle (Glitchy)", "Shuffles NPCs sprites among each other. Use at your own risk - can result in glitchy/invisible graphics.", () => Globals.Config.NPCs.SpriteShuffle, (bool val) => Globals.Config.NPCs.SpriteShuffle = val);
 
             AddSectionTitle("Crop Options");
-			AddCheckbox("Crops", "Randomize crop names, growing schedules, and attributes (trellis, scythe needed, etc.).", () => Globals.Config.Crops.Randomize, (bool val) => Globals.Config.Crops.Randomize = val);
-			AddCheckbox("Use Custom Crop Images", "Use custom images for seeds and crops at each growth stage.", () => Globals.Config.Crops.UseCustomImages, (bool val) => Globals.Config.Crops.UseCustomImages = val);
+			AddCheckbox("Randomize Stats", "Shuffles and randomizes what crops grow, their growing schedules, and their attributes (trellis, scythe needed, etc.).", () => Globals.Config.Crops.RandomizeStats, (bool val) => Globals.Config.Crops.RandomizeStats = val);
+            AddCheckbox("Randomize Names", "Randomize crop names - recommeded to turn this on when randomizing stats so you know what crops each seed will grow.", () => Globals.Config.Crops.RandomizeNames, (bool val) => Globals.Config.Crops.RandomizeNames = val);
+            AddCheckbox("Use Custom Crop Images", "Use custom images for seeds and crops at each growth stage.", () => Globals.Config.Crops.UseCustomImages, (bool val) => Globals.Config.Crops.UseCustomImages = val);
 			AddHueShiftOption("Hue Shift Max", "The maxmium value that crop images will be hue-shifted. Set to 0 for no effect.", () => Globals.Config.Crops.HueShiftMax, (int val) => Globals.Config.Crops.HueShiftMax = val);
 
 			AddSectionTitle("Fruit Tree Options");

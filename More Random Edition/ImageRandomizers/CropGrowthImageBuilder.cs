@@ -219,9 +219,7 @@ namespace Randomizer
 		/// </summary>
 		/// <returns>True if so, false otherwise</returns>
 		public override bool ShouldSaveImage()
-		{
-			return Globals.Config.Crops.Randomize && Globals.Config.Crops.UseCustomImages;
-		}
+			=> Globals.Config.Crops.UseCustomImages;
 
 		/// <summary>
 		/// Validates that the crop growth images map to the appropriate directories

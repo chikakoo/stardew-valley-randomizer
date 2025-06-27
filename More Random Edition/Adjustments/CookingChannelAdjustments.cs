@@ -45,7 +45,11 @@ namespace Randomizer
 			FixCookingRecipeDisplayNames();
 
             Dictionary<string, string> replacements = new();
-			if (!Globals.Config.Crops.Randomize && !Globals.Config.Fish.RandomizeNames) { return replacements; }
+			if (!Globals.Config.Crops.RandomizeNames && 
+				!Globals.Config.Fish.RandomizeNames) 
+			{ 
+				return replacements; 
+			}
 
 			foreach (ShowData showData in GetCookingChannelData())
 			{

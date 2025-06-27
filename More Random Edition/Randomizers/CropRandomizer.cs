@@ -12,16 +12,56 @@ namespace Randomizer
     /// </summary>
     public class CropRandomizer
 	{
+        /// <summary>
+        /// Helper class to simplify randomizing crops
+        /// </summary>
+        private class CropRandomizationInfoObject
+        {
+            public List<string> RegrowableSeedIdsToRandomize { get; set; }
+            public List<string> NonRegrowableSeedIdsToRandomize { get; set; }
+            public List<string> StaticSeedsToRandomize { get; set; }
+
+            public List<CropItem> RandomizedCrops { get; set; }
+            public List<CropItem> RandomizedVegetables { get; set; }
+            public List<CropItem> RandomizedFlowers { get; set; }
+
+            public CropRandomizationInfoObject()
+            {
+                RegrowableSeedIdsToRandomize = ItemList.GetSeeds().Cast<SeedItem>()
+                    .Where(x => x.Randomize && x.RegrowsAfterHarvest && x.ShuffleBetweenSeeds)
+                    .Select(x => x.Id)
+                    .ToList();
+                NonRegrowableSeedIdsToRandomize = ItemList.GetSeeds().Cast<SeedItem>()
+                    .Where(x => x.Randomize && !x.RegrowsAfterHarvest && x.ShuffleBetweenSeeds)
+                    .Select(x => x.Id)
+                    .ToList();
+                StaticSeedsToRandomize = ItemList.GetSeeds().Cast<SeedItem>()
+                    .Where(x => x.Randomize && !x.ShuffleBetweenSeeds)
+                    .Select(x => x.Id)
+                    .ToList();
+
+                RandomizedCrops = ItemList.GetCrops(true).Cast<CropItem>()
+                    .Where(x => NonRegrowableSeedIdsToRandomize
+                    .Union(RegrowableSeedIdsToRandomize)
+                    .Union(StaticSeedsToRandomize).Contains(x.MatchingSeedItem.Id))
+                    .ToList();
+                RandomizedVegetables = RandomizedCrops.Where(x => !x.IsFlower).ToList();
+                RandomizedFlowers = RandomizedCrops.Where(x => x.IsFlower).ToList();
+            }
+        }
+
         private static RNG Rng { get; set; }
 
         public static void Randomize(EditedObjects editedObjectInfo)
 		{
-            if (!Globals.Config.Crops.Randomize) 
+			// If we're not randomizing names OR stats, no need to do anything
+			if (!Globals.Config.Crops.RandomizeNames &&
+				!Globals.Config.Crops.RandomizeStats)
 			{
 				// Currently this also handles fish dishes... so call this here
 				// so we don't accidently skip any renames here
                 SetUpCookedFood(editedObjectInfo);
-                return;
+				return;
 			}
 
             Rng = RNG.GetFarmRNG(nameof(CropRandomizer));
@@ -36,76 +76,17 @@ namespace Randomizer
 		/// <param name="editedObjectInfo">The edited object information</param>
 		private static void RandomizeCrops(EditedObjects editedObjectInfo)
 		{
-			List<string> regrowableSeedIdsToRandomize = ItemList.GetSeeds().Cast<SeedItem>()
-				.Where(x => x.Randomize && x.RegrowsAfterHarvest && x.ShuffleBetweenSeeds)
-				.Select(x => x.Id)
-				.ToList();
-			List<string> regrowableSeedIdsToRandomizeCopy = new(regrowableSeedIdsToRandomize);
+			var cropInfoObject = new CropRandomizationInfoObject();
 
-			List<string> nonRegrowableSeedIdsToRandomize = ItemList.GetSeeds().Cast<SeedItem>()
-				.Where(x => x.Randomize && !x.RegrowsAfterHarvest && x.ShuffleBetweenSeeds)
-				.Select(x => x.Id)
-				.ToList();
-			List<string> nonRegrowableSeedIdsToRandomizeCopy = new(nonRegrowableSeedIdsToRandomize);
+			RandomizeCropStats(cropInfoObject);
 
-			List<string> staticSeedsToRandomize = ItemList.GetSeeds().Cast<SeedItem>()
-				.Where(x => x.Randomize && !x.ShuffleBetweenSeeds)
-				.Select(x => x.Id)
-				.ToList();
-
-			// Fill up a dictionary to remap the seed values
-			Dictionary<string, string> seedMappings = new(); // Original value, new value
-
-			foreach (string originalRegrowableSeedId in regrowableSeedIdsToRandomize)
-			{
-				seedMappings.Add(originalRegrowableSeedId, Rng.GetAndRemoveRandomValueFromList(regrowableSeedIdsToRandomizeCopy));
-			}
-
-			foreach (string originalNonRegrowableSeedId in nonRegrowableSeedIdsToRandomize)
-			{
-				seedMappings.Add(originalNonRegrowableSeedId, Rng.GetAndRemoveRandomValueFromList(nonRegrowableSeedIdsToRandomizeCopy));
-			}
-
-			foreach(string staticSeedId in staticSeedsToRandomize)
-			{
-				// These are static, so map it to itself!
-				seedMappings.Add(staticSeedId, staticSeedId);
-			}
-
-			// Loop through the dictionary and reassign the values, keeping the seasons the same as before
-			foreach (KeyValuePair<string, string> seedMapping in seedMappings)
-			{
-				string originalValue = seedMapping.Key;
-				string newValue = seedMapping.Value;
-
-                CropData newCropGrowthInfo = DataLoader.Crops(Game1.content)[newValue.ToString()].DeepClone();
-                newCropGrowthInfo.Seasons = DataLoader.Crops(Game1.content)[originalValue.ToString()].DeepClone().Seasons;
-				newCropGrowthInfo.DaysInPhase = GetRandomGrowthStages(newCropGrowthInfo.DaysInPhase.Count);
-				newCropGrowthInfo.HarvestMethod = Rng.NextBoolean(10)
-					? HarvestMethod.Scythe
-					: HarvestMethod.Grab;
-				newCropGrowthInfo.RegrowDays = newCropGrowthInfo.RegrowDays == -1
-					? -1
-					: Rng.NextIntWithinRange(1, 7);
-
-				var originalSeedItem = ItemList.Items[originalValue] as SeedItem;
-				originalSeedItem.CropGrowthInfo = newCropGrowthInfo;
-			}
-
-			// Set the object info
-			List<CropItem> randomizedCrops = ItemList.GetCrops(true).Cast<CropItem>()
-				.Where(x => nonRegrowableSeedIdsToRandomize
-					.Union(regrowableSeedIdsToRandomize)
-					.Union(staticSeedsToRandomize).Contains(x.MatchingSeedItem.Id))
-				.ToList();
-			List<CropItem> vegetables = randomizedCrops.Where(x => !x.IsFlower).ToList();
-			List<CropItem> flowers = randomizedCrops.Where(x => x.IsFlower).ToList();
-
-			List<string> vegetableNames = NameAndDescriptionRandomizer.GenerateVegetableNames(vegetables.Count + 1);
-			List<string> cropDescriptions = NameAndDescriptionRandomizer.GenerateCropDescriptions(randomizedCrops.Count);
+			List<string> vegetableNames = NameAndDescriptionRandomizer
+				.GenerateVegetableNames(cropInfoObject.RandomizedVegetables.Count + 1);
+			List<string> cropDescriptions = NameAndDescriptionRandomizer
+				.GenerateCropDescriptions(cropInfoObject.RandomizedCrops.Count);
 			SetCropAndSeedInformation(
 				editedObjectInfo,
-				vegetables,
+				cropInfoObject.RandomizedVegetables,
 				vegetableNames,
 				cropDescriptions); // Note: It removes the descriptions it uses from the list after assigning them- may want to edit later
 
@@ -114,12 +95,52 @@ namespace Randomizer
 
 			SetCropAndSeedInformation(
 				editedObjectInfo,
-				flowers,
-				NameAndDescriptionRandomizer.GenerateFlowerNames(flowers.Count),
+				cropInfoObject.RandomizedFlowers,
+				NameAndDescriptionRandomizer.GenerateFlowerNames(cropInfoObject.RandomizedFlowers.Count),
 				cropDescriptions); // Note: It removes the descriptions it uses from the list after assigning them- may want to edit later
 
 			SetUpCookedFood(editedObjectInfo);
 		}
+
+		private static void RandomizeCropStats(CropRandomizationInfoObject cropInfoObject)
+		{
+			if (!Globals.Config.Crops.RandomizeStats) { return; }
+
+            List<string> regrowableSeedIdsToRandomizeCopy =
+				new(cropInfoObject.RegrowableSeedIdsToRandomize);
+            List<string> nonRegrowableSeedIdsToRandomizeCopy =
+                new(cropInfoObject.NonRegrowableSeedIdsToRandomize);
+
+            // Fill up a dictionary to remap the seed values
+            Dictionary<string, string> seedMappings = new(); // Original value, new value
+
+			cropInfoObject.RegrowableSeedIdsToRandomize.ForEach(seedId => 
+				seedMappings.Add(seedId, Rng.GetAndRemoveRandomValueFromList(regrowableSeedIdsToRandomizeCopy)));
+			cropInfoObject.NonRegrowableSeedIdsToRandomize.ForEach(seedId =>
+				seedMappings.Add(seedId, Rng.GetAndRemoveRandomValueFromList(nonRegrowableSeedIdsToRandomizeCopy)));
+            cropInfoObject.StaticSeedsToRandomize.ForEach(seedId =>
+                seedMappings.Add(seedId, seedId));  // These are static, so map it to itself!
+
+            // Loop through the dictionary and reassign the values, keeping the seasons the same as before
+            foreach (KeyValuePair<string, string> seedMapping in seedMappings)
+            {
+                string originalValue = seedMapping.Key;
+                string newValue = seedMapping.Value;
+
+                CropData newCropGrowthInfo = DataLoader.Crops(Game1.content)[newValue.ToString()].DeepClone();
+                newCropGrowthInfo.Seasons = DataLoader.Crops(Game1.content)[originalValue.ToString()].DeepClone().Seasons;
+                newCropGrowthInfo.DaysInPhase = GetRandomGrowthStages(newCropGrowthInfo.DaysInPhase.Count);
+                newCropGrowthInfo.HarvestMethod = Rng.NextBoolean(10)
+                    ? HarvestMethod.Scythe
+                    : HarvestMethod.Grab;
+                newCropGrowthInfo.RegrowDays = newCropGrowthInfo.RegrowDays == -1
+                    ? -1
+                    : Rng.NextIntWithinRange(1, 7);
+
+                var originalSeedItem = ItemList.Items[originalValue] as SeedItem;
+                originalSeedItem.CropGrowthInfo = newCropGrowthInfo;
+            }
+        }
 
 		/// <summary>
 		/// Gets a list of randomly generated growth stages
@@ -162,37 +183,47 @@ namespace Randomizer
                 CropItem crop = crops[i];
 				SeedItem seed = crop.MatchingSeedItem;
 
-				string name = randomNames[i];
-                string seasonsString = Globals.GetTranslation(
-					"crop-tooltip-seasons", 
-					new { seasons = seed.GetSeasonsStringForDisplay() });
-				string description = Rng.GetAndRemoveRandomValueFromList(randomDescriptions);
-				crop.OverrideName = name;
-				crop.Description = $"{description} {seasonsString}";
-
-				seed.OverrideDisplayName = seed.IsTrellisCrop
-					? Globals.GetTranslation("trellis-text", new { itemName = name })
-					: Globals.GetTranslation("seed-text", new { itemName = name });
-				seed.OverrideName = seed.IsTrellisCrop
-					? $"{name} Starter"
-					: $"{name} Seeds";
-
-				seed.Price = GetRandomSeedPrice();
-				crop.Price = CalculateCropPrice(seed);
-
-				ObjectData cropObject = Game1.objectData[crop.Id].DeepClone();
-				cropObject.DisplayName = crop.Name;
-				cropObject.Description = crop.Description;
-				cropObject.Price = crop.Price;
-
+                ObjectData cropObject = Game1.objectData[crop.Id].DeepClone();
                 ObjectData seedObject = Game1.objectData[seed.Id].DeepClone();
-                seedObject.DisplayName = seed.Name;
-                seedObject.Description = seed.Description;
-                seedObject.Price = seed.Price;
+
+                // Set up new descriptions and prices if we are randomizing stats
+                if (Globals.Config.Crops.RandomizeStats)
+				{
+                    string seasonsString = Globals.GetTranslation(
+						"crop-tooltip-seasons",
+						new { seasons = seed.GetSeasonsStringForDisplay() });
+                    string description = Rng.GetAndRemoveRandomValueFromList(randomDescriptions);
+
+                    crop.Description = $"{description} {seasonsString}";
+                    crop.Price = CalculateCropPrice(seed);
+                    cropObject.Description = crop.Description;
+                    cropObject.Price = crop.Price;
+
+                    seed.Price = GetRandomSeedPrice();
+                    seedObject.Description = seed.Description;
+                    seedObject.Price = seed.Price;
+                }
+
+				// Set up the override and display names if we are randomizing names
+				if (Globals.Config.Crops.RandomizeNames)
+				{
+                    string newCropName = randomNames[i];
+
+                    crop.OverrideName = newCropName;
+                    cropObject.DisplayName = crop.Name;
+
+                    seed.OverrideDisplayName = seed.IsTrellisCrop
+						? Globals.GetTranslation("trellis-text", new { itemName = newCropName })
+						: Globals.GetTranslation("seed-text", new { itemName = newCropName });
+                    seed.OverrideName = seed.IsTrellisCrop
+                        ? $"{newCropName} Starter"
+                        : $"{newCropName} Seeds";
+                    seedObject.DisplayName = seed.Name;
+                }
 
                 editedObjectInfo.ObjectsReplacements[crop.Id] = cropObject;
-				editedObjectInfo.ObjectsReplacements[seed.Id] = seedObject;
-			}
+                editedObjectInfo.ObjectsReplacements[seed.Id] = seedObject;
+            }
 		}
 
 		/// <summary>
@@ -202,6 +233,8 @@ namespace Randomizer
 		/// <param name="coffeeItemName">The name of the coffee item</param>
 		private static void SetUpCoffee(EditedObjects editedObjectInfo, string coffeeItemName)
 		{
+			if (!Globals.Config.Crops.RandomizeNames) { return; }
+
 			Item coffee = ObjectIndexes.Coffee.GetItem();
 			coffee.OverrideName = $"Hot {coffeeItemName}";
             coffee.CoffeeIngredient = coffeeItemName; // Used for the description of the coffee bean
@@ -218,7 +251,7 @@ namespace Randomizer
 			coffeeBeanObject.DisplayName = coffeeBean.Name;
 			coffeeBeanObject.Description = coffeeBean.Description;
             editedObjectInfo.ObjectsReplacements[coffeeBean.Id] = coffeeBeanObject;
-		}
+        }
 
 		/// <summary>
 		/// Sets up the rice objects
@@ -226,7 +259,9 @@ namespace Randomizer
 		/// <param name="editedObjectInfo">The object info containing changes to apply</param>
 		private static void SetUpRice(EditedObjects editedObjectInfo)
 		{
-			CropItem unmilledRice = ObjectIndexes.UnmilledRice.GetItem() as CropItem;
+            if (!Globals.Config.Crops.RandomizeNames) { return; }
+
+            CropItem unmilledRice = ObjectIndexes.UnmilledRice.GetItem() as CropItem;
 			string riceName = unmilledRice.OverrideName;
 			unmilledRice.OverrideName = $"Unmilled {riceName}";
 			unmilledRice.OverrideDisplayName = Globals.GetTranslation("unmilled-rice-name", new { itemName = riceName });
@@ -249,7 +284,7 @@ namespace Randomizer
 		/// <param name="editedObjectInfo">The object info containing changes to apply</param>
 		private static void SetUpCookedFood(EditedObjects editedObjectInfo)
 		{
-			if (Globals.Config.Crops.Randomize)
+			if (Globals.Config.Crops.RandomizeNames)
 			{
 				CookedItem.GetAllCropDishes().ForEach(cropDish =>
 				{
@@ -383,9 +418,14 @@ namespace Randomizer
 				}
 
 				CropItem cropItem = (CropItem)ItemList.Items[seedItem.CropId];
-				Globals.SpoilerWrite($"{cropItem.Id}: {cropItem.Name} - Seed Buy Price: {seedItem.Price * 2}G - Crop Sell Price: {cropItem.Price}G");
-				Globals.SpoilerWrite($"{seedItem.Id}: {seedItem.Description}");
-				Globals.SpoilerWrite("---");
+				Globals.SpoilerWrite($"{cropItem.Id}: {cropItem.Name}");
+
+				if (Globals.Config.Crops.RandomizeStats)
+				{
+                    Globals.SpoilerWrite($"- Seed Buy Price: {seedItem.Price * 2}G - Crop Sell Price: {cropItem.Price}G");
+                    Globals.SpoilerWrite($"{seedItem.Id}: {seedItem.Description}");
+                    Globals.SpoilerWrite("---");
+                }
 			}
 			Globals.SpoilerWrite("");
 		}

@@ -51,7 +51,7 @@ namespace Randomizer
         /// <returns>The object data replacements, containing the ContextTag info</returns>
         public static void AdjustContextTags(Dictionary<string, ObjectData> objectDataReplacements)
         {
-            if (!Globals.Config.Fish.Randomize)
+            if (!Globals.Config.Fish.ShuffleSeasonsAndLocations)
             {
                 return;
             }

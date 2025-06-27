@@ -73,8 +73,10 @@
 
 	public class FishConfig
 	{
-		public bool Randomize { get; set; } = true;
-		public bool UseCustomImages { get; set; } = true;
+        public bool ShuffleSeasonsAndLocations { get; set; } = true;
+        public bool RandomizeBehaviors { get; set; } = true;
+        public bool RandomizeNames { get; set; } = true;
+        public bool UseCustomImages { get; set; } = true;
         public int HueShiftMax { get; set; } = 359;
 		public int GoldenTagChance { get; set; } = 25;
     }

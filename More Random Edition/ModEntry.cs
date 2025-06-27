@@ -52,7 +52,7 @@ namespace Randomizer
 				helper.Events.GameLoop.GameLaunched += (sender, args) => WildSeedAdjustments.ReplaceGetRandomWildCropForSeason();
 			}
 
-			if (Globals.Config.Fish.Randomize)
+			if (Globals.Config.Fish.ShuffleSeasonsAndLocations)
 			{
 				helper.Events.GameLoop.GameLaunched += (sender, args) => FishingRodAdjustments.TryGetTroutDerbyTag();
 			}

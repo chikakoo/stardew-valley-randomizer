@@ -86,8 +86,8 @@ namespace Randomizer
 				{
 					bool isRandomizedCookedItem = Globals.Config.Crops.Randomize && IsCooked;
 					bool isRandomizedCropOrSeedItem = Globals.Config.Crops.Randomize && (IsCrop || IsSeed);
-					bool isRandomizedFishItem = Globals.Config.Fish.Randomize && IsFish;
-					bool useOriginalName = isRandomizedCookedItem || isRandomizedCropOrSeedItem || isRandomizedFishItem;
+					bool isFishWithRandomizedName = Globals.Config.Fish.RandomizeNames && IsFish;
+					bool useOriginalName = isRandomizedCookedItem || isRandomizedCropOrSeedItem || isFishWithRandomizedName;
 
 					if (useOriginalName)
 					{
@@ -302,14 +302,14 @@ namespace Randomizer
 		/// Gets the name of an item from
 		/// </summary>
 		/// <returns>
-		/// Splits apart the name from the ObjectIndexes name - WildHorseradish -> Wild Horseradish
+		/// The item's internal name
 		/// Uses the override name if there is one and the item type in question actually has a new name
 		/// </returns>
 		private string GetName()
 		{
             bool ignoreOverrideName =
 				(!Globals.Config.Crops.Randomize && (IsCrop || IsSeed)) ||
-				(!Globals.Config.Fish.Randomize && IsFish);
+				(!Globals.Config.Fish.RandomizeNames && IsFish);
 
             if (!ignoreOverrideName && !string.IsNullOrEmpty(OverrideName))
             {

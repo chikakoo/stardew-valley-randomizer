@@ -113,20 +113,20 @@ namespace Randomizer
             if (e.NameWithoutLocale.IsEquivalentTo("Strings/UI")) { return true; }
 			if (e.NameWithoutLocale.IsEquivalentTo("Data/Events/Farm")) { return Globals.Config.Animals.RandomizePets; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Objects")) { return true; }
-            if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish")) { return Globals.Config.Fish.Randomize; }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish")) { return Globals.Config.Fish.RandomizeBehaviors || Globals.Config.Fish.ShuffleSeasonsAndLocations; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Quests") || e.NameWithoutLocale.IsEquivalentTo("Data/mail")) { return Globals.Config.RandomizeQuests; }
-            if (e.NameWithoutLocale.IsEquivalentTo("Data/Locations")) { return Globals.Config.Fish.Randomize || Globals.Config.RandomizeForagables || Globals.Config.AddRandomArtifactItem; }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Locations")) { return Globals.Config.Fish.ShuffleSeasonsAndLocations || Globals.Config.RandomizeForagables || Globals.Config.AddRandomArtifactItem; }
             if (e.NameWithoutLocale.IsEquivalentTo("Strings/Locations")) { return Globals.Config.Crops.Randomize; } // For now, as the only thing is the sweet gem berry text
             if (e.NameWithoutLocale.IsEquivalentTo("Data/FruitTrees")) { return Globals.Config.RandomizeFruitTrees; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Crops")) { return Globals.Config.Crops.Randomize; }
-            if (e.NameWithoutLocale.IsEquivalentTo("Data/TV/CookingChannel")) { return Globals.Config.Crops.Randomize || Globals.Config.Fish.Randomize; }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/TV/CookingChannel")) { return Globals.Config.Crops.Randomize || Globals.Config.Fish.RandomizeNames; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Weapons")) { return Globals.Config.Weapons.ShouldSaveChanges(); }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Boots")) { return Globals.Config.Boots.ShouldSaveChanges(); }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Monsters")) { return Globals.Config.Monsters.Randomize; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Characters")) { return Globals.Config.NPCs.RandomizeBirthdays; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/NPCGiftTastes")) { return Globals.Config.NPCs.RandomizeIndividualPreferences || Globals.Config.NPCs.RandomizeUniversalPreferences; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/SecretNotes")) { return Globals.Config.NPCs.RandomizeIndividualPreferences; }
-            if (e.NameWithoutLocale.IsEquivalentTo("Data/SpecialOrders")) { return Globals.Config.Fish.Randomize; }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/SpecialOrders")) { return Globals.Config.Fish.ShuffleSeasonsAndLocations; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/MuseumRewards")) { return Globals.Config.RandomizeMuseumRewards; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/GarbageCans")) { return Globals.Config.RandomizeGarbageCans; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Shops")) 

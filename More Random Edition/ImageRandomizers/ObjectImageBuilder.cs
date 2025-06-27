@@ -310,19 +310,19 @@ namespace Randomizer
         }
 
         /// <summary>
-        /// Whether the settings permit random crop images
+        /// Whether the settings permit saving the image in randomizeImage.png
         /// </summary>
         /// <returns>True if so, false otherwise</returns>
         public override bool ShouldSaveImage()
 		{
-			bool randomizeCrops = Globals.Config.Crops.Randomize && Globals.Config.Crops.UseCustomImages;
-			bool randomizeFish = Globals.Config.Fish.Randomize;
-			return randomizeCrops || randomizeFish;
+			return Globals.Config.Boots.UseCustomImages ||
+				Globals.Config.Crops.UseCustomImages ||
+				Globals.Config.RandomizeFruitTrees ||
+				Globals.Config.Fish.UseCustomImages;
 		}
 
 		/// <summary>
-		/// Whether we should actually save the image file, or if the setting is off
-		/// This checks whether the image is a crop or a fish and checks the specific setting
+		/// Whether we should actually modify the game's image file, for the given item
 		/// </summary>
 		/// <param name="overlayData">The overlay data to check</param>
 		/// <returns />
@@ -335,14 +335,20 @@ namespace Randomizer
 			}
 
 			Item item = ItemList.Items[itemId];
-			if (item.IsCrop || item.IsSeed || item.ObjectIndex == ObjectIndexes.CherrySapling)
+			if (item.IsCrop || item.IsSeed)
 			{
-				return Globals.Config.Crops.Randomize && Globals.Config.Crops.UseCustomImages;
+				return Globals.Config.Crops.UseCustomImages;
+			}
+
+			// The fruit tree image is ALL fruit trees in one image, starting at the cherry sapling
+			if (item.ObjectIndex == ObjectIndexes.CherrySapling)
+			{
+				return Globals.Config.RandomizeFruitTrees;
 			}
 
 			if (item.IsFish)
 			{
-				return Globals.Config.Fish.Randomize;
+				return Globals.Config.Fish.UseCustomImages;
 			}
 
 			return false;

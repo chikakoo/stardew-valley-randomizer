@@ -18,7 +18,7 @@ namespace Randomizer
         public static Dictionary<string, SpecialOrderData> GetSpecialOrderAdjustments()
         {
             Dictionary<string, SpecialOrderData> adjustments = new();
-            if (!Globals.Config.Fish.Randomize)
+            if (!Globals.Config.Fish.ShuffleSeasonsAndLocations)
             {
                 return adjustments;
             }

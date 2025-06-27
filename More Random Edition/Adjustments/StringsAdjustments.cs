@@ -21,7 +21,7 @@ namespace Randomizer
 			stringReplacements["Farmer.cs.1918"] = Globals.GetTranslation("Farmer.cs.1918", new { seedName = parsnipSeedName });
 
 			// Fix the queen of sauce strings so it doesn't say the wrong recipe
-			if (Globals.Config.Fish.Randomize || Globals.Config.Crops.Randomize)
+			if (Globals.Config.Fish.RandomizeNames || Globals.Config.Crops.Randomize)
 			{
 				stringReplacements["TV.cs.13151"] = Globals.GetTranslation("TV.cs.13151");
 				stringReplacements["TV.cs.13153"] = Globals.GetTranslation("TV.cs.13153");

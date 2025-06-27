@@ -261,7 +261,7 @@ namespace Randomizer
                 });
 			}
 
-			if (Globals.Config.Fish.Randomize)
+			if (Globals.Config.Fish.RandomizeNames)
 			{
                 CookedItem.GetAllFishDishes().ForEach(fishDish =>
                 {

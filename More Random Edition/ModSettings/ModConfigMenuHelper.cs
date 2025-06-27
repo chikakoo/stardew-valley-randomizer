@@ -43,8 +43,10 @@ namespace Randomizer
 			AddHueShiftOption("Hue Shift Max", "The maxmium value that crop images will be hue-shifted. Set to 0 for no effect.", () => Globals.Config.Crops.HueShiftMax, (int val) => Globals.Config.Crops.HueShiftMax = val);
 
 			AddSectionTitle("Fish Options");
-			AddCheckbox("Fish", "Randomize fish names, difficulty and behaviors, as well as locations, times of days and seasons.", () => Globals.Config.Fish.Randomize, (bool val) => Globals.Config.Fish.Randomize = val);
-			AddCheckbox("Use Custom Fish Images", "Use custom images for the fish.", () => Globals.Config.Fish.UseCustomImages, (bool val) => Globals.Config.Fish.UseCustomImages = val);
+			AddCheckbox("Shuffle Locations", "Shuffle all fish locations and corresponding seasons.", () => Globals.Config.Fish.ShuffleSeasonsAndLocations, (bool val) => Globals.Config.Fish.ShuffleSeasonsAndLocations = val);
+            AddCheckbox("Randomize Behaviors", "Randomize fish difficulties and behaviors.", () => Globals.Config.Fish.RandomizeBehaviors, (bool val) => Globals.Config.Fish.RandomizeBehaviors = val);
+            AddCheckbox("Randomize Names", "Randomize fish names.", () => Globals.Config.Fish.RandomizeNames, (bool val) => Globals.Config.Fish.RandomizeNames = val);
+            AddCheckbox("Use Custom Fish Images", "Use custom images for the fish.", () => Globals.Config.Fish.UseCustomImages, (bool val) => Globals.Config.Fish.UseCustomImages = val);
 			AddHueShiftOption("Hue Shift Max", "The maxmium value that fish images will be hue-shifted. Set to 0 for no effect.", () => Globals.Config.Fish.HueShiftMax, (int val) => Globals.Config.Fish.HueShiftMax = val);
 			AddPercentageOption("Golden Tag %", "During the Trout Derby, the chance that a fish caught while in the town, forest, or mountains will award a Golden Tag.", () => Globals.Config.Fish.GoldenTagChance, (int val) => Globals.Config.Fish.GoldenTagChance = val);
 

@@ -46,7 +46,7 @@ namespace Randomizer
         {
             Dictionary<string, FruitTreeData> fruitTreeReplacements = new();
 
-            if (!Globals.Config.RandomizeFruitTrees)
+            if (!Globals.Config.FruitTrees.RandomizeFruit)
             {
                 return fruitTreeReplacements;
             }

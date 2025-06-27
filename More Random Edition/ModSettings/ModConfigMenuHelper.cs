@@ -39,10 +39,13 @@ namespace Randomizer
             AddSectionTitle("Crop Options");
 			AddCheckbox("Crops", "Randomize crop names, growing schedules, and attributes (trellis, scythe needed, etc.).", () => Globals.Config.Crops.Randomize, (bool val) => Globals.Config.Crops.Randomize = val);
 			AddCheckbox("Use Custom Crop Images", "Use custom images for seeds and crops at each growth stage.", () => Globals.Config.Crops.UseCustomImages, (bool val) => Globals.Config.Crops.UseCustomImages = val);
-			AddCheckbox("Fruit Trees", "Generates Item saplings that grow a random item. Prices are loosely balanced based on the item grown.", () => Globals.Config.RandomizeFruitTrees, (bool val) => Globals.Config.RandomizeFruitTrees = val);
 			AddHueShiftOption("Hue Shift Max", "The maxmium value that crop images will be hue-shifted. Set to 0 for no effect.", () => Globals.Config.Crops.HueShiftMax, (int val) => Globals.Config.Crops.HueShiftMax = val);
 
-			AddSectionTitle("Fish Options");
+			AddSectionTitle("Fruit Tree Options");
+            AddCheckbox("Randomize Fruit", "Generates Item saplings that grow a random item. Prices are loosely balanced based on the item grown.", () => Globals.Config.FruitTrees.RandomizeFruit, (bool val) => Globals.Config.FruitTrees.RandomizeFruit = val);
+            AddCheckbox("Use Custom Fruit Tree Image", "Uses the custom fruit tree image, which by default has no specific fruit pictures.", () => Globals.Config.FruitTrees.UseCustomImages, (bool val) => Globals.Config.FruitTrees.UseCustomImages = val);
+
+            AddSectionTitle("Fish Options");
 			AddCheckbox("Shuffle Locations", "Shuffle all fish locations and corresponding seasons.", () => Globals.Config.Fish.ShuffleSeasonsAndLocations, (bool val) => Globals.Config.Fish.ShuffleSeasonsAndLocations = val);
             AddCheckbox("Randomize Behaviors", "Randomize fish difficulties and behaviors.", () => Globals.Config.Fish.RandomizeBehaviors, (bool val) => Globals.Config.Fish.RandomizeBehaviors = val);
             AddCheckbox("Randomize Names", "Randomize fish names.", () => Globals.Config.Fish.RandomizeNames, (bool val) => Globals.Config.Fish.RandomizeNames = val);

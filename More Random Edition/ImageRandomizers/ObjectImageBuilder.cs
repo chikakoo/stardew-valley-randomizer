@@ -317,7 +317,7 @@ namespace Randomizer
 		{
 			return Globals.Config.Boots.UseCustomImages ||
 				Globals.Config.Crops.UseCustomImages ||
-				Globals.Config.RandomizeFruitTrees ||
+				Globals.Config.FruitTrees.UseCustomImages ||
 				Globals.Config.Fish.UseCustomImages;
 		}
 
@@ -343,7 +343,7 @@ namespace Randomizer
 			// The fruit tree image is ALL fruit trees in one image, starting at the cherry sapling
 			if (item.ObjectIndex == ObjectIndexes.CherrySapling)
 			{
-				return Globals.Config.RandomizeFruitTrees;
+				return Globals.Config.FruitTrees.UseCustomImages;
 			}
 
 			if (item.IsFish)

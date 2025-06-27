@@ -9,7 +9,7 @@ namespace Randomizer
         public RandomizedSeedShop() : base("SeedShop") { }
 
         public override bool ShouldModifyShop()
-            => Globals.Config.RandomizeFruitTrees ||
+            => Globals.Config.FruitTrees.RandomizeFruit ||
                 Globals.Config.Shops.AddSeedShopItemOfTheWeek;
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Randomizer
         /// </summary>
         private void FixFruitTreePrices()
         {
-            if (!Globals.Config.RandomizeFruitTrees)
+            if (!Globals.Config.FruitTrees.RandomizeFruit)
             {
                 return;
             }

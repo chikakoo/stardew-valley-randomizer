@@ -11,6 +11,7 @@
 		public BootsConfig Boots { get; set; } = new BootsConfig();
 		public MonstersConfig Monsters { get; set; } = new MonstersConfig();
 		public CropsConfig Crops { get; set; } = new CropsConfig();
+		public FruitTreeConfig FruitTrees { get; set; } = new FruitTreeConfig();
 		public FishConfig Fish { get; set; } = new FishConfig();
 		public NPCsConfig NPCs { get; set; } = new NPCsConfig();
 		public BundleConfig Bundles { get; set; } = new BundleConfig();
@@ -21,7 +22,6 @@
 		public bool RandomizeForagables { get; set; } = true;
 		public bool AddRandomArtifactItem { get; set; } = true;
 		public bool RandomizeBuildingCosts { get; set; } = true;
-		public bool RandomizeFruitTrees { get; set; } = true;
 		public bool RandomizeMuseumRewards { get; set; } = true;
 		public bool RandomizeGarbageCans { get; set; } = true;
 		public bool RandomizeIntroStory { get; set; } = true;
@@ -71,7 +71,13 @@
 		public int HueShiftMax { get; set; } = 359;
 	}
 
-	public class FishConfig
+    public class FruitTreeConfig
+    {
+        public bool RandomizeFruit { get; set; } = true;
+        public bool UseCustomImages { get; set; } = true;
+    }
+
+    public class FishConfig
 	{
         public bool ShuffleSeasonsAndLocations { get; set; } = true;
         public bool RandomizeBehaviors { get; set; } = true;

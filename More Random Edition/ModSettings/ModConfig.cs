@@ -18,6 +18,7 @@
 		public MusicConfig Music { get; set; } = new MusicConfig();
 		public ShopsConfig Shops { get; set; } = new ShopsConfig();
 		public AnimalsConfig Animals { get; set; } = new AnimalsConfig();
+		public LightningRodConfig LightningRod { get; set; } = new LightningRodConfig();
 
 		public bool RandomizeForagables { get; set; } = true;
 		public bool AddRandomArtifactItem { get; set; } = true;
@@ -130,5 +131,13 @@
 		public bool RandomizeCritters { get; set; } = true;
 		public int CritterHueShiftMax { get; set; } = 359;
 	}
-}
 
+	public class LightningRodConfig
+	{
+		public bool Randomize { get; set; } = true;
+		public int BatteryWeight { get; set; } = 85;
+        public int ObjectWeight { get; set; } = 10;
+        public int BigCraftableWeight { get; set; } = 2;
+        public int FurnitureWeight { get; set; } = 3;
+    }
+}

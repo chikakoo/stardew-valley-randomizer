@@ -100,6 +100,13 @@ namespace Randomizer
 			AddCheckbox("Randomize Sewer Shop", "Randomizes the two decorative items to two random items daily.", () => Globals.Config.Shops.RandomizerSewerShop, (bool val) => Globals.Config.Shops.RandomizerSewerShop = val);
             AddCheckbox("Randomize Club Shop", "Randomizes Qi's Club (the casino).", () => Globals.Config.Shops.RandomizeClubShop, (bool val) => Globals.Config.Shops.RandomizeClubShop = val);
 
+			AddSectionTitle("Lightning Rod Options");
+			AddCheckbox("Randomize", "Enables randomizing lightning rod output to the weights below.", () => Globals.Config.LightningRod.Randomize, (bool val) => Globals.Config.LightningRod.Randomize = val);
+            AddNumberOption("Battery Weight", "(Requires Randomize to be on) The relative weight of a battery to be received from a lightning rod.", () => Globals.Config.LightningRod.BatteryWeight, (int val) => Globals.Config.LightningRod.BatteryWeight = val);
+            AddNumberOption("Item Weight", "(Requires Randomize to be on) The relative weight of a normal item to be received from a lightning rod.", () => Globals.Config.LightningRod.ObjectWeight, (int val) => Globals.Config.LightningRod.ObjectWeight = val);
+            AddNumberOption("Big Craftable Weight", "(Requires Randomize to be on) The relative weight of a big craftable (these are mostly machines) to be received from a lightning rod.", () => Globals.Config.LightningRod.BigCraftableWeight, (int val) => Globals.Config.LightningRod.BigCraftableWeight = val);
+            AddNumberOption("Furniture Weight", "(Requires Randomize to be on) The relative weight of a furniture item to be received from a lightning rod.", () => Globals.Config.LightningRod.FurnitureWeight, (int val) => Globals.Config.LightningRod.FurnitureWeight = val);
+            
             AddSectionTitle("Misc Options");
 			AddCheckbox("Building Costs", "Farm buildings that Robin can build for the player choose from a random pool of resources.", () => Globals.Config.RandomizeBuildingCosts, (bool val) => Globals.Config.RandomizeBuildingCosts = val);
 			AddCheckbox("Forageables", "Forageables for every season and location are now randomly selected. Every forageable appears at least once per year.", () => Globals.Config.RandomizeForagables, (bool val) => Globals.Config.RandomizeForagables = val);
@@ -178,15 +185,36 @@ namespace Randomizer
 				max: 100);
 		}
 
-		/// <summary>
-		/// A wrapper for AddSectionTitle
-		/// </summary>
-		/// <param name="text"></param>
-		/// <param name="tooltip"></param>
-		private void AddSectionTitle(string text, string tooltip = "")
+        /// <summary>
+        /// A wrapper for AddNumberOption catered toward any positive input
+        /// </summary>
+        /// <param name="labelText"></param>
+        /// <param name="tooltip"></param>
+        /// <param name="getValue"></param>
+        /// <param name="setValue"></param>
+        private void AddNumberOption(
+            string labelText,
+            string tooltip,
+            Func<int> getValue,
+            Action<int> setValue)
+        {
+            Api.AddNumberOption(
+                mod: ModManifest,
+                getValue: getValue,
+                setValue: setValue,
+                name: () => labelText,
+                tooltip: () => tooltip,
+				min: 0);
+        }
+
+        /// <summary>
+        /// A wrapper for AddSectionTitle
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="tooltip"></param>
+        private void AddSectionTitle(string text, string tooltip = "")
 		{
             Api.AddSectionTitle(ModManifest, () => text, () => tooltip);
 		}
 	}
-
 }

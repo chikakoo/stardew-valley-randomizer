@@ -282,7 +282,7 @@ namespace Randomizer
         }
 
         /// <summary>
-        /// Gets a random furniture's qualified id
+        /// Gets a random big craftable's qualified id
         /// </summary>
         /// <param name="rng">The rng to use</param>
         /// <param name="idsToExclude">A list of ids to not include in the selection</param>

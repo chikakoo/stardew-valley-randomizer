@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using Randomizer.Randomizers;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
@@ -36,6 +37,10 @@ namespace Randomizer
             helper.Events.GameLoop.SaveLoaded += (sender, args) => CalculateAllReplacements();
 			helper.Events.Display.MenuChanged += MenuAdjustments.AdjustMenus;
 			helper.Events.GameLoop.DayStarted += (sender, args) => _modAssetEditor.CalculateAndInvalidateShopEdits();
+            helper.Events.GameLoop.DayEnding += (sender, args) => LightningRodRandomizer.Randomize();
+
+			// Enable to debug lightning
+            //helper.Events.GameLoop.DayStarted += (sender, args) => TestLightning();
 
             if (Globals.Config.RandomizeRain)
 			{
@@ -62,6 +67,15 @@ namespace Randomizer
 				helper.Events.Display.RenderedActiveMenu += (sender, args) => BundleMenuAdjustments.AddDescriptionsToBundleTooltips();
 			}
 		}
+
+		/// <summary>
+		/// For testing purposes
+		/// </summary>
+		private static void TestLightning()
+		{
+			Game1.isRaining = true;
+			Game1.isLightning = true;
+        }
 
 		/// <summary>
 		/// When an asset is requested, attempt to replace it

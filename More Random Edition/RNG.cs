@@ -12,6 +12,11 @@ namespace Randomizer
     public class RNG : Random
     {
         /// <summary>
+        /// Unseeded RNG - usually not used
+        /// </summary>
+        public RNG() : base() { }
+
+        /// <summary>
         /// The only version of Random that we need is the one that uses a seed
         /// This is private because classes should instantiate this using the static functions below
         /// </summary>

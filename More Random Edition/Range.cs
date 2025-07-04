@@ -34,8 +34,14 @@
         /// <param name="rng">The RNG object to use</param>
         /// <returns />
         public int GetRandomValue(RNG rng)
-		{
-            return rng.NextIntWithinRange(this);
-		}
+			=> rng.NextIntWithinRange(this);
+
+		/// <summary>
+		/// Checks if the given value is within the range (inclusive)
+		/// </summary>
+		/// <param name="value">The value to check</param>
+		/// <returns />
+		public bool Contains(int value)
+			=> value >= MinValue && value <= MaxValue;
     }
 }

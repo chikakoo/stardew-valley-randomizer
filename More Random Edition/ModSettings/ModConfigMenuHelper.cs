@@ -102,11 +102,17 @@ namespace Randomizer
 
 			AddSectionTitle("Lightning Rod Options");
 			AddCheckbox("Randomize", "Enables randomizing lightning rod output to the weights below.", () => Globals.Config.LightningRod.Randomize, (bool val) => Globals.Config.LightningRod.Randomize = val);
-            AddNumberOption("Battery Weight", "(Requires Randomize to be on) The relative weight of a battery to be received from a lightning rod.", () => Globals.Config.LightningRod.BatteryWeight, (int val) => Globals.Config.LightningRod.BatteryWeight = val);
-            AddNumberOption("Item Weight", "(Requires Randomize to be on) The relative weight of a normal item to be received from a lightning rod.", () => Globals.Config.LightningRod.ObjectWeight, (int val) => Globals.Config.LightningRod.ObjectWeight = val);
-            AddNumberOption("Big Craftable Weight", "(Requires Randomize to be on) The relative weight of a big craftable (these are mostly machines) to be received from a lightning rod.", () => Globals.Config.LightningRod.BigCraftableWeight, (int val) => Globals.Config.LightningRod.BigCraftableWeight = val);
-            AddNumberOption("Furniture Weight", "(Requires Randomize to be on) The relative weight of a furniture item to be received from a lightning rod.", () => Globals.Config.LightningRod.FurnitureWeight, (int val) => Globals.Config.LightningRod.FurnitureWeight = val);
-            
+            AddPositiveNumberOption("Battery Weight", "(Requires Randomize to be on) The relative weight of a battery to be received from a lightning rod.", () => Globals.Config.LightningRod.BatteryWeight, (int val) => Globals.Config.LightningRod.BatteryWeight = val);
+            AddPositiveNumberOption("Item Weight", "(Requires Randomize to be on) The relative weight of a normal item to be received from a lightning rod.", () => Globals.Config.LightningRod.ObjectWeight, (int val) => Globals.Config.LightningRod.ObjectWeight = val);
+            AddPositiveNumberOption("Big Craftable Weight", "(Requires Randomize to be on) The relative weight of a big craftable (these are mostly machines) to be received from a lightning rod.", () => Globals.Config.LightningRod.BigCraftableWeight, (int val) => Globals.Config.LightningRod.BigCraftableWeight = val);
+            AddPositiveNumberOption("Furniture Weight", "(Requires Randomize to be on) The relative weight of a furniture item to be received from a lightning rod.", () => Globals.Config.LightningRod.FurnitureWeight, (int val) => Globals.Config.LightningRod.FurnitureWeight = val);
+
+            AddSectionTitle("Recycling Machine Options");
+            AddCheckbox("Randomize", "Enables recycling any normal item into a random item within the cost allowance. Does not change items that can be recycled normally.", () => Globals.Config.RecyclingMachine.Randomize, (bool val) => Globals.Config.RecyclingMachine.Randomize = val);
+            AddNumberOption("Max Price (% Above)", "The % above the input item's price that can be outputted. Negative input will match any item above the input's price.", () => Globals.Config.RecyclingMachine.PercentAbovePrice, (int val) => Globals.Config.RecyclingMachine.PercentAbovePrice = val);
+            AddNumberOption("Min Price (% Below)", "The % below the input item's price that can be outputted. Negative input will match any item below the input's price.", () => Globals.Config.RecyclingMachine.PercentBelowPrice, (int val) => Globals.Config.RecyclingMachine.PercentBelowPrice = val);
+            AddPercentageOption("Percent Any Random Item", "The % chance that any item that's worth more than the input can be received.", () => Globals.Config.RecyclingMachine.PercentAnyRandomItem, (int val) => Globals.Config.RecyclingMachine.PercentAnyRandomItem = val);
+
             AddSectionTitle("Misc Options");
 			AddCheckbox("Building Costs", "Farm buildings that Robin can build for the player choose from a random pool of resources.", () => Globals.Config.RandomizeBuildingCosts, (bool val) => Globals.Config.RandomizeBuildingCosts = val);
 			AddCheckbox("Forageables", "Forageables for every season and location are now randomly selected. Every forageable appears at least once per year.", () => Globals.Config.RandomizeForagables, (bool val) => Globals.Config.RandomizeForagables = val);
@@ -192,7 +198,7 @@ namespace Randomizer
         /// <param name="tooltip"></param>
         /// <param name="getValue"></param>
         /// <param name="setValue"></param>
-        private void AddNumberOption(
+        private void AddPositiveNumberOption(
             string labelText,
             string tooltip,
             Func<int> getValue,
@@ -205,6 +211,27 @@ namespace Randomizer
                 name: () => labelText,
                 tooltip: () => tooltip,
 				min: 0);
+        }
+
+        /// <summary>
+        /// A wrapper for AddNumberOption catered toward any input
+        /// </summary>
+        /// <param name="labelText"></param>
+        /// <param name="tooltip"></param>
+        /// <param name="getValue"></param>
+        /// <param name="setValue"></param>
+        private void AddNumberOption(
+            string labelText,
+            string tooltip,
+            Func<int> getValue,
+            Action<int> setValue)
+        {
+            Api.AddNumberOption(
+                mod: ModManifest,
+                getValue: getValue,
+                setValue: setValue,
+                name: () => labelText,
+                tooltip: () => tooltip);
         }
 
         /// <summary>

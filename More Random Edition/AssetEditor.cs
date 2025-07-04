@@ -5,6 +5,7 @@ using StardewValley.GameData.Characters;
 using StardewValley.GameData.Crops;
 using StardewValley.GameData.FruitTrees;
 using StardewValley.GameData.GarbageCans;
+using StardewValley.GameData.Machines;
 using StardewValley.GameData.Museum;
 using StardewValley.GameData.Objects;
 using StardewValley.GameData.Shops;
@@ -44,6 +45,7 @@ namespace Randomizer
         private Dictionary<string, SpecialOrderData> _specialOrderAdjustments = new();
         private Dictionary<string, MuseumRewards> _museumRewardReplacements = new();
         private Dictionary<string, ShopData> _shopReplacements = new();
+        private Dictionary<string, MachineData> _machineReplacements = new();
         private GarbageCanData _garbageCanReplacements = null;
 
         public AssetEditor(ModEntry mod)
@@ -81,6 +83,7 @@ namespace Randomizer
                 TryReplaceAsset(e, "Data/SpecialOrders", _specialOrderAdjustments) ||
                 TryReplaceAsset(e, "Data/MuseumRewards", _museumRewardReplacements) ||
                 TryReplaceAsset(e, "Data/Shops", _shopReplacements) ||
+                TryReplaceAsset(e, "Data/Machines", _machineReplacements) ||
                 TryReplaceAsset(e, "Data/GarbageCans", _garbageCanReplacements))
 			{
 				return;
@@ -129,6 +132,7 @@ namespace Randomizer
             if (e.NameWithoutLocale.IsEquivalentTo("Data/SpecialOrders")) { return Globals.Config.Fish.ShuffleSeasonsAndLocations; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/MuseumRewards")) { return Globals.Config.RandomizeMuseumRewards; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/GarbageCans")) { return Globals.Config.RandomizeGarbageCans; }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Machines")) { return Globals.Config.RecyclingMachine.Randomize; } // The only one so far
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Shops")) 
             { 
                 // The logic to include changes is included in the randomizer (there are many settings)
@@ -225,6 +229,7 @@ namespace Randomizer
             InvalidateCacheForDefaultAndCurrentLocales("Data/SpecialOrders");
             InvalidateCacheForDefaultAndCurrentLocales("Data/MuseumRewards");
             InvalidateCacheForDefaultAndCurrentLocales("Data/Shops");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Machines");
             InvalidateCacheForDefaultAndCurrentLocales("Data/GarbageCans");
         }
 
@@ -271,6 +276,7 @@ namespace Randomizer
             _specialOrderAdjustments.Clear();
             _museumRewardReplacements.Clear();
             _shopReplacements.Clear();
+            _machineReplacements.Clear();
             _garbageCanReplacements = null;
 
             InvalidateCache();
@@ -358,6 +364,8 @@ namespace Randomizer
             _specialOrderAdjustments = SpecialOrderAdjustments.GetSpecialOrderAdjustments();
 
             _museumRewardReplacements = MuseumRewardRandomizer.RandomizeMuseumRewards();
+
+            _machineReplacements = MachineRandomizer.RandomizeMachines();
         }
 
 		/// <summary>

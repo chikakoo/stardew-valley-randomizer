@@ -1,7 +1,5 @@
 ﻿using StardewValley;
-using System;
 using System.Linq;
-using SVItem = StardewValley.Item;
 using SVObject = StardewValley.Object;
 
 namespace Randomizer.Randomizers;

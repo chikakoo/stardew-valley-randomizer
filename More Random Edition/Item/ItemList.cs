@@ -684,7 +684,7 @@ namespace Randomizer
 				// Resources - ObtainingDifficulties.NoRequirements
 				{ ObjectIndexes.Wood.GetId(), new ResourceItem(ObjectIndexes.Wood) },
 				{ ObjectIndexes.Hardwood.GetId(), new ResourceItem(ObjectIndexes.Hardwood, 1, new Range(1, 15)) { DifficultyToObtain = ObtainingDifficulties.MediumTimeRequirements } },
-				{ ObjectIndexes.Moss.GetId(), new ResourceItem(ObjectIndexes.Moss, 1, new Range(1, 5)) { DifficultyToObtain = ObtainingDifficulties.MediumTimeRequirements } },
+				{ ObjectIndexes.Moss.GetId(), new ResourceItem(ObjectIndexes.Moss, 1, new Range(1, 5)) { DifficultyToObtain = ObtainingDifficulties.LargeTimeRequirements } },
 				{ ObjectIndexes.Stone.GetId(), new ResourceItem(ObjectIndexes.Stone) },
 				{ ObjectIndexes.Fiber.GetId(), new ResourceItem(ObjectIndexes.Fiber, 3, new Range(1, 5)) },
 				{ ObjectIndexes.Clay.GetId(), new ResourceItem(ObjectIndexes.Clay, 1, new Range(1, 5)) { DifficultyToObtain = ObtainingDifficulties.SmallTimeRequirements } },

@@ -387,6 +387,16 @@ public class ModConfigMenuHelper
             "The % chance that any item that's worth more than the input can be received.",
             () => Globals.Config.RecyclingMachine.PercentAnyRandomItem,
             (int val) => Globals.Config.RecyclingMachine.PercentAnyRandomItem = val);
+        AddNumberOption("Max 1H Ready Time Price",
+            "The max price the output can be before considering whether to increase the processing time " +
+            "(the default time is 1 in-game hour).",
+            () => Globals.Config.RecyclingMachine.MaxPriceForDefaultProcessingTime,
+            (int val) => Globals.Config.RecyclingMachine.MaxPriceForDefaultProcessingTime = val);
+        AddNumberOption("% Time Increase Interval",
+            "For every x% more expensive the output item is than the input item, increase the ready time" +
+            "by 10 minutes (capped at 1 day).",
+            () => Globals.Config.RecyclingMachine.PercentTimeIncreaseInterval,
+            (int val) => Globals.Config.RecyclingMachine.PercentTimeIncreaseInterval = val);
     }
 
     private void AddMiscSettingsPage()

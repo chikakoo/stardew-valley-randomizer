@@ -176,8 +176,9 @@ public class MachineRandomizer
     /// <summary>
     /// Gets the minutes until the Recycling Machine output will be ready
     /// - If getting back a cheaper item, default to one hour
-    /// - If the output costs 500 or less, default to one hour
-    /// - Else increase 10 minutes per 5% more costly the output is
+    /// - If the output costs the max price for default processing time or less, 
+    ///   default to one hour
+    /// - Else increase 10 minutes per PercentTimeIncreaseInterval% more costly the output is
     /// - Capped at one day
     /// </summary>
     /// <param name="inputPrice">The price of the item put into the machine</param>
@@ -188,7 +189,8 @@ public class MachineRandomizer
         const int minutesInOneHour = 60;
 
         int difference =  outputPrice - inputPrice;
-        if (difference < 0 || outputPrice <= 500) {
+        if (difference < 0 || 
+            outputPrice <= Globals.Config.RecyclingMachine.MaxPriceForDefaultProcessingTime) {
             return minutesInOneHour;
         }
 
@@ -197,7 +199,7 @@ public class MachineRandomizer
         // - This is a 100% total increase:
         //   If this value is 5, that's 100 / 5 = 20 intervals it increased by
         //   so the time should increase by 20 * 10 minutes
-        const int percentIntervalForIncreases = 5;
+        int percentIntervalForIncreases = Globals.Config.RecyclingMachine.PercentTimeIncreaseInterval;
         const int minutesInOneDay = 20 * minutesInOneHour;
 
         int percentIncrease = (int)((double)difference / inputPrice * 100);

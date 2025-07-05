@@ -148,5 +148,7 @@
 		public int PercentAbovePrice { get; set; } = 25;
 		public int PercentBelowPrice { get; set; } = 25;
 		public int PercentAnyRandomItem { get; set; } = 1;
+		public int MaxPriceForDefaultProcessingTime { get; set; } = 500;
+		public int PercentTimeIncreaseInterval { get; set; } = 5;
     }
 }

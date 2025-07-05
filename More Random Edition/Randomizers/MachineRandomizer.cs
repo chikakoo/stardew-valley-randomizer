@@ -150,6 +150,13 @@ public class MachineRandomizer
         var rng = new RNG(); // No need for this to be seeded
         if (rng.NextBoolean(Globals.Config.RecyclingMachine.PercentAnyRandomItem))
         {
+            var message = HUDMessage.ForItemGained(
+                ItemRegistry.Create(
+                    BigCraftableIndexes.RecyclingMachine.GetItem().QualifiedId), 
+                    count: 0);
+            message.message = Globals.GetTranslation("recycling-machine-good-roll");
+            Game1.addHUDMessage(message);
+
             return new(basePrice + 1, highestPrice);
         }
 

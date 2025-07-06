@@ -5,9 +5,10 @@ using System.IO;
 
 namespace Randomizer;
 
-public class NpcSkinSwapper
+public class NpcSkinManipulator
 {
-    private static RNG Rng { get; set; }
+    private static RNG SwapRng { get; set; }
+    private static RNG HueShiftRng { get; set; }
 
     /// <summary>
     /// The path to the randomized images directory
@@ -79,19 +80,21 @@ public class NpcSkinSwapper
         CleanUpRandomizedImageDirectory();
 
         List<NpcSwapperData> npcSwapperData = new();
-        if (!Globals.Config.NPCs.SpriteShuffle)
+        if (!Globals.Config.NPCs.SpriteShuffle &&
+            Globals.Config.NPCs.SpriteHueShiftMax == 0)
         {
             return npcSwapperData;
         }
 
-        Globals.SpoilerWrite("==== NPC SKINS ====");
+        TryWriteSwapToSpoilerLog("==== NPC SKINS ====");
 
-        Rng = RNG.GetFarmRNG($"{nameof(NpcSkinSwapper)}");
+        SwapRng = RNG.GetFarmRNG($"{nameof(NpcSkinManipulator)}");
+        HueShiftRng = RNG.GetFarmRNG($"{nameof(NpcSkinManipulator)}");
 
         npcSwapperData = GetNpcSwaps();
         npcSwapperData.ForEach(npcSwap => TrySaveImage(npcSwap));
 
-        Globals.SpoilerWrite("");
+        TryWriteSwapToSpoilerLog("");
 
         return npcSwapperData;
     }
@@ -108,15 +111,15 @@ public class NpcSkinSwapper
             List<string> possibleSwaps = new(swapPool);
             foreach (var npc in swapPool)
             {
-                var replacementNPC = Rng.GetAndRemoveRandomValueFromList(possibleSwaps);
+                // Only get a new asset if we're shuffling sprites
+                var replacementNPC = Globals.Config.NPCs.SpriteShuffle
+                    ? SwapRng.GetAndRemoveRandomValueFromList(possibleSwaps)
+                    : npc;
                 NPCSkinSwapPaths npcSwap = new(npc, replacementNPC);
 
-                if (npc != replacementNPC)
-                {
-                    AddNpcSwaps(npcSwapData, npcSwap);
-                }
-                
-                Globals.SpoilerWrite($"{npc} => {replacementNPC}");
+                AddNpcSwaps(npcSwapData, npcSwap);
+
+                TryWriteSwapToSpoilerLog($"{npc} => {replacementNPC}");
             }
         }
         return npcSwapData;
@@ -132,26 +135,34 @@ public class NpcSkinSwapper
         List<NpcSwapperData> npcSwapData, 
         NPCSkinSwapPaths npcSwap)
     {
+        // Use the same value so skin/hair colors are consistent
+        var hueShiftValue = Globals.Config.NPCs.SpriteHueShiftMax != 0
+            ? HueShiftRng.NextIntWithinRange(
+                0, Globals.Config.NPCs.SpriteHueShiftMax)
+            : 0;
+
         // Sprite sheets
         NPCSkinSwapPaths.Suffixes.ForEach(suffix =>
         {
             AddSwapForSuffix(
-            npcSwapData,
-            npcSwap.OriginalCharacterPath,
-            npcSwap.ReplacementCharacterPath,
-            fileOutputName: npcSwap.OriginalNPC,
-            suffix);
+                npcSwapData,
+                npcSwap.OriginalCharacterPath,
+                npcSwap.ReplacementCharacterPath,
+                fileOutputName: npcSwap.OriginalNPC,
+                hueShiftValue,
+                suffix);
         });
 
         // Portraits
         NPCSkinSwapPaths.Suffixes.ForEach(suffix =>
         {
             AddSwapForSuffix(
-            npcSwapData,
-            npcSwap.OriginalPortraitPath,
-            npcSwap.ReplacementPortraitPath,
-            fileOutputName: $"{npcSwap.OriginalNPC}_Portrait",
-            suffix);
+                npcSwapData,
+                npcSwap.OriginalPortraitPath,
+                npcSwap.ReplacementPortraitPath,
+                fileOutputName: $"{npcSwap.OriginalNPC}_Portrait",
+                hueShiftValue,
+                suffix);
         });
     } 
 
@@ -162,12 +173,14 @@ public class NpcSkinSwapper
     /// <param name="originalPath">The path to the original asset</param>
     /// <param name="replacementPath">The path to the asset to use instead</param>
     /// <param name="fileOutputName">The name of the file to output, if saving the images</param>
+    /// <param name="hueShiftValue">The amount to hue shift the image by</param>
     /// <param name="suffix">The suffix for any special spritesheet, if any (e.g. "_Beach")</param>
     private static void AddSwapForSuffix(
         List<NpcSwapperData> npcSwapData, 
         string originalPath,
         string replacementPath,
         string fileOutputName,
+        int hueShiftValue,
         string suffix = "")
     {
         Texture2D originalAsset = TryGetStardewCharacterAsset(originalPath, suffix);
@@ -180,6 +193,12 @@ public class NpcSkinSwapper
         Texture2D replacementAsset = GetStardewCharacterAsset(replacementPath, suffix);
         Texture2D replacementSpriteSheet = ImageManipulator.TileOrCropTexture(
             replacementAsset, originalAsset.Width, originalAsset.Height);
+        
+        if (hueShiftValue != 0)
+        {
+            replacementSpriteSheet = ImageManipulator
+                .ShiftImageHue(replacementSpriteSheet, hueShiftValue);
+        }
 
         npcSwapData.Add(new NpcSwapperData(
             assetName: $"{fileOutputName}{suffix}",
@@ -257,6 +276,18 @@ public class NpcSkinSwapper
             using FileStream stream = File.OpenWrite(
                 Path.Combine(RandomizedImagesDirectory, $"{npcSwapperData.AssetName}.png"));
             image.SaveAsPng(stream, image.Width, image.Height);
+        }
+    }
+
+    /// <summary>
+    /// Writes to the spoiler log if sprite shuffle is enabled
+    /// </summary>
+    /// <param name="message">The message to write</param>
+    private static void TryWriteSwapToSpoilerLog(string message)
+    {
+        if (Globals.Config.NPCs.SpriteShuffle)
+        {
+            Globals.SpoilerWrite(message);
         }
     }
 

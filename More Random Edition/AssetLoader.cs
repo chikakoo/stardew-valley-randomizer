@@ -127,7 +127,7 @@ public class AssetLoader
         MonsterHueShifter.GetHueShiftedMonsterAssets().ForEach(monsterData =>
             AddReplacement(monsterData.StardewAssetPath, monsterData.MonsterImage));
 
-        NpcSkinSwapper.GetSwappedNpcAssets()
+        NpcSkinManipulator.GetSwappedNpcAssets()
             .ForEach(npcSwap =>
             {
                 AddReplacement(npcSwap.StardewAssetPath, npcSwap.NpcImage);

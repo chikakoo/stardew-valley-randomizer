@@ -122,6 +122,10 @@ public class ModConfigMenuHelper
             "Shuffles NPCs sprites among each other. Use at your own risk - can result in glitchy/invisible graphics.",
             () => Globals.Config.NPCs.SpriteShuffle,
             (bool val) => Globals.Config.NPCs.SpriteShuffle = val);
+        AddHueShiftOption("Sprite Hue Shift Max",
+            "The maxmium value that NPC images will be hue-shifted. Set to 0 for no effect. Can be used independently of sprite shuffle.",
+            () => Globals.Config.NPCs.SpriteHueShiftMax,
+            (int val) => Globals.Config.NPCs.SpriteHueShiftMax = val);
     }
 
     private void AddCropsAndFishSettingsPage()

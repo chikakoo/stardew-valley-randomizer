@@ -96,7 +96,8 @@
 		public bool RandomizeIndividualPreferences { get; set; } = true;
 		public bool RandomizeUniversalPreferences { get; set; } = true;
 		public bool SpriteShuffle { get; set; } = false;
-	}
+        public int SpriteHueShiftMax { get; set; } = 0;
+    }
 
 	public class BundleConfig
 	{

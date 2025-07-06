@@ -25,8 +25,7 @@ public class ModConfigMenuHelper
 
     public void RegisterModOptions()
     {
-        AddParagraph("Configure various aspects of the game which can be randomized. Note that toggling " +
-            "random images from ON to OFF may require a game restart to reload the default image.");
+        AddParagraph("Configure various aspects of the game which can be randomized.");
 
         AddSectionTitle("Option Links", "Click to modify settings in each section.");
 
@@ -257,7 +256,7 @@ public class ModConfigMenuHelper
                 Globals.Config.Animals.RandomizePets = val;
                 Globals.ModRef.Helper.GameContent.InvalidateCache(AnimalIconPatcher.StardewAssetPath);
             });
-        AddCheckbox("RandomizeCritters",
+        AddCheckbox("Randomize Critters",
             "Use custom images for critters using replacements in their respective directories.",
             () => Globals.Config.Animals.RandomizeCritters,
             (bool val) => Globals.Config.Animals.RandomizeCritters = val);

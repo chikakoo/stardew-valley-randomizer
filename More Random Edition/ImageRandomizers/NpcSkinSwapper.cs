@@ -245,7 +245,7 @@ public class NpcSkinSwapper
     }
 
     /// <summary>
-    /// If we're saving randomized images, and there was actually a hue shift,
+    /// If we're saving randomized images,
     /// then write the images to a CustomImages/NPCs directory
     /// </summary>
     /// <param name="image">The image</param>

@@ -28,7 +28,8 @@
 		public bool RandomizeGarbageCans { get; set; } = true;
 		public bool RandomizeIntroStory { get; set; } = true;
 		public bool RandomizeQuests { get; set; } = true;
-		public bool RandomizeRain { get; set; } = true;
+        public bool RandomizeMailRewards { get; set; } = true;
+        public bool RandomizeRain { get; set; } = true;
 	}
 
 	public class CraftingRecipesConfig

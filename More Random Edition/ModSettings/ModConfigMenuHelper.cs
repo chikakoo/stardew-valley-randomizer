@@ -8,14 +8,14 @@ public class ModConfigMenuHelper
     public IGenericModConfigMenuApi Api;
     public IManifest ModManifest;
 
-    private const string SpoilerLogSettingsTitle = "Spoiler Log Settings";
-    private const string BundleCraftingNpcSettingsTitle = "Bundle/Crafting/NPC Settings";
-    private const string CropsAndFishSettingsTitle = "Crops and Fish Settings";
-    private const string MonstersAndEquipmentSettingsTitle = "Monsters and Equipment Settings";
-    private const string CosmeticSettingsTitle = "Cosmetic Settings";
-    private const string ShopSettingsTitle = "Shop Settings";
-    private const string MachineSettingsTitle = "Machine Settings";
-    private const string MiscSettingsTitle = "Misc Settings";
+    private const string SpoilerLogSettingsTitle = "Spoiler Log";
+    private const string BundleCraftingNpcSettingsTitle = "Bundle/Crafting/NPC";
+    private const string CropsAndFishSettingsTitle = "Crops and Fish";
+    private const string MonstersAndEquipmentSettingsTitle = "Monsters and Equipment";
+    private const string CosmeticSettingsTitle = "Cosmetic";
+    private const string ShopSettingsTitle = "Shop";
+    private const string MachineSettingsTitle = "Machine";
+    private const string MiscSettingsTitle = "Misc";
 
     public ModConfigMenuHelper(IGenericModConfigMenuApi api, IManifest modManifest)
     {
@@ -416,12 +416,12 @@ public class ModConfigMenuHelper
             "Every forageable appears at least once per year.", 
             () => Globals.Config.RandomizeForagables, 
             (bool val) => Globals.Config.RandomizeForagables = val);
-        AddCheckbox("Randomize Museum Rewards",
+        AddCheckbox("Museum Rewards",
             "Changes museum rewards to similiar items. Does not affect the Dwarven Translation Manual, " +
             "Ancient Fruit, or the Stardrop rewards.", 
             () => Globals.Config.RandomizeMuseumRewards, 
             (bool val) => Globals.Config.RandomizeMuseumRewards = val);
-        AddCheckbox("Randomize Garbage Cans", 
+        AddCheckbox("Garbage Cans", 
             "Random chance of NPC's dislikes/hates to be obtained from garbage cans.", 
             () => Globals.Config.RandomizeGarbageCans, 
             (bool val) => Globals.Config.RandomizeGarbageCans = val);
@@ -433,13 +433,17 @@ public class ModConfigMenuHelper
             "Randomly select quest givers, required items, and rewards.", 
             () => Globals.Config.RandomizeQuests, 
             (bool val) => Globals.Config.RandomizeQuests = val);
+        AddCheckbox("Mail Rewards",
+            "Randomize unimportant rewards (gold, food, and items that can be reasonably obtained elsewhere).",
+            () => Globals.Config.RandomizeMailRewards,
+            (bool val) => Globals.Config.RandomizeMailRewards = val);
     }
 
     /// <summary>
-    /// A wrapper for the AddPage= functionality for readability
+    /// A wrapper for the AddPage functionality for readability
     /// </summary>
     /// <param name="pageTitle">What to call the page</param>
-		private void AddPage(string pageTitle)
+    private void AddPage(string pageTitle)
         => Api.AddPage(
             mod: ModManifest,
             pageId: GetPageId(pageTitle),

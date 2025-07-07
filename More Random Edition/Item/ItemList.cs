@@ -14,9 +14,7 @@ public class ItemList
     /// </summary>
     /// <returns />
     public static List<Item> GetResources()
-    {
-        return Items.Values.Where(x => x.IsResource).ToList();
-    }
+        => Items.Values.Where(x => x.IsResource).ToList();
 
     /// <summary>
     /// Gets the name of the item with the given index
@@ -24,9 +22,7 @@ public class ItemList
     /// <param name="index">The item's index</param>
     /// <returns />
     public static string GetItemName(ObjectIndexes index)
-    {
-        return index.GetItem().Name;
-    }
+        => index.GetItem().Name;
 
     /// <summary>
     /// Gets the display name of the item with the given qualifiedId
@@ -51,9 +47,7 @@ public class ItemList
     /// <param name="index">The item's index</param>
     /// <returns />
     public static string GetQualifiedId(ObjectIndexes index)
-    {
-        return index.GetItem().QualifiedId;
-    }
+        => index.GetItem().QualifiedId;
 
     /// <summary>
     /// Gets the item from the given id
@@ -84,9 +78,7 @@ public class ItemList
     /// </summary>
     /// <returns />
     public static List<Item> GetForagables()
-    {
-        return Items.Values.Where(x => x.IsForagable).ToList();
-    }
+        => Items.Values.Where(x => x.IsForagable).ToList();
 
     /// <summary>
     /// Gets all the foragables belonging to the given season
@@ -120,36 +112,28 @@ public class ItemList
     /// </summary>
     /// <returns />
     public static List<Item> GetUniqueWoodsForagables()
-    {
-        return Items.Values.Where(x => ForagableRandomizer.WoodsForagables.Contains(x)).ToList();
-    }
+     => Items.Values.Where(x => ForagableRandomizer.WoodsForagables.Contains(x)).ToList();
 
     /// <summary>
     /// Gets all the unique beach foragables
     /// </summary>
     /// <returns />
     public static List<Item> GetUniqueBeachForagables()
-    {
-        return Items.Values.Where(x => ForagableRandomizer.BeachForagables.Contains(x)).ToList();
-    }
+        => Items.Values.Where(x => ForagableRandomizer.BeachForagables.Contains(x)).ToList();
 
     /// <summary>
     /// Gets all the unique woods foragables
     /// </summary>
     /// <returns />
     public static List<Item> GetUniqueDesertForagables()
-    {
-        return Items.Values.Where(x => ForagableRandomizer.DesertForagables.Contains(x)).ToList();
-    }
+        => Items.Values.Where(x => ForagableRandomizer.DesertForagables.Contains(x)).ToList();
 
     /// <summary>
     /// Gets all the geode minerals
     /// </summary>
     /// <returns />
     public static List<Item> GetGeodeMinerals()
-    {
-        return Items.Values.Where(x => x.IsGeodeMineral).ToList();
-    }
+        => Items.Values.Where(x => x.IsGeodeMineral).ToList();
 
     /// <summary>
     /// Gets all items which are giftable to NPCs
@@ -157,8 +141,7 @@ public class ItemList
     /// </summary>
     /// <returns>List&lt;Item&gt; containing all giftable items</returns>
     public static List<Item> GetGiftables()
-    {
-        return Items.Values.Where(x =>
+        => Items.Values.Where(x =>
             x.DifficultyToObtain < ObtainingDifficulties.Impossible &&
             (
                 x.IsAnimalProduct ||
@@ -178,16 +161,14 @@ public class ItemList
                 x.IsSmelted ||
                 x.IsTrash)
             ).ToList();
-    }
 
     /// <summary>
     /// Gets all the seeds
     /// </summary>
     /// <returns />
     public static List<Item> GetSeeds()
-    {
-        return Items.Values.Where(x => x.IsSeed).ToList();
-    }
+        => Items.Values.Where(x => x.IsSeed).ToList();
+
 
     /// <summary>
     /// Gets the seed that grows the given crop
@@ -217,11 +198,9 @@ public class ItemList
     /// <param name="includeFlowers">Whether to include flowers in the results</param>
     /// <returns />
     public static List<Item> GetCrops(bool includeFlowers = false)
-    {
-        return Items.Values.Where(x =>
+        => Items.Values.Where(x =>
             x.IsCrop && (includeFlowers || (!includeFlowers && !x.IsFlower))
         ).ToList();
-    }
 
     /// <summary>
     /// Gets crops that grow in the given season
@@ -244,63 +223,56 @@ public class ItemList
     /// </summary>
     /// <returns />
     public static List<Item> GetFlowers()
-    {
-        return Items.Values.Where(x => x.IsFlower).ToList();
-    }
+        => Items.Values.Where(x => x.IsFlower).ToList();
 
     /// <summary>
     /// Gets all the fruit
     /// </summary>
     /// <returns />
     public static List<Item> GetFruit()
-    {
-        return Items.Values.Where(x => x.IsFruit).ToList();
-    }
+        => Items.Values.Where(x => x.IsFruit).ToList();
 
     /// <summary>
     /// Gets all the artifacts
     /// </summary>
     /// <returns />
     public static List<Item> GetArtifacts()
-    {
-        return Items.Values.Where(x => x.IsArtifact).ToList();
-    }
+        => Items.Values.Where(x => x.IsArtifact).ToList();
+
+    /// <summary>
+    /// Gets all the smelted items
+    /// </summary>
+    /// <returns />
+    public static List<Item> GetSmeltedItems()
+        => Items.Values.Where(x => x.IsSmelted).ToList();
 
     /// <summary>
     /// Gets all the trash
     /// </summary>
     /// <returns />
     public static List<Item> GetTrash()
-    {
-        return Items.Values.Where(x => x.IsTrash).ToList();
-    }
+        => Items.Values.Where(x => x.IsTrash).ToList();
 
     /// <summary>
     /// Gets all the cooked items
     /// </summary>
     /// <returns />
     public static List<Item> GetCookedItems()
-    {
-        return Items.Values.Where(x => x.IsCooked).ToList();
-    }
+        => Items.Values.Where(x => x.IsCooked).ToList();
 
     /// <summary>
     /// Gets all the rings
     /// </summary>
     /// <returns />
     public static List<Item> GetRings()
-    {
-        return Items.Values.Where(x => x.IsRing).ToList();
-    }
+        => Items.Values.Where(x => x.IsRing).ToList();
 
     /// <summary>
     /// Gets all the animal products
     /// </summary>
     /// <returns />
     public static List<Item> GetAnimalProducts()
-    {
-        return Items.Values.Where(x => x.IsAnimalProduct).ToList();
-    }
+        => Items.Values.Where(x => x.IsAnimalProduct).ToList();
 
     /// <summary>
     /// Splits <paramref name="itemString"/> by <paramref name="separator"/> and returns a List&lt;Item&gt;
@@ -338,11 +310,10 @@ public class ItemList
     /// <param name="idsToExclude">Any ids to exclude from the results</param>
     /// <returns>The list of items</returns>
     public static List<Item> GetItemsBelowDifficulty(ObtainingDifficulties difficulty, List<string> idsToExclude = null)
-    {
-        return Items.Values.Where(x => x.DifficultyToObtain < difficulty &&
-            (idsToExclude == null || !idsToExclude.Contains(x.Id)))
-        .ToList();
-    }
+        => Items.Values
+            .Where(x => x.DifficultyToObtain < difficulty &&
+                (idsToExclude == null || !idsToExclude.Contains(x.Id)))
+            .ToList();
 
     /// <summary>
     /// Gets one random items equal to the given difficulty
@@ -352,13 +323,11 @@ public class ItemList
     /// <param name="idsToExclude">Any ids to exclude from the results</param>
     /// <returns>The list of items</returns>
     public static Item GetRandomItemAtDifficulty(RNG rng, ObtainingDifficulties difficulty, string[] idsToExclude = null)
-    {
-        return rng.GetRandomValueFromList(
+        => rng.GetRandomValueFromList(
             Items.Values.Where(x =>
                 x.DifficultyToObtain == difficulty &&
                 (idsToExclude == null || !idsToExclude.Contains(x.Id))).ToList()
             );
-    }
 
     /// <summary>
     /// Gets all items equal to the given difficulty
@@ -367,12 +336,10 @@ public class ItemList
     /// <param name="idsToExclude">List of IDs to exclude</param>
     /// <returns>The list of items, not including any in idsToExclude</returns>
     public static List<Item> GetItemsAtDifficulty(ObtainingDifficulties difficulty, List<string> idsToExclude = null)
-    {
-        return Items.Values.Where(
+        => Items.Values.Where(
                 x => x.DifficultyToObtain == difficulty &&
                 (idsToExclude == null || !idsToExclude.Contains(x.Id))
             ).ToList();
-    }
 
     /// <summary>
     /// Gets all items in given craftable category
@@ -396,13 +363,10 @@ public class ItemList
     /// <param name="idsToExclude">Any ids to exclude from the results</param>
     /// <returns>The resource item</returns>
     public static Item GetRandomResourceItem(RNG rng, string[] idsToExclude = null)
-    {
-        return rng.GetRandomValueFromList(
-        Items.Values
+        => rng.GetRandomValueFromList(Items.Values
             .Where(x => x.IsResource &&
                 (idsToExclude == null || !idsToExclude.Contains(x.Id)))
             .ToList());
-    }
 
     /// <summary>
     /// Gets a random craftable item out of the list
@@ -455,11 +419,9 @@ public class ItemList
         RNG rng,
         int numberToGet,
         List<FurnitureIndexes> itemsToExclude = null)
-    {
-        return GetRandomFurniture(rng, numberToGet, itemsToExclude)
+        => GetRandomFurniture(rng, numberToGet, itemsToExclude)
             .Cast<ISalable>()
             .ToList();
-    }
 
     /// <summary>
     /// Gets a list of random furniture items
@@ -497,7 +459,7 @@ public class ItemList
     {
         var allClothingIds = Enum.GetValues(typeof(ClothingIndexes))
             .Cast<ClothingIndexes>()
-        .Where(index => itemsToExclude == null || !itemsToExclude.Contains(index))
+            .Where(index => itemsToExclude == null || !itemsToExclude.Contains(index))
             .ToList();
 
         return rng.GetRandomValuesFromList(allClothingIds, numberToGet)
@@ -516,7 +478,7 @@ public class ItemList
     public static List<ISalable> GetRandomHatsToSell(RNG rng, int numberToGet, List<string> itemsToExclude = null)
     {
         var allHatIds = Enum.GetValues(typeof(HatIndexes))
-        .Cast<HatIndexes>()
+            .Cast<HatIndexes>()
             .Select(hat => HatFunctions.GetHatId(hat))
             .Where(id => itemsToExclude == null || !itemsToExclude.Contains(id))
             .ToList();
@@ -535,14 +497,12 @@ public class ItemList
     /// <param name="itemsToExclude">BigCraftable indexes to not include</param>
     /// <returns>A list of big craftables to sell</returns>
     public static List<ISalable> GetRandomBigCraftablesToSell(
-    RNG rng,
-    int numberToGet,
-    List<BigCraftableIndexes> itemsToExclude = null)
-    {
-        return GetRandomBigCraftables(rng, numberToGet, itemsToExclude)
-        .Cast<ISalable>()
-        .ToList();
-    }
+        RNG rng,
+        int numberToGet,
+        List<BigCraftableIndexes> itemsToExclude = null)
+        => GetRandomBigCraftables(rng, numberToGet, itemsToExclude)
+            .Cast<ISalable>()
+            .ToList();
 
     /// <summary>
     /// Gets a list of random big craftables
@@ -567,8 +527,7 @@ public class ItemList
             .ToList();
 
         return rng.GetRandomValuesFromList(allBigCraftableIds, numberToGet)
-            .Select(bigCraftableId =>
-            BigCraftableFunctions.GetItem(
+            .Select(bigCraftableId => BigCraftableFunctions.GetItem(
                 BigCraftableIndexesExtentions.GetBigCraftableIndex(bigCraftableId)))
             .ToList();
     }
@@ -1294,20 +1253,23 @@ public class ItemList
             { BigCraftableIndexes.FarmComputer.GetId(), new CraftableItem(BigCraftableIndexes.FarmComputer, CraftableCategories.Difficult) },
             { BigCraftableIndexes.Dehydrator.GetId(), new CraftableItem(BigCraftableIndexes.Dehydrator, CraftableCategories.Moderate) },
             { BigCraftableIndexes.StatueOfBlessings.GetId(), new CraftableItem(BigCraftableIndexes.StatueOfBlessings, CraftableCategories.Endgame) },
-            { BigCraftableIndexes.StatueOfTheDwarfKing.GetId(), new CraftableItem(BigCraftableIndexes.StatueOfTheDwarfKing, CraftableCategories.Endgame) },
-
-			// Non-craftable BigObjects
-			{ BigCraftableIndexes.Heater.GetId(), new Item(BigCraftableIndexes.Heater.GetId(), ObtainingDifficulties.NonCraftingItem) },
-            { BigCraftableIndexes.AutoGrabber.GetId(), new Item(BigCraftableIndexes.AutoGrabber.GetId(), ObtainingDifficulties.NonCraftingItem) },
-            { BigCraftableIndexes.PrairieKingArcadeSystem.GetId(), new Item(BigCraftableIndexes.PrairieKingArcadeSystem.GetId(), ObtainingDifficulties.NonCraftingItem) },
-            { BigCraftableIndexes.JunimoKartArcadeSystem.GetId(), new Item(BigCraftableIndexes.JunimoKartArcadeSystem.GetId(), ObtainingDifficulties.NonCraftingItem) },
-            { BigCraftableIndexes.SodaMachine.GetId(), new Item(BigCraftableIndexes.SodaMachine.GetId(), ObtainingDifficulties.NonCraftingItem) },
-            { BigCraftableIndexes.HMTGF.GetId(), new Item(BigCraftableIndexes.HMTGF.GetId(), ObtainingDifficulties.NonCraftingItem) { OverrideName = "??HMTGF??" } },
-            { BigCraftableIndexes.PinkyLemon.GetId(), new Item(BigCraftableIndexes.PinkyLemon.GetId(), ObtainingDifficulties.NonCraftingItem) { OverrideName = "??Pinky Lemon??" } },
-            { BigCraftableIndexes.Foroguemon.GetId(), new Item(BigCraftableIndexes.Foroguemon.GetId(), ObtainingDifficulties.NonCraftingItem) { OverrideName = "??Foroguemon??" } },
-            { BigCraftableIndexes.SolidGoldLewis.GetId(), new Item(BigCraftableIndexes.SolidGoldLewis.GetId(), ObtainingDifficulties.NonCraftingItem) },
-            { BigCraftableIndexes.StardewHeroTrophy.GetId(), new Item(BigCraftableIndexes.StardewHeroTrophy.GetId(), ObtainingDifficulties.NonCraftingItem) }
+            { BigCraftableIndexes.StatueOfTheDwarfKing.GetId(), new CraftableItem(BigCraftableIndexes.StatueOfTheDwarfKing, CraftableCategories.Endgame) }
         };
+
+        // Fill out the rest of the big craftables so they are in the list
+        Enum.GetValues(typeof(BigCraftableIndexes))
+            .Cast<BigCraftableIndexes>()
+            .ToList()
+            .ForEach(index =>
+            {
+                var id = index.GetId();
+                if (!BigCraftableItems.ContainsKey(id))
+                {
+                    BigCraftableItems.Add(
+                        id, 
+                        new Item(id, ObtainingDifficulties.NonCraftingItem, isBigCraftable: true));
+                }
+            });
 
         // Fill out the default fish info based off Data/Fish
         Items.Values.Where(item => item is FishItem)

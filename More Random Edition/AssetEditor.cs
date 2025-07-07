@@ -18,10 +18,10 @@ using SVLocationData = StardewValley.GameData.Locations.LocationData;
 namespace Randomizer
 {
     public class AssetEditor
-	{
-		private readonly ModEntry _mod;
-		private Dictionary<string, string> _recipeReplacements = new();
-		private Dictionary<string, string> _bundleReplacements = new();
+    {
+        private readonly ModEntry _mod;
+        private Dictionary<string, string> _recipeReplacements = new();
+        private Dictionary<string, string> _bundleReplacements = new();
         private Dictionary<string, BuildingData> _buildingReplacements = new();
         private Dictionary<string, string> _uiStringReplacements = new();
         private Dictionary<string, string> _grandpaStringReplacements = new();
@@ -49,22 +49,22 @@ namespace Randomizer
         private GarbageCanData _garbageCanReplacements = null;
 
         public AssetEditor(ModEntry mod)
-		{
-			_mod = mod;
-		}
+        {
+            _mod = mod;
+        }
 
-		/// <summary>
-		/// Called when requesting new assets - will replace them with our version
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
+        /// <summary>
+        /// Called when requesting new assets - will replace them with our version
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-			if (TryReplaceAsset(e, "Data/CraftingRecipes", _recipeReplacements) ||
+            if (TryReplaceAsset(e, "Data/CraftingRecipes", _recipeReplacements) ||
                 TryReplaceAsset(e, "Data/Bundles", _bundleReplacements) ||
                 TryReplaceAsset(e, "Data/Buildings", _buildingReplacements) ||
                 TryReplaceAsset(e, "Strings/UI", _uiStringReplacements) ||
-				TryReplaceAsset(e, "Data/Events/Farm", _farmEventsReplacements) ||
+                TryReplaceAsset(e, "Data/Events/Farm", _farmEventsReplacements) ||
                 TryReplaceAsset(e, "Data/Fish", _fishReplacements) ||
                 TryReplaceAsset(e, "Data/Quests", _questReplacements) ||
                 TryReplaceAsset(e, "Data/mail", _mailReplacements) ||
@@ -85,9 +85,9 @@ namespace Randomizer
                 TryReplaceAsset(e, "Data/Shops", _shopReplacements) ||
                 TryReplaceAsset(e, "Data/Machines", _machineReplacements) ||
                 TryReplaceAsset(e, "Data/GarbageCans", _garbageCanReplacements))
-			{
-				return;
-			}
+            {
+                return;
+            }
 
             if (ShouldReplaceAsset(e, "Strings/StringsFromCSFiles"))
             {
@@ -104,7 +104,7 @@ namespace Randomizer
         /// <returns>True if we should replace it; false otherwise</returns>
         private static bool ShouldReplaceAsset(AssetRequestedEventArgs e, string assetName)
         {
-			if (!e.NameWithoutLocale.IsEquivalentTo(assetName))
+            if (!e.NameWithoutLocale.IsEquivalentTo(assetName))
             {
                 return false;
             }
@@ -114,7 +114,7 @@ namespace Randomizer
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Buildings")) { return Globals.Config.RandomizeBuildingCosts; }
             if (e.NameWithoutLocale.IsEquivalentTo("Strings/StringsFromCSFiles")) { return true; }
             if (e.NameWithoutLocale.IsEquivalentTo("Strings/UI")) { return true; }
-			if (e.NameWithoutLocale.IsEquivalentTo("Data/Events/Farm")) { return Globals.Config.Animals.RandomizePets; }
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Events/Farm")) { return Globals.Config.Animals.RandomizePets; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Objects")) { return true; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish")) { return Globals.Config.Fish.RandomizeBehaviors || Globals.Config.Fish.ShuffleSeasonsAndLocations; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Quests") || e.NameWithoutLocale.IsEquivalentTo("Data/mail")) { return Globals.Config.RandomizeQuests; }
@@ -133,25 +133,25 @@ namespace Randomizer
             if (e.NameWithoutLocale.IsEquivalentTo("Data/MuseumRewards")) { return Globals.Config.RandomizeMuseumRewards; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/GarbageCans")) { return Globals.Config.RandomizeGarbageCans; }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Machines")) { return Globals.Config.RecyclingMachine.Randomize; } // The only one so far
-            if (e.NameWithoutLocale.IsEquivalentTo("Data/Shops")) 
-            { 
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Shops"))
+            {
                 // The logic to include changes is included in the randomizer (there are many settings)
-                return true; 
+                return true;
             }
 
             return false;
         }
 
-		/// <summary>
-		/// Tries to replace the asset with the one with the given name
-		/// </summary>
-		/// <param name="e"></param>
-		/// <param name="assetName"></param>
-		/// <param name="replacement"></param>
-		/// <returns>True if successful, false otherwise</returns>
+        /// <summary>
+        /// Tries to replace the asset with the one with the given name
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="assetName"></param>
+        /// <param name="replacement"></param>
+        /// <returns>True if successful, false otherwise</returns>
         private static bool TryReplaceAsset<TKey, TValue>(
-            AssetRequestedEventArgs e, 
-            string assetName, 
+            AssetRequestedEventArgs e,
+            string assetName,
             IDictionary<TKey, TValue> replacement)
         {
             if (ShouldReplaceAsset(e, assetName))
@@ -163,7 +163,7 @@ namespace Randomizer
         }
 
         private static void ApplyEdits<TKey, TValue>(
-            IAssetData asset, 
+            IAssetData asset,
             IDictionary<TKey, TValue> edits)
         {
             IAssetDataForDictionary<TKey, TValue> assetDict = asset.AsDictionary<TKey, TValue>();
@@ -182,7 +182,7 @@ namespace Randomizer
         /// <param name="garbageCanData">The asset we wish to replace the Stardew asset with</param>
         /// <returns>True if we should replace the asset, false otherwise</returns>
         private static bool TryReplaceAsset(
-            AssetRequestedEventArgs e, 
+            AssetRequestedEventArgs e,
             string assetName,
             GarbageCanData garbageCanData)
         {
@@ -203,25 +203,25 @@ namespace Randomizer
         /// Invalidates the cache for all the assets
         /// </summary>
         public void InvalidateCache()
-		{
+        {
             InvalidateCacheForDefaultAndCurrentLocales("Data/CraftingRecipes");
             InvalidateCacheForDefaultAndCurrentLocales("Data/Bundles");
             InvalidateCacheForDefaultAndCurrentLocales("Data/Buildings");
-			InvalidateCacheForDefaultAndCurrentLocales("Strings/StringsFromCSFiles");
-			InvalidateCacheForDefaultAndCurrentLocales("Strings/UI");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Objects");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Events/Farm");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Fish");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Quests");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/mail");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Locations");
-			InvalidateCacheForDefaultAndCurrentLocales("Strings/Locations");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/FruitTrees");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Crops");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/TV/CookingChannel");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Weapons");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Boots");
-			InvalidateCacheForDefaultAndCurrentLocales("Data/Monsters");
+            InvalidateCacheForDefaultAndCurrentLocales("Strings/StringsFromCSFiles");
+            InvalidateCacheForDefaultAndCurrentLocales("Strings/UI");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Objects");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Events/Farm");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Fish");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Quests");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/mail");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Locations");
+            InvalidateCacheForDefaultAndCurrentLocales("Strings/Locations");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/FruitTrees");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Crops");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/TV/CookingChannel");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Weapons");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Boots");
+            InvalidateCacheForDefaultAndCurrentLocales("Data/Monsters");
             InvalidateCacheForDefaultAndCurrentLocales("Data/Characters");
             InvalidateCacheForDefaultAndCurrentLocales("Data/NPCGiftTastes");
             InvalidateCacheForDefaultAndCurrentLocales("Data/SecretNotes");
@@ -240,7 +240,7 @@ namespace Randomizer
         /// </summary>
         /// <param name="assetName">The asset to invalidate</param>
 		public void InvalidateCacheForDefaultAndCurrentLocales(string assetName)
-		{
+        {
             _mod.Helper.GameContent.InvalidateCache(assetName);
             _mod.Helper.GameContent.InvalidateCache(Globals.GetLocalizedFileName(assetName));
         }
@@ -286,9 +286,9 @@ namespace Randomizer
         /// Calculates edits that need to happen before a save file is loaded
         /// </summary>
         public void CalculateEditsBeforeLoad()
-		{
-			_grandpaStringReplacements = StringsAdjustments.RandomizeGrandpasStory();
-			CalculateAndInvalidateUIEdits();
+        {
+            _grandpaStringReplacements = StringsAdjustments.RandomizeGrandpasStory();
+            CalculateAndInvalidateUIEdits();
         }
 
         /// <summary>
@@ -296,10 +296,10 @@ namespace Randomizer
         /// Should be called on game load and after a language change
         /// </summary>
         public void CalculateAndInvalidateUIEdits()
-		{
-			_uiStringReplacements = StringsAdjustments.ModifyRemixedBundleUI();
-			_mod.Helper.GameContent.InvalidateCache("Strings/UI");
-		}
+        {
+            _uiStringReplacements = StringsAdjustments.ModifyRemixedBundleUI();
+            _mod.Helper.GameContent.InvalidateCache("Strings/UI");
+        }
 
         /// <summary>
         /// Shops are randomized once per day - this is a handler that's meant to be called
@@ -311,54 +311,59 @@ namespace Randomizer
             _mod.Helper.GameContent.InvalidateCache("Data/Shops");
         }
 
-		/// <summary>
-		/// Calculates all the things to edit and creates the replacement dictionaries
-		/// </summary>
-		public void CalculateEdits()
-		{
-			ItemList.Initialize();
-			ValidateItemList();
+        /// <summary>
+        /// Calculates all the things to edit and creates the replacement dictionaries
+        /// </summary>
+        public void CalculateEdits()
+        {
+            ItemList.Initialize();
 
-			EditedObjects editedObjectInfo = new();
-			_objectReplacements = editedObjectInfo.ObjectsReplacements;
+#if DEBUG
+            ValidateItemList();
+#endif
+
+            EditedObjects editedObjectInfo = new();
+            _objectReplacements = editedObjectInfo.ObjectsReplacements;
 
             // Must be done before recipes because of wild seeds
             // Also, the ForagableRandomizer needs to be the one to define _locationsReplacements
             _locationsReplacements = ForagableRandomizer.Randomize(_objectReplacements);
             ArtifactSpotRandomizer.Randomize(_locationsReplacements);
-			
+
             FishRandomizer.Randomize(editedObjectInfo, _locationsReplacements);
-			_fishReplacements = editedObjectInfo.FishReplacements;
+            _fishReplacements = editedObjectInfo.FishReplacements;
 
-			CropRandomizer.Randomize(editedObjectInfo);
+            CropRandomizer.Randomize(editedObjectInfo);
             _fruitTreeReplacements = FruitTreeRandomizer.Randomize(_objectReplacements);
-			_cropReplacements = EditedObjects.CropsReplacements;
+            _cropReplacements = EditedObjects.CropsReplacements;
 
-			_buildingReplacements = BuildingRandomizer.Randomize();
-			_monsterReplacements = MonsterRandomizer.Randomize(); // Must be done before recipes since rarities of drops change
-			_recipeReplacements = CraftingRecipeRandomizer.Randomize();
-			_stringReplacements = StringsAdjustments.GetCSFileStringReplacements();
-			_farmEventsReplacements = StringsAdjustments.GetFarmEventsReplacements();
-			_locationStringReplacements = StringsAdjustments.GetLocationStringReplacements();
-			_cookingChannelReplacements = CookingChannelAdjustments.GetTextEdits();
+            _buildingReplacements = BuildingRandomizer.Randomize();
+            _monsterReplacements = MonsterRandomizer.Randomize(); // Must be done before recipes since rarities of drops change
+            _recipeReplacements = CraftingRecipeRandomizer.Randomize();
+            _stringReplacements = StringsAdjustments.GetCSFileStringReplacements();
+            _farmEventsReplacements = StringsAdjustments.GetFarmEventsReplacements();
+            _locationStringReplacements = StringsAdjustments.GetLocationStringReplacements();
+            _cookingChannelReplacements = CookingChannelAdjustments.GetTextEdits();
 
             // Needs to run after Cooking Recipe fix so that cooked items are properly named,
             // and needs to run before bundles so that NPC Loved Item bundles are properly generated
             _preferenceReplacements = PreferenceRandomizer.Randomize();
-			_secretNotesReplacements = SecretNotesRandomizer.FixSecretNotes(_preferenceReplacements);
+            _secretNotesReplacements = SecretNotesRandomizer.FixSecretNotes(_preferenceReplacements);
             _garbageCanReplacements = GarbageCanRandomizer.Randomize();
 
             // Bundles need to be ran after preferences so modified NPC values are correct
-			_bundleReplacements = BundleRandomizer.Randomize();
+            _bundleReplacements = BundleRandomizer.Randomize();
             MusicRandomizer.Randomize();
 
-			QuestInformation questInfo = QuestRandomizer.Randomize();
-			_questReplacements = questInfo.QuestReplacements;
-			_mailReplacements = questInfo.MailReplacements;
+            QuestInformation questInfo = QuestRandomizer.Randomize();
+            _questReplacements = questInfo.QuestReplacements;
+            _mailReplacements = questInfo.MailReplacements;
 
-			_weaponReplacements = WeaponRandomizer.Randomize();
-			_bootReplacements = BootRandomizer.Randomize();
-			_birthdayReplacements = BirthdayRandomizer.Randomize();
+            MailRewardRandomizer.Randomize(_mailReplacements);
+
+            _weaponReplacements = WeaponRandomizer.Randomize();
+            _bootReplacements = BootRandomizer.Randomize();
+            _birthdayReplacements = BirthdayRandomizer.Randomize();
 
             ObjectContextTagsAdjustments.AdjustContextTags(_objectReplacements);
             _specialOrderAdjustments = SpecialOrderAdjustments.GetSpecialOrderAdjustments();
@@ -368,18 +373,26 @@ namespace Randomizer
             _machineReplacements = MachineRandomizer.RandomizeMachines();
         }
 
-		/// <summary>
-		/// Validates that all the items in ObjectIndexes exist in the main item lists
-		/// </summary>
-		private static void ValidateItemList()
-		{
-			foreach (ObjectIndexes index in Enum.GetValues(typeof(ObjectIndexes)))
-			{
-				if (!ItemList.Items.ContainsKey(index.GetId()))
-				{
-					Globals.ConsoleWarn($"Missing item: {(int)index}: {index}");
-				}
-			}
+        /// <summary>
+        /// Validates that all the items in ObjectIndexes exist in the main item lists
+        /// </summary>
+        private static void ValidateItemList()
+        {
+            foreach (ObjectIndexes index in Enum.GetValues(typeof(ObjectIndexes)))
+            {
+                if (!ItemList.Items.ContainsKey(index.GetId()))
+                {
+                    Globals.ConsoleWarn($"Missing item: {(int)index}: {index}");
+                }
+            }
+
+            foreach (BigCraftableIndexes index in Enum.GetValues(typeof(BigCraftableIndexes)))
+            {
+                if (!ItemList.BigCraftableItems.ContainsKey(index.GetId()))
+                {
+                    Globals.ConsoleWarn($"Missing item: {(int)index}: {index}");
+                }
+            }
         }
-	}
+    }
 }

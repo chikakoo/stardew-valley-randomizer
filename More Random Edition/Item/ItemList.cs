@@ -512,9 +512,9 @@ public class ItemList
     /// <param name="indexesToExclude">BigCraftable indexes to not include</param>
     /// <returns>A list of big craftables to sell</returns>
     public static List<SVObject> GetRandomBigCraftables(
-    RNG rng,
-    int numberToGet,
-    List<BigCraftableIndexes> indexesToExclude = null)
+        RNG rng,
+        int numberToGet,
+        List<BigCraftableIndexes> indexesToExclude = null)
     {
         List<string> idsToExclude = indexesToExclude == null
             ? null

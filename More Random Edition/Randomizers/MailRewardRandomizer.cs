@@ -282,7 +282,8 @@ public class MailRewardRandomizer
                             new(BigCraftableIndexes.AutoGrabber.GetItem()),
                             new(BigCraftableIndexes.AutoPetter.GetItem()),
                             new(BigCraftableIndexes.MayonnaiseMachine.GetItem()),
-                            new(BigCraftableIndexes.CheesePress.GetItem())
+                            new(BigCraftableIndexes.CheesePress.GetItem()),
+                            new(BigCraftableIndexes.OstrichIncubator.GetItem())
                         })
                     .ToList());
             case MailRewardTypes.CaveItems:

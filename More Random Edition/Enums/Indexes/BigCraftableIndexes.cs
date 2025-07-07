@@ -241,9 +241,6 @@ public static class BigCraftableIndexesExtentions
     public static string GetId(this BigCraftableIndexes index) =>
         BigCraftableIndexData.BigCraftableIndexIdMap[index];
 
-    public static string GetQualifiedId(this BigCraftableIndexes index) =>
-        BigCraftableFunctions.GetQualifiedId(index);
-
     public static Item GetItem(this BigCraftableIndexes index) =>
         ItemList.BigCraftableItems[GetId(index)];
 

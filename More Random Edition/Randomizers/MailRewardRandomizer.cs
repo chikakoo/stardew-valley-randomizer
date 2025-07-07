@@ -66,18 +66,18 @@ public class MailRewardRandomizer
         public List<MailItemReward> ItemRewardList {  get; set; }
 
         /// <summary>
-        /// The amount of money in this reward
+        /// The range of money in this reward
         /// If this has a value, then it is assumed that
         /// the reward is money, and not an item
         /// </summary>
-        public int MoneyAmount { get; set; }
+        public Range MoneyAmountRange { get; set; } = default;
 
         /// <summary>
         /// Gets whether this is a money reward
         /// </summary>
         public bool IsMoneyReward
         {
-            get => MoneyAmount > 0;
+            get => MoneyAmountRange != default;
         }
 
         public MailReward(List<MailItemReward> itemRewardList)
@@ -88,7 +88,7 @@ public class MailRewardRandomizer
 
         public MailReward(Range moneyAmountRange)
         {
-            MoneyAmount = moneyAmountRange.GetRandomValue(Rng);
+            MoneyAmountRange = moneyAmountRange;
         }
 
         /// <summary>
@@ -108,7 +108,8 @@ public class MailRewardRandomizer
         {
             if (IsMoneyReward)
             {
-                return $"item money {MoneyAmount} ";
+                // The max value in the mail is exclusive, so we need to add 1
+                return $"item money {MoneyAmountRange.MinValue} {MoneyAmountRange.MaxValue + 1} ";
             }
 
             var rewardStrings = ItemRewardList
@@ -126,7 +127,7 @@ public class MailRewardRandomizer
         {
             if (IsMoneyReward)
             {
-                return $"{MoneyAmount}g";
+                return $"{MoneyAmountRange.MinValue}-{MoneyAmountRange.MaxValue}g";
             }
 
             var displayString = ItemRewardList
@@ -134,6 +135,52 @@ public class MailRewardRandomizer
                 .ToList();
 
             return $"\n{string.Join("\n", displayString)}";
+        }
+    }
+
+    /// <summary>
+    /// A class to track the mail type and text replacement data
+    /// </summary>
+    private class MailTypeAndTextReplacement
+    {
+        /// <summary>
+        /// The reward type of the mail
+        /// </summary>
+        public MailRewardTypes RewardType { get; set; }
+
+        /// <summary>
+        /// The text to overwrite in the mail
+        /// </summary>
+        public string TextToReplace { get; set; } = "";
+
+        /// <summary>
+        /// The new text to replace the old text with
+        /// </summary>
+        public string NewText { get; set; } = "";
+
+        /// <summary>
+        /// Whether we should replace the text, which is whenever
+        /// there is actually text to replace
+        /// </summary>
+        public bool ShouldReplaceText
+        {
+            get => TextToReplace != "";
+        }
+
+        public MailTypeAndTextReplacement(
+            MailRewardTypes rewardType)
+        {
+            RewardType = rewardType;
+        }
+
+        public MailTypeAndTextReplacement(
+            MailRewardTypes rewardType,
+            string textToReplace,
+            string newText)
+        {
+            RewardType = rewardType;
+            TextToReplace = textToReplace;
+            NewText = newText;
         }
     }
 
@@ -162,42 +209,45 @@ public class MailRewardRandomizer
     /// <summary>
     /// The map of each relevant letter's key to what randomized reward type
     /// the player should receive
+    /// 
+    /// Also includes the text to replace in the English message so the message
+    /// will actually match the reward
     /// </summary>
-    private static readonly Dictionary<string, MailRewardTypes> _mailRewardMap = new()
+    private static readonly Dictionary<string, MailTypeAndTextReplacement> _mailRewardMap = new()
     {
-        { "mom1", MailRewardTypes.Food },
-        { "mom2", MailRewardTypes.SmallMoney },
-        { "mom4", MailRewardTypes.Food },
+        { "mom1", new(MailRewardTypes.Food, "cookies", "food") },
+        { "mom2", new(MailRewardTypes.SmallMoney) },
+        { "mom4", new(MailRewardTypes.Food, "cake", "food") },
 
-        { "dad1", MailRewardTypes.SmallMoney },
-        { "dad2", MailRewardTypes.SmallMoney },
-        { "dad4", MailRewardTypes.CheapResources },
+        { "dad1", new(MailRewardTypes.SmallMoney) },
+        { "dad2", new(MailRewardTypes.SmallMoney) },
+        { "dad4", new(MailRewardTypes.CheapResources, "stone", "resources") },
 
-        { "QiChallengeComplete", MailRewardTypes.LargeMoney },
-        { "quest10", MailRewardTypes.SmallMoney },
-        { "quest35", MailRewardTypes.MediumMoney },
+        { "QiChallengeComplete", new(MailRewardTypes.LargeMoney) },
+        { "quest10", new(MailRewardTypes.SmallMoney) },
+        { "quest35", new(MailRewardTypes.MediumMoney) },
 
-        { "lewisStatue", MailRewardTypes.SmallMoney },
-        { "ClintReward2", MailRewardTypes.CaveItems },
+        { "lewisStatue", new(MailRewardTypes.SmallMoney) },
+        { "ClintReward2", new(MailRewardTypes.CaveItems) },
 
-        { "Caroline", MailRewardTypes.Crop },
-        { "Clint", MailRewardTypes.CaveItems },
-        { "Demetrius", MailRewardTypes.FieldStudyItems },
-        { "Emily", MailRewardTypes.RandomLargeTimeOrBelow },
-        { "Evelyn", MailRewardTypes.Food },
-        { "George", MailRewardTypes.CheapResources },
-        { "Gus", MailRewardTypes.Food },
-        { "Jodi", MailRewardTypes.CheapFarmItems },
-        { "Kent", MailRewardTypes.RandomLargeTimeOrBelow },
-        { "Lewis", MailRewardTypes.SmallMoney },
-        { "Linus", MailRewardTypes.FishOrFishFood },
-        { "Marnie", MailRewardTypes.AnimalItems },
-        { "Pam", MailRewardTypes.RandomLargeTimeOrBelow },
-        { "Pierre", MailRewardTypes.SmallMoney },
-        { "Robin", MailRewardTypes.CheapResources },
-        { "Sandy", MailRewardTypes.DesertItems },
-        { "Shane", MailRewardTypes.Food },
-        { "Wizard", MailRewardTypes.RandomLargeTimeOrBelow }
+        { "Caroline", new(MailRewardTypes.Crop) },
+        { "Clint", new(MailRewardTypes.CaveItems, "made one metal bar too many", "found a pile of items in storage") },
+        { "Demetrius", new(MailRewardTypes.FieldStudyItems) },
+        { "Emily", new(MailRewardTypes.RandomLargeTimeOrBelow) },
+        { "Evelyn", new(MailRewardTypes.Food) },
+        { "George", new(MailRewardTypes.CheapResources, "stone", "resources") },
+        { "Gus", new(MailRewardTypes.Food) },
+        { "Jodi", new(MailRewardTypes.CheapFarmItems, "much fertilizer", "many supplies") },
+        { "Kent", new(MailRewardTypes.RandomLargeTimeOrBelow) },
+        { "Lewis", new(MailRewardTypes.SmallMoney, "500g ", "") },
+        { "Linus", new(MailRewardTypes.FishOrFishFood) },
+        { "Marnie", new(MailRewardTypes.AnimalItems, "over some animal feed", "you something") },
+        { "Pam", new(MailRewardTypes.RandomLargeTimeOrBelow) },
+        { "Pierre", new(MailRewardTypes.SmallMoney) },
+        { "Robin", new(MailRewardTypes.CheapResources, "wood", "resources") },
+        { "Sandy", new(MailRewardTypes.DesertItems) },
+        { "Shane", new(MailRewardTypes.Food) },
+        { "Wizard", new(MailRewardTypes.RandomLargeTimeOrBelow) }
     };
 
     /// <summary>
@@ -228,7 +278,7 @@ public class MailRewardRandomizer
         foreach (var mailRewardMapKV in _mailRewardMap)
         {
             var mailId = mailRewardMapKV.Key;
-            var rewardType = mailRewardMapKV.Value;
+            var rewardType = mailRewardMapKV.Value.RewardType;
 
             if (!mailData.ContainsKey(mailId))
             {
@@ -248,7 +298,9 @@ public class MailRewardRandomizer
             var mailTokens = mailString.Split("%");
             var newMailReward = GetNewMailReward(rewardType);
             mailTokens[MailRewardIndex] = newMailReward.ToString();
-            mailReplacements.Add(mailId, string.Join("%", mailTokens));
+
+            var adjustedMailDataString = FixAndJoinMailMessage(mailRewardMapKV.Value, mailTokens);
+            mailReplacements.Add(mailId, adjustedMailDataString);
 
             Globals.SpoilerWrite($"{mailId}: {newMailReward.GetSpoilerLogString()}");
         }
@@ -348,5 +400,33 @@ public class MailRewardRandomizer
                 Globals.ConsoleError($"Tried to get mail reward for unknown type {rewardType}. Returning 500g instead.");
                 return new(new Range(500, 500)); 
         }
+    }
+
+    /// <summary>
+    /// Fix the mail message so that it makes sense based on the new reward
+    /// Only done in English at the moment
+    /// 
+    /// Joins the mailTokens input by the delimiter (%)
+    /// </summary>
+    /// <param name="mailTypeAndTextReplacement">The replacement info</param>
+    /// <param name="mailTokens">
+    /// The tokens of the mail message (expected length 2)
+    /// - Index 0 is the message we want to modify
+    /// - Index 1 is the rest, containing the reward and other data
+    /// </param>
+    /// <returns>The joined mail message</returns>
+    private static string FixAndJoinMailMessage(
+        MailTypeAndTextReplacement mailTypeAndTextReplacement,
+        string[] mailTokens)
+    {
+        if (mailTypeAndTextReplacement.ShouldReplaceText &&
+            Globals.ModRef.Helper.Translation.LocaleEnum == LocalizedContentManager.LanguageCode.en)
+        {
+            mailTokens[0] = mailTokens[0].Replace(
+                mailTypeAndTextReplacement.TextToReplace,
+                mailTypeAndTextReplacement.NewText);
+        }
+
+        return string.Join("%", mailTokens);
     }
 }

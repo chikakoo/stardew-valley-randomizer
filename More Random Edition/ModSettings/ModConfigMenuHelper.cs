@@ -25,6 +25,9 @@ public class ModConfigMenuHelper
 
     public void RegisterModOptions()
     {
+        // ALL options are title screen only, to prevent issues
+        Api.SetTitleScreenOnlyForNextOptions(ModManifest, titleScreenOnly: true);
+
         AddParagraph("Configure various aspects of the game which can be randomized.");
 
         AddSectionTitle("Option Links", "Click to modify settings in each section.");

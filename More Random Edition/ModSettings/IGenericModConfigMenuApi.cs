@@ -72,5 +72,14 @@ namespace Randomizer
         /// <param name="text">The link text shown in the form.</param>
         /// <param name="tooltip">The tooltip text shown when the cursor hovers on the link, or <c>null</c> to disable the tooltip.</param>
         void AddPageLink(IManifest mod, string pageId, Func<string> text, Func<string> tooltip = null);
+
+        /****
+        ** Advanced
+        ****/
+        /// <summary>Set whether the options registered after this point can only be edited from the title screen.</summary>
+        /// <param name="mod">The mod's manifest.</param>
+        /// <param name="titleScreenOnly">Whether the options can only be edited from the title screen.</param>
+        /// <remarks>This lets you have different values per-field. Most mods should just set it once in <see cref="Register"/>.</remarks>
+        void SetTitleScreenOnlyForNextOptions(IManifest mod, bool titleScreenOnly);
     }
 }

@@ -10,7 +10,7 @@
 		/// </summary>
 		/// <param name="index">The id of the item</param>
 		public AnimalItem(ObjectIndexes index, 
-			ObtainingDifficulties difficultyToObtain = ObtainingDifficulties.MediumTimeRequirements) 
+			ObtainingDifficulties difficultyToObtain = ObtainingDifficulties.LargeTimeRequirements) 
 			: base(index)
 		{
 			IsAnimalProduct = true;

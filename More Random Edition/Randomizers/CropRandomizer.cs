@@ -194,14 +194,14 @@ namespace Randomizer
 						new { seasons = seed.GetSeasonsStringForDisplay() });
                     string description = Rng.GetAndRemoveRandomValueFromList(randomDescriptions);
 
+                    seed.Price = GetRandomSeedPrice();
+                    seedObject.Description = seed.Description;
+                    seedObject.Price = seed.Price;
+
                     crop.Description = $"{description} {seasonsString}";
                     crop.Price = CalculateCropPrice(seed);
                     cropObject.Description = crop.Description;
                     cropObject.Price = crop.Price;
-
-                    seed.Price = GetRandomSeedPrice();
-                    seedObject.Description = seed.Description;
-                    seedObject.Price = seed.Price;
                 }
 
 				// Set up the override and display names if we are randomizing names

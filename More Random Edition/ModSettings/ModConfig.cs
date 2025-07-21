@@ -65,6 +65,7 @@
 		public bool Randomize { get; set; } = true;
 		public bool SwapUniqueDrops { get; set; } = true;
         public int HueShiftMax { get; set; } = 359;
+		public bool RandomizeHueShiftDaily { get; set; } = false;
     }
 
 	public class CropsConfig

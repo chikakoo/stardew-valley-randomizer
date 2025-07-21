@@ -212,6 +212,10 @@ public class ModConfigMenuHelper
             "Set to 0 for no effect.",
             () => Globals.Config.Monsters.HueShiftMax,
             (int val) => Globals.Config.Monsters.HueShiftMax = val);
+        AddCheckbox("Randomize Hue Shift Daily",
+            "Re-randomizes the hue shift daily instead of limiting it to one set per farm.",
+            () => Globals.Config.Monsters.RandomizeHueShiftDaily,
+            (bool val) => Globals.Config.Monsters.RandomizeHueShiftDaily = val);
 
         AddSectionTitle("Weapon Options");
         AddCheckbox("Randomize Stats",

@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Randomizer;
 
@@ -12,9 +13,17 @@ public class AssetLoader
     private readonly Dictionary<string, Texture2D> _editedAssetReplacements = new();
 
     /// <summary>
+    /// Tracking hue shifted NPCs so we can invalidate them all daily
+    /// if we are hue shifting them daily
+    /// 
+    /// This prevents their images from being re-randomized by mistake
+    /// </summary>
+    private readonly HashSet<string> _hueShiftedNpcAssets = new();
+
+    /// <summary>
     /// The asset names to invalidate when returning to title
     /// </summary>
-    private readonly List<string> _originalReplacedAssets = new();
+    private readonly HashSet<string> _originalReplacedAssets = new();
 
     /// <summary>Constructor</summary>
     /// <param name="mod">A reference to the ModEntry</param>
@@ -85,17 +94,49 @@ public class AssetLoader
     }
 
     /// <summary>
+    /// Invalidate replaced assets so that the changes are reapplied
+    /// 
+    /// Called at the end of every day for assets that are modified when the save is first load, but then
+    /// modified again every day after
+    /// 
+    /// We invalidate the npc caches so the actual game data is used when re-hue shifting
+    /// This prevents NPCs from being shuffled again by mistake
+    /// </summary>
+    public void InvalidateDayEndDailyCache()
+    {
+        if (Globals.Config.Monsters.HueShiftMax > 0 &&
+            Globals.Config.Monsters.RandomizeHueShiftDaily)
+        {
+            MonsterHueShifter.GetHueShiftedMonsterAssets().ForEach(monsterData =>
+                AddReplacement(monsterData.StardewAssetPath, monsterData.MonsterImage));
+        }
+
+        if (Globals.Config.NPCs.SpriteHueShiftMax > 0 &&
+            Globals.Config.NPCs.RandomizeHueShiftDaily)
+        {
+            _hueShiftedNpcAssets.ToList().ForEach(npcAsset =>
+            {
+                RemoveReplacement(npcAsset);
+                _mod.Helper.GameContent.InvalidateCache(npcAsset);
+            });
+            NpcSkinManipulator.GetSwappedNpcAssets().ForEach(npcSwap =>
+                AddReplacement(npcSwap.StardewAssetPath, npcSwap.NpcImage));
+        }
+    }
+
+    /// <summary>
     /// Replace assets while on the title screen, includes returning back
     /// to the title screen
     /// </summary>
     public void ReplaceTitleScreenAssets()
     {
         _editedAssetReplacements.Clear();
+        _hueShiftedNpcAssets.Clear();
 
         _mod.Helper.GameContent.InvalidateCache(TitleScreenPatcher.StardewAssetPath);
         ReplaceCatIcon();
 
-        _originalReplacedAssets.ForEach(originalAsset =>
+        _originalReplacedAssets.ToList().ForEach(originalAsset =>
             _mod.Helper.GameContent.InvalidateCache(originalAsset));
         _originalReplacedAssets.Clear();
     }
@@ -117,6 +158,7 @@ public class AssetLoader
     public void RandomizeImages()
     {
         _editedAssetReplacements.Clear();
+        _hueShiftedNpcAssets.Clear();
 
         CropGrowthImageBuilder cropGrowthImageBuilder = new();
 
@@ -139,12 +181,11 @@ public class AssetLoader
         MonsterHueShifter.GetHueShiftedMonsterAssets().ForEach(monsterData =>
             AddReplacement(monsterData.StardewAssetPath, monsterData.MonsterImage));
 
-        NpcSkinManipulator.GetSwappedNpcAssets()
-            .ForEach(npcSwap =>
-            {
-                AddReplacement(npcSwap.StardewAssetPath, npcSwap.NpcImage);
-                _mod.Helper.GameContent.InvalidateCache(npcSwap.StardewAssetPath);
-            });
+        NpcSkinManipulator.GetSwappedNpcAssets().ForEach(npcSwap =>
+        {
+            _hueShiftedNpcAssets.Add(npcSwap.StardewAssetPath);
+            AddReplacement(npcSwap.StardewAssetPath, npcSwap.NpcImage);
+        });
     }
 
     /// <summary>
@@ -161,12 +202,11 @@ public class AssetLoader
             var texture = assetData.Value;
 
             AddReplacement(assetName, texture);
-            _mod.Helper.GameContent.InvalidateCache(assetName);
         }
     }
 
     /// <summary>
-    /// Adds a replacement to our internal dictionary
+    /// Adds a replacement to our internal dictionary and invalidates the cache so it will be reloaded
     /// </summary>
     /// <param name="originalAsset">The original asset</param>
     /// <param name="replacementAsset">The asset to replace it with</param>
@@ -175,5 +215,17 @@ public class AssetLoader
         IAssetName normalizedAssetName = _mod.Helper.GameContent.ParseAssetName(originalAsset);
         _editedAssetReplacements[normalizedAssetName.BaseName] = replacementAsset;
         _originalReplacedAssets.Add(originalAsset);
+        _mod.Helper.GameContent.InvalidateCache(originalAsset);
+    }
+
+    /// <summary>
+    /// Removes a replacement to our internal dictionary and invalidates the cache so it will be reloaded
+    /// </summary>
+    /// <param name="originalAsset">The original asset</param>
+    private void RemoveReplacement(string originalAsset)
+    {
+        IAssetName normalizedAssetName = _mod.Helper.GameContent.ParseAssetName(originalAsset);
+        _editedAssetReplacements.Remove(normalizedAssetName.BaseName);
+        _mod.Helper.GameContent.InvalidateCache(originalAsset);
     }
 }

@@ -40,9 +40,10 @@ public class ModEntry : Mod
         helper.Events.GameLoop.ReturnedToTitle += (sender, args) => _modAssetEditor.ResetValuesAndInvalidateCache();
         
         helper.Events.GameLoop.SaveLoaded += (sender, args) => CalculateAllReplacements();
+        helper.Events.GameLoop.DayStarted += (sender, args) => _modAssetEditor.CalculateAndInvalidateShopEdits();
 
         helper.Events.GameLoop.DayStarted += (sender, args) => _modAssetLoader.InvalidateDailyCache();
-        helper.Events.GameLoop.DayStarted += (sender, args) => _modAssetEditor.CalculateAndInvalidateShopEdits();
+        helper.Events.GameLoop.DayEnding += (sender, args) => _modAssetLoader.InvalidateDayEndDailyCache();
 
         // Enable to debug lightning
         //helper.Events.GameLoop.DayStarted += (sender, args) => TestLightning();

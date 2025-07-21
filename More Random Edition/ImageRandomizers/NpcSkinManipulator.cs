@@ -88,8 +88,11 @@ public class NpcSkinManipulator
 
         TryWriteSwapToSpoilerLog("==== NPC SKINS ====");
 
-        SwapRng = RNG.GetFarmRNG($"{nameof(NpcSkinManipulator)}");
-        HueShiftRng = RNG.GetFarmRNG($"{nameof(NpcSkinManipulator)}");
+        var rngSeed = nameof(NpcSkinManipulator);
+        SwapRng = RNG.GetFarmRNG(rngSeed);
+        HueShiftRng = Globals.Config.NPCs.RandomizeHueShiftDaily
+            ? RNG.GetDailyRNG(rngSeed)
+            : RNG.GetFarmRNG(rngSeed);
 
         npcSwapperData = GetNpcSwaps();
         npcSwapperData.ForEach(npcSwap => TrySaveImage(npcSwap));

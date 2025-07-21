@@ -129,6 +129,10 @@ public class ModConfigMenuHelper
             "The maxmium value that NPC images will be hue-shifted. Set to 0 for no effect. Can be used independently of sprite shuffle.",
             () => Globals.Config.NPCs.SpriteHueShiftMax,
             (int val) => Globals.Config.NPCs.SpriteHueShiftMax = val);
+        AddCheckbox("Randomize Hue Shift Daily",
+            "Re-randomizes the hue shift daily instead of limiting it to one set per farm.",
+            () => Globals.Config.NPCs.RandomizeHueShiftDaily,
+            (bool val) => Globals.Config.NPCs.RandomizeHueShiftDaily = val);
     }
 
     private void AddCropsAndFishSettingsPage()

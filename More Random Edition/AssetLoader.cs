@@ -64,12 +64,24 @@ public class AssetLoader
     /// Invalidate replaced assets so that the changes are reapplied
     /// Called when a save is loaded
     /// </summary>
-    public void InvalidateCache()
-    {
-        ReplaceCatIcon();
+    public void InvalidateSaveLoadCache()
+        => ReplaceCatIcon();
 
-        _mod.Helper.GameContent.InvalidateCache(RainPatcher.StardewAssetPath);
-        _mod.Helper.GameContent.InvalidateCache(CritterPatcher.StardewAssetPath);
+    /// <summary>
+    /// Invalidate replaced assets so that the changes are reapplied
+    /// Called at the start of every day
+    /// </summary>
+    public void InvalidateDailyCache()
+    {
+        if (Globals.Config.RandomizeRain)
+        {
+            _mod.Helper.GameContent.InvalidateCache(RainPatcher.StardewAssetPath);
+        }
+        
+        if (Globals.Config.Animals.RandomizeCritters)
+        {
+            _mod.Helper.GameContent.InvalidateCache(CritterPatcher.StardewAssetPath);
+        }
     }
 
     /// <summary>

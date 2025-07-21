@@ -41,6 +41,7 @@ public class ModEntry : Mod
         
         helper.Events.GameLoop.SaveLoaded += (sender, args) => CalculateAllReplacements();
 
+        helper.Events.GameLoop.DayStarted += (sender, args) => _modAssetLoader.InvalidateDailyCache();
         helper.Events.GameLoop.DayStarted += (sender, args) => _modAssetEditor.CalculateAndInvalidateShopEdits();
 
         // Enable to debug lightning
@@ -116,7 +117,7 @@ public class ModEntry : Mod
         _modAssetLoader.RandomizeImages();
 
         // Invalidate all replaced and edited assets so they are reloaded
-        _modAssetLoader.InvalidateCache();
+        _modAssetLoader.InvalidateSaveLoadCache();
         _modAssetEditor.InvalidateCache();
 
         // Ensure that the bundles get changed if they're meant to

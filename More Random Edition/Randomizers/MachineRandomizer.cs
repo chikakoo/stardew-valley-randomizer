@@ -112,6 +112,7 @@ public class MachineRandomizer
             .Where(kv => kv.Key != inputItem.ItemId &&
                 kv.Key != ObjectIndexes.Stardrop.GetId() &&
                 ItemRegistry.QualifyItemId(kv.Key).StartsWith("(O)") &&
+                ItemRegistry.Create(kv.Key) is SVObject &&
                 salePriceRange.Contains(kv.Value.Price))
             .ToList();
 

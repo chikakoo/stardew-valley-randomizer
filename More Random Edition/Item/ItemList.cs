@@ -519,8 +519,8 @@ public class ItemList
         List<string> idsToExclude = indexesToExclude == null
             ? null
             : indexesToExclude
-                    .Select(index => index.GetId())
-                    .ToList();
+                .Select(index => index.GetId())
+                .ToList();
 
         var allBigCraftableIds = BigCraftableItems.Keys
             .Where(id => idsToExclude == null || !idsToExclude.Contains(id))
@@ -545,7 +545,7 @@ public class ItemList
                 ObjectIndexes.WarpTotemMountains,
                 ObjectIndexes.WarpTotemDesert,
                 ObjectIndexes.RainTotem,
-            ObjectIndexes.TreasureTotem
+                ObjectIndexes.TreasureTotem
             };
         var totemIndex = rng.GetRandomValueFromList(totemList);
         return totemIndex.GetItem();

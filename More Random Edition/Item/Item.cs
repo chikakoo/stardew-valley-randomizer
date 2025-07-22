@@ -234,10 +234,12 @@ namespace Randomizer
         /// Constructor
         /// </summary>
         /// <param name="id">The item ID</param>
-        public Item(string id)
+		/// <param name="isBigCraftable">Whether this is a big craftable</param>
+        public Item(string id, bool isBigCraftable = false)
         {
             Id = id;
-            CanStack = !IsBigCraftable;
+			IsBigCraftable = isBigCraftable;
+            CanStack = !isBigCraftable;
         }
 
         /// <summary>

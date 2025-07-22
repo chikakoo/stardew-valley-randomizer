@@ -67,7 +67,7 @@ namespace Randomizer
 			int overrideBaseLevelLearnedAt = -1,
 			bool isBigCraftable = false,
 			int bigCraftablePrice = 1000,
-			string dataKey = null) : base(id)
+			string dataKey = null) : base(id, isBigCraftable: isBigCraftable)
 		{
 			// Create a unique RNG for each item so that adding new craftables won't impact the RNG
 			// also so that the different items won't always generate linked values

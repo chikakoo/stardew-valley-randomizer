@@ -130,7 +130,7 @@ namespace Randomizer
 
 			if (bundle.Room != CommunityCenterRooms.Joja)
 			{
-				Globals.SpoilerWrite($"Reward: {bundle.Reward.Item.DisplayName}: {bundle.Reward.NumberOfItems}");
+				Globals.SpoilerWrite($"Reward: {bundle.Reward.NumberOfItems} x {bundle.Reward.Item.DisplayName}");
 			}
 			Globals.SpoilerWrite($"---");
 		}

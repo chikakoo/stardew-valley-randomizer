@@ -478,6 +478,14 @@ namespace Randomizer
 
             // Get the seasons to add from the condition, if relevant
             string condition = spawnFishData.Condition;
+
+            // TODO in 0.8.0: ENABLE THIS!!!
+            //if (condition?.StartsWith("IS_PASSIVE_FESTIVAL_OPEN") ?? false)
+            //{
+            // // Handles the squid festival
+            // return;
+            //}
+
             if (!string.IsNullOrWhiteSpace(condition) && 
                 condition.StartsWith("LOCATION_SEASON Here"))
             {

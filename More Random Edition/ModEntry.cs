@@ -35,6 +35,7 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += (sender, args) => TryLoadModConfigMenu();
         helper.Events.GameLoop.GameLaunched += (sender, args) => MusicRandomizer.PatchChangeMusicTrack();
         helper.Events.GameLoop.GameLaunched += (sender, args) => WildSeedAdjustments.ReplaceGetRandomWildCropForSeason();
+        helper.Events.GameLoop.GameLaunched += (sender, args) => FlowerSeedAdjustments.ReplaceGetRandomFlowerSeedForSeason();
         helper.Events.GameLoop.GameLaunched += (sender, args) => FishingRodAdjustments.TryGetTroutDerbyTag();
 
         helper.Events.GameLoop.ReturnedToTitle += (sender, args) => _modAssetEditor.ResetValuesAndInvalidateCache();

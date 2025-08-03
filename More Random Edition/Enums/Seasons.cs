@@ -3,6 +3,7 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SVSeason = StardewValley.Season;
 
 namespace Randomizer
 {
@@ -19,6 +20,29 @@ namespace Randomizer
 
 	public static class SeasonsExtensions
 	{
+        /// <summary>
+        /// Converts a SVSeason over to the rando version
+        /// </summary>
+        /// <param name="svSeason">The SVSeason to convert</param>
+        /// <returns>The new Seasons value</returns>
+        public static Seasons ConvertFromSVSeason(SVSeason svSeason)
+        {
+            switch(svSeason)
+            {
+                case SVSeason.Spring: 
+                    return Seasons.Spring;
+                case SVSeason.Summer: 
+                    return Seasons.Summer;
+                case SVSeason.Fall: 
+                    return Seasons.Fall;
+                case SVSeason.Winter:
+                    return Seasons.Winter;
+                default:
+                    Globals.ConsoleError($"Converting unknown SVSeason to Seasons: {svSeason}");
+                    return Seasons.Spring;
+            }
+        }
+
         /// <summary>
         /// Gets the season of the game as one of the enum values
         /// </summary>

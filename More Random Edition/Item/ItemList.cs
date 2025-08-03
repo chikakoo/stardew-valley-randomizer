@@ -169,6 +169,16 @@ public class ItemList
     public static List<Item> GetSeeds()
         => Items.Values.Where(x => x.IsSeed).ToList();
 
+    /// <summary>
+    /// Gets all the flower seeds for the given season
+    /// </summary>
+    /// <param name="season">The season to get the flower seeds for</param>
+    /// <returns>The list of flower seeds</returns>
+    public static List<SeedItem> GetFlowerSeeds(Seasons season)
+        => Items.Values.Where(x => x.IsSeed)
+            .Cast<SeedItem>()
+            .Where(x => x.GrowingSeasons.Contains(season) && x.IsFlowerSeed)
+            .ToList();
 
     /// <summary>
     /// Gets the seed that grows the given crop
@@ -221,7 +231,7 @@ public class ItemList
     /// <summary>
     /// Gets all the flowers
     /// </summary>
-    /// <returns />
+    /// <returns />s
     public static List<Item> GetFlowers()
         => Items.Values.Where(x => x.IsFlower).ToList();
 

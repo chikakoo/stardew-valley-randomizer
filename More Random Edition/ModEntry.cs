@@ -37,6 +37,7 @@ public class ModEntry : Mod
         helper.Events.GameLoop.GameLaunched += (sender, args) => WildSeedAdjustments.ReplaceGetRandomWildCropForSeason();
         helper.Events.GameLoop.GameLaunched += (sender, args) => FlowerSeedAdjustments.ReplaceGetRandomFlowerSeedForSeason();
         helper.Events.GameLoop.GameLaunched += (sender, args) => FishingRodAdjustments.TryGetTroutDerbyTag();
+        helper.Events.GameLoop.GameLaunched += (sender, args) => SquidFestAdjustments.FixSquidFestFish();
 
         helper.Events.GameLoop.ReturnedToTitle += (sender, args) => _modAssetEditor.ResetValuesAndInvalidateCache();
         

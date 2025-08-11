@@ -13,6 +13,7 @@ namespace Randomizer
 	public class FishRandomizer
 	{
         private static RNG Rng { get; set; }
+		public static string OldSquidId = "";
 
         /// <summary>
         /// Randomizes the fish by shuffling which fish ids appear in which location
@@ -24,6 +25,7 @@ namespace Randomizer
             EditedObjects editedObjectInfo, 
             Dictionary<string, SVLocationData> locationReplacements)
 		{
+            OldSquidId = ObjectIndexes.Squid.GetItem().QualifiedId;
             Rng = RNG.GetFarmRNG(nameof(FishRandomizer));
 
             List<FishItem> legendaryFish = FishItem.GetLegendaries().Cast<FishItem>().ToList();
@@ -55,22 +57,24 @@ namespace Randomizer
                 }
             }
 
-			// Keeping this here for debugging purposes
-			// Uncomment to print out all randomized seasons and locations
-			//List<int> sortedFishIds = ItemList.Items.Values
-			//    .Where(x => x is FishItem)
-			//    .Select(x => x.Id).ToList();
-			//sortedFishIds.Sort();
-			//foreach (int fishId in sortedFishIds)
-			//{
-			//    List<Seasons> seasons = (ItemList.Items[(ObjectIndexes)fishId] as FishItem).AvailableSeasons;
-			//    List<Locations> locs = (ItemList.Items[(ObjectIndexes)fishId] as FishItem).AvailableLocations;
-			//    string itemName = ItemList.Items[(ObjectIndexes)fishId].Name;
-			//    Globals.ConsoleWarn($"{fishId} {itemName}: {string.Join(" ", seasons.Select(x => x.ToString().ToLower()))}");
-			//    Globals.ConsoleWarn($"{fishId} {itemName}: {string.Join(" ", locs.Select(x => x.ToString().ToLower()))}");
-			//}
+            OldSquidId = oldToNewFishIdMap[ObjectIndexes.Squid.GetItem().QualifiedId];
 
-			WriteToSpoilerLog(newToOldFishIdMap);
+            // Keeping this here for debugging purposes
+            // Uncomment to print out all randomized seasons and locations
+            //List<int> sortedFishIds = ItemList.Items.Values
+            //    .Where(x => x is FishItem)
+            //    .Select(x => x.Id).ToList();
+            //sortedFishIds.Sort();
+            //foreach (int fishId in sortedFishIds)
+            //{
+            //    List<Seasons> seasons = (ItemList.Items[(ObjectIndexes)fishId] as FishItem).AvailableSeasons;
+            //    List<Locations> locs = (ItemList.Items[(ObjectIndexes)fishId] as FishItem).AvailableLocations;
+            //    string itemName = ItemList.Items[(ObjectIndexes)fishId].Name;
+            //    Globals.ConsoleWarn($"{fishId} {itemName}: {string.Join(" ", seasons.Select(x => x.ToString().ToLower()))}");
+            //    Globals.ConsoleWarn($"{fishId} {itemName}: {string.Join(" ", locs.Select(x => x.ToString().ToLower()))}");
+            //}
+
+            WriteToSpoilerLog(newToOldFishIdMap);
 		}
 
 		/// <summary>
